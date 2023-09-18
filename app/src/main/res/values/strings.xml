@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">rescYOU</string>
+
+    <!--Starting Page-->
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in_email">Sign In Via Email</string>
+    <string name="sign_in_gmail">Sign In Via Gmail</string>
+
+    <string name="tech_image">Tech Life Vector</string>
+    <string name="join_community">Join our community.</string>
+</resources>

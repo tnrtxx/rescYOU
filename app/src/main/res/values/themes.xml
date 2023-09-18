@@ -1,0 +1,20 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.RescYOU" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#F8F8F8</item>
+        <item name="colorPrimaryVariant">#F8F8F8</item>
+        <item name="colorOnPrimary">#072A4D</item>
+    </style>
+
+    <style name="Theme.RescYOU" parent="Base.Theme.RescYOU">
+        <item name="colorPrimary">#F8F8F8</item>
+        <item name="colorPrimaryVariant">#F8F8F8</item>
+        <item name="colorOnPrimary">#072A4D</item>
+    </style>
+
+
+
+
+
+
+</resources>

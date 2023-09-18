@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--COLORS OF THE APP-->
+    <color name="black">#212121</color>
+    <color name="white">#F1F2F2</color>
+
+
+    <!--FOR BUTTONS: Main accent color-->
+    <color name="navy_blue">#072A4D</color>
+
+    <!--FOR TEXTS inside textbox or terms and conditions-->
+    <color name="darkest_gray">#4A5354</color>
+    <color name="darker_gray">#B6B6B6</color>
+
+    <!--FOR SHAPES OR TEXTBOX SHAPES-->
+    <color name="dark_gray">#E6E3E3</color>
+
+</resources>
