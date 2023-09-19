@@ -8,4 +8,27 @@
 
     <string name="tech_image">Tech Life Vector</string>
     <string name="join_community">Join our community.</string>
+
+    <!--Sign Up Page-->
+    <!--Personal Details-->
+    <string name="personal_details">Personal Details</string>
+    <string name="first_name">First Name</string>
+    <string name="middle_name">Middle Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="suffix_name">Suffix</string>
+    <string name="birthday">Birthday</string>
+    <string name="age">Age</string>
+
+    <!--Account Details-->
+    <string name="account_details">Account Details</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+
+    <!--Terms and Conditions-->
+    <string name="termsAndCondtions">By signing up, you agree to our terms and conditions.</string>
+
+
+
+
+
 </resources>

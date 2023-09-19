@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1005866032280",
+    "project_id": "rescyou-57570",
+    "storage_bucket": "rescyou-57570.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005866032280:android:d8510281667373802e04ed",
+        "android_client_info": {
+          "package_name": "com.example.rescyou"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGCgwA7wV7tmsmLwg93pDuCntA00InE7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
