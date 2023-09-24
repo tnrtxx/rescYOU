@@ -26,21 +26,37 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 
 private lateinit var binding: ActivityMainBinding
 
+//Initialize variables
+//Personal Information
+private lateinit var firstName: String
+private lateinit var middleName: String
+private lateinit var lastName: String
+private lateinit var suffixName: String
+private lateinit var birthday: String
+private var age: Int = 0
+
+//Account Information
+private lateinit var email: String
+private lateinit var password: String
+
+//For Realtime Database
+private lateinit var database: DatabaseReference
+private lateinit var data: FirebaseDatabase
+
+//for FirebaseAuth (SIGN UP/REGISTRATION OF USER)
+private lateinit var auth: FirebaseAuth
+
 class MainActivity : AppCompatActivity() {
 
 
-//    private lateinit var oneTapClient: SignInClient
-//    private lateinit var signInRequest: BeginSignInRequest
-//    private val REQ_ONE_TAP = 2  // Can be any integer unique to the Activity
-//    private var showOneTapUI = true
-//    private lateinit var auth: FirebaseAuth
-
-//    private lateinit var auth : FirebaseAuth
     private lateinit var googleSignInClient : GoogleSignInClient
 
     // [START declare_auth]
@@ -70,45 +86,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-//        auth = FirebaseAuth.getInstance()
-//
-//        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//            .requestIdToken("1005866032280-in6ljm34otj2k73u0ni85ers0gutv3up.apps.googleusercontent.com")
-//            .requestEmail()
-//            .build()
-//
-//        googleSignInClient = GoogleSignIn.getClient(this , gso)
-
-
-////        AUTHENTICATIONS
-//        auth = Firebase.auth
-//
-//
-//        oneTapClient = Identity.getSignInClient(this)
-//        signInRequest = BeginSignInRequest.builder()
-//            .setPasswordRequestOptions(
-//                BeginSignInRequest.PasswordRequestOptions.builder()
-//                    .setSupported(true)
-//                    .build()
-//            )
-//            .setGoogleIdTokenRequestOptions(
-//                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-//                    .setSupported(true)
-//                    // Your server's client ID, not your Android client ID.
-//                    .setServerClientId("1005866032280-in6ljm34otj2k73u0ni85ers0gutv3up.apps.googleusercontent.com")
-//                    // Only show accounts previously used to sign in.
-//                    .setFilterByAuthorizedAccounts(true)
-//                    .build()
-//            )
-////            // Automatically sign in when exactly one credential is retrieved.
-////            .setAutoSelectEnabled(false)
-//            .build()
-////
-////        // ...
-
-
-
-
 
         //SIGN UP
         binding.signUpButton.setOnClickListener {
@@ -116,7 +93,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        //SIGN IN VIA EMAL
+        //SIGN IN VIA EMAIL
         binding.signInEmailButton.setOnClickListener {
             val intent = Intent(this, SignInEmail::class.java)
             startActivity(intent)
@@ -127,29 +104,6 @@ class MainActivity : AppCompatActivity() {
         binding.signInGmailButton.setOnClickListener {
             signIn()
             Toast.makeText(applicationContext, "Gmail", Toast.LENGTH_SHORT).show()
-
-
-        //            signInGoogle()
-
-
-
-//            oneTapClient.beginSignIn(signInRequest)
-//                .addOnSuccessListener(this) { result ->
-//                    try {
-//                        startIntentSenderForResult(
-//                            result.pendingIntent.intentSender, REQ_ONE_TAP,
-//                            null, 0, 0, 0, null
-//                        )
-//                    } catch (e: IntentSender.SendIntentException) {
-//                        Log.e(TAG, "Couldn't start One Tap UI: ${e.localizedMessage}")
-//                    }
-//                }
-//                .addOnFailureListener(this) { e ->
-//                    // No saved credentials found. Launch the One Tap sign-up flow, or
-//                    // do nothing and continue presenting the signed-out UI.
-//                    Log.d(TAG, e.localizedMessage)
-//                }
-
 
         }
     }
@@ -178,6 +132,16 @@ class MainActivity : AppCompatActivity() {
                 val account = task.getResult(ApiException::class.java)!!
                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
                 firebaseAuthWithGoogle(account.idToken!!)
+
+
+
+
+//                getProviderData()
+                val user = auth.currentUser
+                val userID= user?.uid.toString()
+                Toast.makeText(applicationContext, userID, Toast.LENGTH_SHORT).show()
+
+
                 val intent = Intent(this, Home::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
@@ -203,6 +167,7 @@ class MainActivity : AppCompatActivity() {
                     updateUI(user)
 
 
+
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
@@ -214,6 +179,17 @@ class MainActivity : AppCompatActivity() {
 
     // [START signin]
     private fun signIn() {
+        // Initialize Firebase Auth
+//        auth = Firebase.auth
+//        val user = auth.currentUser
+//        val userID= user?.uid.toString()
+//        Toast.makeText(applicationContext, userID, Toast.LENGTH_SHORT).show()
+//        getProviderData()
+//        // Initialize Firebase Auth
+//        auth = Firebase.auth
+//        val user = auth.currentUser
+//        val userID= user?.uid.toString()
+//        Toast.makeText(applicationContext, userID, Toast.LENGTH_SHORT).show()
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
@@ -226,148 +202,49 @@ class MainActivity : AppCompatActivity() {
         private const val TAG = "GoogleActivity"
         private const val RC_SIGN_IN = 9001
     }
+    fun storeData(userID:String, firstName: String, email: String){
+        //initialize database
+        database = Firebase.database.reference
 
+        data = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        val myRef = data.reference
 
-//    private fun signInGoogle(){
-//        val signInIntent = googleSignInClient.signInIntent
-//        launcher.launch(signInIntent)
-//    }
-//
-//    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-//            result ->
-//        if (result.resultCode == Activity.RESULT_OK){
-//
-//            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-//            handleResults(task)
-//        }
-//    }
-//
-//    private fun handleResults(task: Task<GoogleSignInAccount>) {
-//        if (task.isSuccessful){
-//            val account : GoogleSignInAccount? = task.result
-//            if (account != null){
-//                updateUI(account)
-//                Toast.makeText(applicationContext, "yes", Toast.LENGTH_SHORT).show()
-//            }
-//        }else{
-//            Toast.makeText(applicationContext, "no", Toast.LENGTH_SHORT).show()
-//            Toast.makeText(this, task.exception.toString() , Toast.LENGTH_SHORT).show()
-//        }
-//    }
-
-//    private fun updateUI(account: GoogleSignInAccount) {
-//        val credential = GoogleAuthProvider.getCredential(account.idToken , null)
-//        auth.signInWithCredential(credential).addOnCompleteListener {
-//            if (it.isSuccessful){
-//                Toast.makeText(applicationContext, "update ui", Toast.LENGTH_SHORT).show()
-//                val intent : Intent = Intent(this , Home::class.java)
-//                intent.putExtra("email" , account.email)
-//                intent.putExtra("name" , account.displayName)
-//                startActivity(intent)
-//
-//            }else{
-//                Toast.makeText(this, it.exception.toString() , Toast.LENGTH_SHORT).show()
-//                Toast.makeText(applicationContext, "update ui no", Toast.LENGTH_SHORT).show()
-//
-//            }
-//        }
-//    }
-
-
-//    private fun updateUI(user: FirebaseUser?) {
-//
-//}
-//
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        val googleCredential = oneTapClient.getSignInCredentialFromIntent(data)
-//        val idToken = googleCredential.googleIdToken
-//
-//        when (requestCode) {
-//            REQ_ONE_TAP -> {
-//                try {
-//                    val credential = oneTapClient.getSignInCredentialFromIntent(data)
-//                    val idToken = credential.googleIdToken
-//                    val username = credential.id
-//                    val password = credential.password
-//                    when {
-//                        idToken != null -> {
-//                            // Got an ID token from Google. Use it to authenticate
-//                            // with your backend.
-//                            Log.d(TAG, "Got ID token.")
-//                        }
-//
-//                        password != null -> {
-//                            // Got a saved username and password. Use them to authenticate
-//                            // with your backend.
-//                            Log.d(TAG, "Got password.")
-//                        }
-//
-//                        else -> {
-//                            // Shouldn't happen.
-//                            Log.d(TAG, "No ID token or password!")
-//                        }
-//                    }
-//                } catch (e: ApiException) {
-//                    when (e.statusCode) {
-//                        CommonStatusCodes.CANCELED -> {
-//                            Log.d(TAG, "One-tap dialog was closed.")
-//                            // Don't re-prompt the user.
-//                            showOneTapUI = false
-//                        }
-//
-//                        CommonStatusCodes.NETWORK_ERROR -> {
-//                            Log.d(TAG, "One-tap encountered a network error.")
-//                            // Try again or just ignore.
-//                        }
-//
-//                        else -> {
-//                            Log.d(
-//                                TAG, "Couldn't get credential from result." +
-//                                        " (${e.localizedMessage})"
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        when {
-//            idToken != null -> {
-//                // Got an ID token from Google. Use it to authenticate
-//                // with Firebase.
-//                val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-//                auth.signInWithCredential(firebaseCredential)
-//                    .addOnCompleteListener(this) { task ->
-//                        if (task.isSuccessful) {
-//                            // Sign in success, update UI with the signed-in user's information
-//                            Log.d(TAG, "signInWithCredential:success")
-//                            val user = auth.currentUser
-//                            updateUI(user)
-////                            GoogleSignInClient.clearDefaultAccountAndReconnect();
-//                        } else {
-//                            // If sign in fails, display a message to the user.
-//                            Log.w(TAG, "signInWithCredential:failure", task.exception)
-//                            updateUI(null)
-//                        }
-//                    }
-//            }
-//            else -> {
-//                // Shouldn't happen.
-//                Log.d(TAG, "No ID token!")
-//            }
-//        }}
-//
-//
-//        override fun onStart() {
-//            super.onStart()
-//            // Check if user is signed in (non-null) and update UI accordingly.
-//            val currentUser = auth.currentUser
-//            updateUI(currentUser)
-//        }
+        //store data to the REALTIME DATABASE
+        myRef.child("Users").child(userID).child("firstName").setValue(firstName)
+//        myRef.child("Users").child(userID).child("middleName").setValue(middleName)
+//        myRef.child("Users").child(userID).child("lastName").setValue(lastName)
+//        myRef.child("Users").child(userID).child("suffix").setValue(suffixName)
+//        myRef.child("Users").child(userID).child("birthday").setValue(birthday)
+//        myRef.child("Users").child(userID).child("age").setValue(age)
+        myRef.child("Users").child(userID).child("email").setValue(email)
 
 
 
+    }
+
+    private fun getProviderData() {
+        // [START get_provider_data]
+        val user = Firebase.auth.currentUser
+        user?.let {
+            for (profile in it.providerData) {
+                // Id of the provider (ex: google.com)
+//                val providerId = profile.providerId
+
+                // UID specific to the provider
+                val uid = profile.uid
+                val user = auth.currentUser
+
+                // Name, email address, and profile photo Url
+                firstName = profile.displayName.toString()
+                email = profile.email.toString()
+                val userID= user?.uid.toString()
+
+                Toast.makeText(applicationContext, userID, Toast.LENGTH_SHORT).show()
+                storeData(userID, firstName, email)
+
+            }
+        }
+        // [END get_provider_data]
+    }
 
     }

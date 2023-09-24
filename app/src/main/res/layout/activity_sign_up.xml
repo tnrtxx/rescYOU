@@ -35,7 +35,8 @@
                 android:id="@+id/firstNameTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-               android:hint="@string/first_name"
+               android:hint="@string/first_name_req"
+
                 >
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -50,7 +51,7 @@
                 android:id="@+id/middleNameTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/middle_name"
+                android:hint="@string/middle_name_req"
                 >
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -65,7 +66,7 @@
                 android:id="@+id/lastNameTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/last_name"
+                android:hint="@string/last_name_req"
                 >
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -80,30 +81,31 @@
                 android:id="@+id/suffixNameTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/suffix_name"
+                android:hint="@string/suffix_name_req"
+                >
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/birthdayTextLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/birthdayTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/birthday_req"
+                android:inputType="date"
+                android:focusableInTouchMode="false"
                 >
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
 
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/birthdayTextLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="18dp"
-                >
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/birthdayTextInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/birthday"
-                    android:inputType="date"
-                    android:focusableInTouchMode="false"
-                    >
-                </com.google.android.material.textfield.TextInputEditText>
-            </com.google.android.material.textfield.TextInputLayout>
 
 
 
@@ -132,10 +134,8 @@
                 android:id="@+id/emailTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/email"
-                android:inputType="textEmailAddress"
-                >
-            </com.google.android.material.textfield.TextInputEditText>
+                android:hint="@string/email_req"
+                android:inputType="textEmailAddress"></com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -150,7 +150,7 @@
                 android:id="@+id/passwordTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/password"
+                android:hint="@string/password_req"
                 >
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>

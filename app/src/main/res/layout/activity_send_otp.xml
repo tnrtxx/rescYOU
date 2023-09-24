@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SendOtp"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="34dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verify_OTP"
+            android:textAlignment="textStart"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/send_OTP"
+            android:textAlignment="textStart"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="20dp"
+            >
+        </TextView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+
+            >
+
+
+            <TextView
+                android:id="@+id/countryCodeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:text="@string/country_code"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:layout_alignTop="@id/mobilelTextLayout">
+                </TextView>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/mobilelTextLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@id/countryCodeTextView"
+
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/mobileTextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/mobile_num"
+                    android:inputType="phone">
+
+                </com.google.android.material.textfield.TextInputEditText>
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+        </RelativeLayout>
+
+
+        <android.widget.Button
+            android:id="@+id/getOTPButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:text="@string/get_OTP"
+            android:background="@drawable/rounded_corner"
+            android:foregroundTint="@color/white"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:padding="12dp"
+            >
+        </android.widget.Button>
+
+
+    </LinearLayout>
+
+</ScrollView>

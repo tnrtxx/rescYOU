@@ -11,13 +11,20 @@
     <string name="join_community">Join our community.</string>
 
     <!--Sign Up Page-->
-    <!--Personal Details-->
+    <!--Personal Details:REQUIRED-->
     <string name="personal_details">Personal Details</string>
-    <string name="first_name">First Name</string>
+    <string name="first_name_req">First Name <font color='#FF0000'>*</font></string>
+    <string name="middle_name_req">Middle Name</string>
+    <string name="last_name_req">Last Name <font color='#FF0000'>*</font></string>
+    <string name="suffix_name_req">Suffix</string>
+    <string name="birthday_req">Birthday <font color='#FF0000'>*</font></string>
+
+    <!--Personal Details-->
+    <string name="first_name">First Name </string>
     <string name="middle_name">Middle Name</string>
-    <string name="last_name">Last Name</string>
+    <string name="last_name">Last Name </string>
     <string name="suffix_name">Suffix</string>
-    <string name="birthday">Birthday</string>
+    <string name="birthday">Birthday </string>
 
     <!--Account Details-->
     <string name="account_details">Account Details</string>
@@ -29,9 +36,34 @@
 
     <!--Sign In EMAIL Page-->
     <string name="welcome">Welcome Back</string>
+
+    <!--Sign In EMAIL Page:REQUIRED-->
+    <string name="email_req">Email <font color='#FF0000'>*</font></string>
+    <string name="password_req">Password <font color='#FF0000'>*</font></string>
+
     <string name="email">Email</string>
-    <string name="password">Password</string>
+    <string name="password">Password </string>
+
+
+    <!--Forgot Password Page-->
     <string name="forgot_password">Forgot Password</string>
+    <string name="enter_email">Enter your email to reset your password.</string>
+    <string name="reset_password">Reset Password</string>
+
+    <!--Verify OTP Page-->
+    <string name="verify_OTP">OTP Verification</string>
+    <string name="send_OTP">We will send you an One Time Password (OTP) on this mobile number.</string>
+    <string name="country_code">+63</string>
+    <string name="mobile_num">Mobile Number</string>
+    <string name="get_OTP">Get OTP</string>
+
+    <!--Send OTP Page-->
+    <string name="entery_OTP">Enter the OTP sent to:</string>
+    <string name="OTP">One Time Password (OTP)</string>
+    <string name="didnt_getOTP">Didn\'t receive the OTP?</string>
+    <string name="resend">Resend OTP</string>
+    <string name="verify">Verify OTP</string>
+
 
 
 </resources>
