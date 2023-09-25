@@ -80,9 +80,7 @@
 
     <!--Profile-->
     <string name="sign_out">Sign Out</string>
-
-
-
+    <string name="map_decoy">Map decoy</string>
 
 
 </resources>

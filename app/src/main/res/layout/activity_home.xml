@@ -43,6 +43,17 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+<!--     TODO: Add MapView here-->
+
+        <!-- Sample-->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/button_constraintLayout"
+            android:src="@drawable/ic_launcher_background"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/map_decoy"
+            />
 
     </RelativeLayout>
 
