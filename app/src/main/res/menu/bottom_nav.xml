@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/home_icon"
+        android:title="@string/home"
+        >
+    </item>
+
+    <item
+        android:id="@+id/tools"
+        android:icon="@drawable/tools_icon"
+        android:title="@string/tools"
+        >
+    </item>
+
+
+    <item
+        android:id="@+id/info"
+        android:icon="@drawable/info_icon2"
+        android:title="@string/info"
+        >
+    </item>
+
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/profile_icon"
+        android:title="@string/profile"
+        >
+    </item>
+
+</menu>

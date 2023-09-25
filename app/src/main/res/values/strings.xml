@@ -58,12 +58,26 @@
     <string name="get_OTP">Get OTP</string>
 
     <!--Send OTP Page-->
-    <string name="entery_OTP">Enter the OTP sent to:</string>
+    <string name="entry_OTP">Enter the OTP sent to:</string>
     <string name="OTP">One Time Password (OTP)</string>
     <string name="didnt_getOTP">Didn\'t receive the OTP?</string>
     <string name="resend">Resend OTP</string>
     <string name="verify">Verify OTP</string>
 
+
+    <!--Home-->
+
+    <!--Nav Bar-->
+    <string name="home">Home</string>
+    <string name="tools">Tools</string>
+    <string name="info">Information</string>
+    <string name="profile">Profile</string>
+
+    <!--Pin my location button-->
+    <string name="pin_location">Pin My Location</string>
+
+    <!--Profile-->
+    <string name="sign_out">Sign Out</string>
 
 
 </resources>

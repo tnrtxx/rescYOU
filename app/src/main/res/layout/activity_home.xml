@@ -1,44 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Home">
+    tools:context=".Home"
+    >
 
-
-    <TextView
-        android:id="@+id/homeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Home"
-        android:textAlignment="textStart"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        >
-    </TextView>
-
-    <android.widget.Button
-        android:id="@+id/signOutButton"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="sign out"
-        android:background="@drawable/rounded_corner"
-        android:foregroundTint="@color/white"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:padding="12dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_height="match_parent"
         >
-    </android.widget.Button>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/button_constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="30dp"
+            android:layout_marginTop="20dp"
+            >
+
+            <android.widget.Button
+                android:id="@+id/pinMyLocationButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/pin_location"
+                android:background="@drawable/rounded_corner"
+                android:foregroundTint="@color/white"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:drawableStart="@drawable/pin_location_icon"
+                android:paddingStart="60dp"
+                android:paddingEnd="60dp"
+
+                >
+            </android.widget.Button>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+    </RelativeLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+    android:id="@+id/bottom_app_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    app:fabCradleMargin="10dp"
+    app:fabCradleRoundedCornerRadius="10dp"
+    app:fabCradleVerticalOffset="5dp"
+        android:backgroundTint="@color/light_gray"
+    app:contentInsetRight="0dp"
+    app:contentInsetEnd="0dp"
+    app:contentInsetStart="0dp"
+    app:contentInsetLeft="0dp"
+        >
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="0dp"
+        android:background="@color/light_gray"
+        app:itemIconTint="@color/darker_gray"
+        app:itemTextColor="@color/darker_gray"
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled"
+        android:visibility="visible"
+
+        />
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
