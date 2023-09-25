@@ -1,9 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PinMyLocation">
+    tools:context=".PinMyLocation"
+    android:orientation="vertical"
+    >
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="34dp"
+        >
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/describe"
+            android:textAlignment="textStart"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="20dp"
+            >
+        </TextView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            >
+
+
+            <ImageView
+                android:id="@+id/cameraButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/camera_icon1"
+                android:background="@drawable/rounded_corner"
+                android:padding="10dp"
+                android:layout_alignTop="@id/describeTextLayout"
+                android:layout_marginRight="20dp"
+                />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/describeTextLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@id/cameraButton"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/describeTextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/describe"
+                    >
+
+                </com.google.android.material.textfield.TextInputEditText>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </RelativeLayout>
+
+
+        <android.widget.Button
+            android:id="@+id/pinMyLocationButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:text="@string/pin_location"
+            android:background="@drawable/rounded_corner"
+            android:foregroundTint="@color/white"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:padding="12dp"
+            >
+        </android.widget.Button>
+
+        <android.widget.Button
+            android:id="@+id/cancelPinButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/cancel_pin"
+            android:background="@drawable/rounded_corner_gray"
+            android:foregroundTint="@color/navy_blue"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:padding="12dp"
+            >
+        </android.widget.Button>
+
+
+    </LinearLayout>
+
+
+
+</ScrollView>

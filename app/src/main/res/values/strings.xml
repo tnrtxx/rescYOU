@@ -75,9 +75,14 @@
 
     <!--Pin my location button-->
     <string name="pin_location">Pin My Location</string>
+    <string name="describe">Describe your current situation.</string>
+    <string name="cancel_pin">Cancel</string>
 
     <!--Profile-->
     <string name="sign_out">Sign Out</string>
+
+
+
 
 
 </resources>

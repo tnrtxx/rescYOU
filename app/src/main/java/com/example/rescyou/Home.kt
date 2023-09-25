@@ -25,6 +25,13 @@ class Home : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        //PIN MY LOCATION BUTTON
+        binding.pinMyLocationButton.setOnClickListener {
+            val intent = Intent(this, PinMyLocation::class.java)
+            startActivity(intent)
+        }
+
         // Initialize and assign variable
         var bottomNavigationView: BottomNavigationView = binding.bottomNavView
 
