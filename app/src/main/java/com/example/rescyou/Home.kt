@@ -11,9 +11,11 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.vmadalin.easypermissions.EasyPermissions
+import com.vmadalin.easypermissions.dialogs.SettingsDialog
 
 
-class Home : AppCompatActivity(), OnMapReadyCallback {
+class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.PermissionCallbacks {
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var googleMap: GoogleMap
@@ -23,6 +25,8 @@ class Home : AppCompatActivity(), OnMapReadyCallback {
 
     companion object {
         const val MAP_LEVEL = 16f
+        const val PERMISSION_REQUEST_CODE_ACCESS_FINE_LOCATION = 900
+        const val PERMISSION_REQUEST_CODE_ENABLE_GPS = 901
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,13 +38,14 @@ class Home : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
 
+
+
         //PIN MY LOCATION BUTTON
         binding.pinMyLocationButton.setOnClickListener {
             val intent = Intent(this, PinMyLocation::class.java)
             startActivity(intent)
 
         }
-
 
 
         // Initialize and assign variable
@@ -58,16 +63,55 @@ class Home : AppCompatActivity(), OnMapReadyCallback {
         googleMap = map
         googleMap.uiSettings.isZoomControlsEnabled = true
 
+    }
 
+    private fun hasLocationPermission(): Boolean =
+        EasyPermissions.hasPermissions(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+
+    private fun requestLocationPermission() {
+        EasyPermissions.requestPermissions(
+            this,
+            "This application requires location permission to work properly.",
+            PERMISSION_REQUEST_CODE_ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            SettingsDialog.Builder(this).build().show()
+        } else {
+            requestLocationPermission()
+        }
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+        Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
     private fun pinLocation() {
 
     }
 
+
     private fun getCurrentLocation() {
 
     }
+
+
+
+
+
+
 
 
     private val navBarWhenClicked = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -96,10 +140,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback {
             }
         }
         false
-
     }
-
-
 }
 
 
