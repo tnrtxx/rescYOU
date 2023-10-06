@@ -71,10 +71,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
      * Oflline mode - nag aappear ket may internet naman
      * GPS - irequire kay user
      * Hindi makapag zoom kapag nagra route si user
-     *
-     * Refactor code
      */
-
     override fun onDestroy() {
         super.onDestroy()
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
@@ -87,7 +84,10 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         dialog = MaterialAlertDialogBuilder(this, R.style.MaterialAlertDialogRounded)
             .setTitle("You are currently using the Map Feature in offline mode")
             .setMessage("Please connect to the internet to keep receiving real-time updates.")
-            .setPositiveButton("Ok", null)
+            .setPositiveButton("Ok") { _, _ ->
+                // Call showOfflineModeView() here
+                showOfflineModeView()
+            }
             .setCancelable(false)
             .create()
 
@@ -98,9 +98,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                     dialog.show()
                 }
             } else {
-                if (dialog.isShowing ) {
+                if (dialog.isShowing || binding.offlineModeTextView.isVisible) {
                     dialog.hide()
-
+                    hideOfflineModeView()
                 }
             }
         }
@@ -148,7 +148,16 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         getCurrentLocation()
     }
 
-   
+    private fun showOfflineModeView() {
+        binding.offlineModeTextView.visibility = View.VISIBLE
+        Log.d("DEBUG", "showOfflineModeView")
+    }
+
+    private fun hideOfflineModeView() {
+        binding.offlineModeTextView.visibility = View.GONE
+        Log.d("DEBUG", "hideOfflineModeView")
+
+    }
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
