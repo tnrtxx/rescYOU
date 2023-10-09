@@ -71,6 +71,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
      * Oflline mode - nag aappear ket may internet naman
      * GPS - irequire kay user
      * Hindi makapag zoom kapag nagra route si user
+     * 
      */
     override fun onDestroy() {
         super.onDestroy()
@@ -84,7 +85,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         dialog = MaterialAlertDialogBuilder(this, R.style.MaterialAlertDialogRounded)
             .setTitle("You are currently using the Map Feature in offline mode")
             .setMessage("Please connect to the internet to keep receiving real-time updates.")
-            .setPositiveButton("Ok") { _, _ ->
+            .setPositiveButton("Dismiss") { _, _ ->
                 // Call showOfflineModeView() here
                 showOfflineModeView()
             }
