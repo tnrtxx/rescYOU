@@ -2,6 +2,7 @@ package com.example.rescyou
 
 // Android-related imports
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
@@ -36,11 +37,13 @@ import com.vmadalin.easypermissions.dialogs.SettingsDialog
 
 // Custom package imports
 import com.example.rescyou.utils.GpsStatusListener
-import com.example.rescyou.utils.NetworkManager
 import com.example.rescyou.utils.TurnOnGps
 import com.example.rescyou.databinding.ActivityHomeBinding
+import com.example.rescyou.utils.ConnectionLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
+
+private const val TAG = "Home"
 
 class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.PermissionCallbacks {
 
@@ -58,6 +61,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var isGpsStatusChanged: Boolean? = null
 
+    // Network Connection
+    private lateinit var connectionLiveData: ConnectionLiveData
+
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
@@ -68,7 +74,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
      * Map current location button change color, add shadow
      *
      * LOGIC-RELATED
-     * Oflline mode - nag aappear ket may internet naman
+     *
      * GPS - irequire kay user
      * Hindi makapag zoom kapag nagra route si user
      * 
@@ -81,19 +87,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
+        connectionLiveData = ConnectionLiveData(this)
 
-        dialog = MaterialAlertDialogBuilder(this, R.style.MaterialAlertDialogRounded)
-            .setTitle("You are currently using the Map Feature in offline mode")
-            .setMessage("Please connect to the internet to keep receiving real-time updates.")
-            .setPositiveButton("Dismiss") { _, _ ->
-                // Call showOfflineModeView() here
-                showOfflineModeView()
-            }
-            .setCancelable(false)
-            .create()
-
-        val networkManager = NetworkManager(this)
-        networkManager.observe(this) {
+        val isNetworkAvailable = connectionLiveData.observe(this) {
             if (!it) {
                 if (!dialog.isShowing) {
                     dialog.show()
@@ -106,6 +102,15 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             }
         }
 
+        dialog = MaterialAlertDialogBuilder(this, R.style.MaterialAlertDialogRounded)
+            .setTitle("You are currently using the Map Feature in offline mode")
+            .setMessage("Please connect to the internet to keep receiving real-time updates.")
+            .setPositiveButton("Dismiss") { _, _ ->
+                // Call showOfflineModeView() here
+                showOfflineModeView()
+            }
+            .setCancelable(false)
+            .create()
 
         turnOnGps = TurnOnGps(this)
         val gpsStatusListener = GpsStatusListener(this)
@@ -203,9 +208,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
         if (activityResult.resultCode == RESULT_OK) {
-
+            Log.d(TAG, "Connected")
         } else if (activityResult.resultCode == RESULT_CANCELED) {
-            Toast.makeText(this, "Request is cancelled", Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "Request is cancelled")
         }
     }
 
