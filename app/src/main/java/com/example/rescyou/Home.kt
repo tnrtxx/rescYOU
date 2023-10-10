@@ -1,6 +1,5 @@
 package com.example.rescyou
 
-// Android-related imports
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -10,14 +9,15 @@ import android.util.Log
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.Toast
-
-// Androidx-related imports
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-
-// Third-party library imports
+import com.example.rescyou.databinding.ActivityHomeBinding
+import com.example.rescyou.utils.ConnectionLiveData
+import com.example.rescyou.utils.GpsStatusListener
+import com.example.rescyou.utils.TurnOnGps
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -32,20 +32,27 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 
-// Custom package imports
-import com.example.rescyou.utils.GpsStatusListener
-import com.example.rescyou.utils.TurnOnGps
-import com.example.rescyou.databinding.ActivityHomeBinding
-import com.example.rescyou.utils.ConnectionLiveData
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-
 
 private const val TAG = "Home"
-
 class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.PermissionCallbacks {
+
+    companion object {
+        /* To access the currentLocation variable from other activities, you can use Home.currentLocation wherever you need it in those activities.
+         * Example:
+         *          val currentLocation = Home.currentLocation
+         *          if (currentLocation != null) {
+         *          // Use the currentLocation
+         *          } else {
+         *          // Handle the case where the currentLocation is null
+         *          }
+         */
+
+        var currentLocation: LatLng? = null
+    }
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var turnOnGps: TurnOnGps
@@ -67,17 +74,16 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
-
+    // Firebase
     /** TODO:
      * UI RELATED
      * Map zoom controls change color, add shadow
      * Map current location button change color, add shadow
      *
      * LOGIC-RELATED
-     *
      * GPS - irequire kay user
      * Hindi makapag zoom kapag nagra route si user
-     * 
+     *
      */
     override fun onDestroy() {
         super.onDestroy()
@@ -162,14 +168,12 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     private fun hideOfflineModeView() {
         binding.offlineModeTextView.visibility = View.GONE
         Log.d("DEBUG", "hideOfflineModeView")
-
     }
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap.uiSettings.isZoomControlsEnabled = true
-
 
         if (hasLocationPermission()) {
             googleMap.uiSettings.isMyLocationButtonEnabled = true
@@ -192,13 +196,13 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
             // Modify the layout to adjust the location button's position
             val view = mapFragment.requireView().findViewById<View>(
-                Constants.CURRENT_LOCATION_BUTTON_PARENT_ID).parent!! as View
+                Constants.CURRENT_LOCATION_BUTTON_PARENT_ID
+            ).parent!! as View
             val locationButton = view.findViewById<View>(Constants.CURRENT_LOCATION_BUTTON_ID)
             val params = locationButton.layoutParams as RelativeLayout.LayoutParams
-            params.addRule(RelativeLayout.ALIGN_BOTTOM, 0)
+            params.addRule(RelativeLayout.ALIGN_TOP, 0)
             params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
-            params.bottomMargin = 50
-
+            params.bottomMargin = 5
         } else {
             requestLocationPermission()
         }
@@ -223,18 +227,26 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             .build()
 
         locationCallback = object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult) {
-                super.onLocationResult(p0)
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
 
-                val newPos = p0.lastLocation?.let {
-                    LatLng(
-                        it.latitude,
-                        it.longitude
-                    )
+                val lastLocation = locationResult.lastLocation
+                if (lastLocation != null) {
+                    val userLatLng = LatLng(lastLocation.latitude, lastLocation.longitude)
+
+                    // Set the current location
+                    currentLocation = userLatLng
+
+                    // Log the new position
+                    Log.d("New Position", userLatLng.toString())
+
+                    // Create a camera update to move to the new position with a specific zoom level
+                    val cameraUpdate =
+                        CameraUpdateFactory.newLatLngZoom(userLatLng, Constants.MAP_LEVEL)
+
+                    // Move the Google Map camera to the new position
+                    googleMap.moveCamera(cameraUpdate)
                 }
-                Log.d("New Position", newPos.toString())
-                newPos?.let { CameraUpdateFactory.newLatLngZoom(it, Constants.MAP_LEVEL) }
-                    ?.let { googleMap.moveCamera(it) }
             }
         }
         fusedLocationProviderClient = LocationServices

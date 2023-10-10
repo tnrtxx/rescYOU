@@ -1,6 +1,5 @@
 package com.example.rescyou.utils
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.IntentSender
 import android.util.Log
@@ -15,7 +14,6 @@ import com.google.android.gms.location.Priority
 // This class ensures that the device's GPS (location services) is enabled and configured for high accuracy when needed.
 // It prompts the user to enable GPS if it's not already enabled.
 
-private const val TAG = "TurnOnGps"
 class TurnOnGps(private val context: Context) {
 
     // This function starts the process to enable GPS and prompts the user to turn on GPS if necessary
@@ -42,7 +40,7 @@ class TurnOnGps(private val context: Context) {
                     resultLauncher.launch(intentSenderRequest)
                 } catch (exception: IntentSender.SendIntentException) {
                     // This will handle any exceptions that may occur while launching the request
-                    Log.e(TAG, "startGps: ${exception.message}")
+                    Log.e("TurnOnGps", "startGps: ${exception.message}")
                 }
             }
         }
