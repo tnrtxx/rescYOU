@@ -31,6 +31,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
@@ -70,7 +71,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     /** TODO:
      * LOGIC-RELATED
      * GPS - irequire kay user
-     * Hindi makapag zoom kapag nagra route si user
      */
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -177,22 +177,40 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             locationLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
             locationLayout.addRule(RelativeLayout.ABOVE, layoutZoom.id)
 
-            // Handle click on the "My Location" button
-            googleMap.setOnMyLocationClickListener {
+            googleMap.setOnMyLocationButtonClickListener {
+                // Handle the click event by obtaining the user's location and zooming the map
+                fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val location = task.result
+                        if (location != null) {
+                            val userLatLng = LatLng(location.latitude, location.longitude)
+                            googleMap.animateCamera(
+                                CameraUpdateFactory.newLatLngZoom(userLatLng, Constants.MAP_LEVEL)
+                            )
+                        } else {
+                            Toast.makeText(this, "Location unavailable. Please enable your GPS location.", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        if (task.exception != null) {
+                            Toast.makeText(this, "Failed to get location: ${task.exception!!.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                true // Return true to indicate that you've handled the click event
+            }
+
+            googleMap.setOnMyLocationClickListener  {
+                // Handle the click event by obtaining the user's location and zooming the map
                 fusedLocationProviderClient.lastLocation.addOnFailureListener { e ->
-                    Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Failed to get location: ${e.message}", Toast.LENGTH_SHORT).show()
                 }.addOnSuccessListener { location ->
                     val userLatLng = LatLng(location.latitude, location.longitude)
+                    val zoomLevel = Constants.MAP_LEVEL
                     googleMap.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                            userLatLng,
-                            Constants.MAP_LEVEL
-                        )
+                        CameraUpdateFactory.newLatLngZoom(userLatLng, zoomLevel)
                     )
                 }
             }
-
-
         } else {
             requestLocationPermission()
         }
@@ -230,12 +248,12 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                     // Log the new position
                     Log.d("New Position", userLatLng.toString())
 
-                    // Create a camera update to move to the new position with a specific zoom level
-                    val cameraUpdate =
-                        CameraUpdateFactory.newLatLngZoom(userLatLng, Constants.MAP_LEVEL)
-
-                    // Move the Google Map camera to the new position
-                    googleMap.moveCamera(cameraUpdate)
+//                    // Create a camera update to move to the new position with a specific zoom level
+//                    val cameraUpdate =
+//                        CameraUpdateFactory.newLatLngZoom(userLatLng, Constants.MAP_LEVEL)
+//
+//                    // Move the Google Map camera to the new position
+//                    googleMap.moveCamera(cameraUpdate)
                 }
             }
         }
