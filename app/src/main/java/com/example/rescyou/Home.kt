@@ -52,29 +52,21 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
          */
 
         var currentLocation: LatLng? = null
+        lateinit var googleMap: GoogleMap
     }
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var turnOnGps: TurnOnGps
-
     private lateinit var dialog: AlertDialog
-
-    private lateinit var googleMap: GoogleMap
     private lateinit var mapFragment: SupportMapFragment
-
-    //Location
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var isGpsStatusChanged: Boolean? = null
-
-    // Network Connection
     private lateinit var connectionLiveData: ConnectionLiveData
-
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
-    // Firebase
     /** TODO:
      * UI RELATED
      * Map zoom controls change color, add shadow
@@ -83,12 +75,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
      * LOGIC-RELATED
      * GPS - irequire kay user
      * Hindi makapag zoom kapag nagra route si user
-     *
      */
-    override fun onDestroy() {
-        super.onDestroy()
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -276,11 +263,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         }
     }
 
-    // Inside onPermissionsGranted() method
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
         restartApp()
     }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -297,12 +282,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         startActivity(intent)
         finish()
     }
-
-
-    private fun pinLocation() {
-
-    }
-
 
     private val navBarWhenClicked = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
@@ -330,6 +309,10 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             }
         }
         false
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
 }
 
