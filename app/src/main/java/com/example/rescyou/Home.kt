@@ -32,12 +32,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 
 
 private const val TAG = "Home"
+
 class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.PermissionCallbacks {
 
     companion object {
@@ -68,10 +68,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     private lateinit var googleSignInClient: GoogleSignInClient
 
     /** TODO:
-     * UI RELATED
-     * Map zoom controls change color, add shadow
-     * Map current location button change color, add shadow
-     *
      * LOGIC-RELATED
      * GPS - irequire kay user
      * Hindi makapag zoom kapag nagra route si user
@@ -166,6 +162,21 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             googleMap.uiSettings.isMyLocationButtonEnabled = true
             googleMap.isMyLocationEnabled = true
 
+            // Modify the layout to adjust the location button's position
+            val mapView = mapFragment.requireView().findViewById<View>(
+                Constants.CURRENT_LOCATION_BUTTON_PARENT_ID
+            ).parent!! as View
+
+            // Get map views
+            val buttonLocation: View = mapView.findViewWithTag("GoogleMapMyLocationButton")
+            val buttonZoomIn: View = mapView.findViewWithTag("GoogleMapZoomInButton")
+            val layoutZoom = buttonZoomIn.parent as View
+
+            // adjust location button layout params above the zoom layout
+            val locationLayout = buttonLocation.layoutParams as RelativeLayout.LayoutParams
+            locationLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
+            locationLayout.addRule(RelativeLayout.ABOVE, layoutZoom.id)
+
             // Handle click on the "My Location" button
             googleMap.setOnMyLocationClickListener {
                 fusedLocationProviderClient.lastLocation.addOnFailureListener { e ->
@@ -181,15 +192,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 }
             }
 
-            // Modify the layout to adjust the location button's position
-            val view = mapFragment.requireView().findViewById<View>(
-                Constants.CURRENT_LOCATION_BUTTON_PARENT_ID
-            ).parent!! as View
-            val locationButton = view.findViewById<View>(Constants.CURRENT_LOCATION_BUTTON_ID)
-            val params = locationButton.layoutParams as RelativeLayout.LayoutParams
-            params.addRule(RelativeLayout.ALIGN_TOP, 0)
-            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
-            params.bottomMargin = 5
+
         } else {
             requestLocationPermission()
         }
@@ -310,6 +313,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         }
         false
     }
+
     override fun onDestroy() {
         super.onDestroy()
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
