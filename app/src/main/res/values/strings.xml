@@ -78,11 +78,24 @@
     <string name="describe">Describe your current situation.</string>
     <string name="cancel_pin">Cancel</string>
 
+    <string name="rate_situation">Rate your current situation.</string>
+    <string name="mild">Mild</string>
+    <string name="moderate">Moderate</string>
+    <string name="severe">Severe</string>
+    <string name="critical">Critical</string>
+    <string name="catastrophic">Catastrophic</string>
+
+    <string name="type_disaster">Type of Disaster</string>
+
+    <string name="take_photo">Take a Photo</string>
+    <string name="add_photo">Add Photos</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+
     <!--Profile-->
     <string name="sign_out">Sign Out</string>
-
-
-
 
 
 </resources>

@@ -103,12 +103,15 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
                             updateUI(user)
                             val userID= user?.uid.toString()
 
+                            Toast.makeText(applicationContext, userID, Toast.LENGTH_SHORT).show()
+
+
                             storeData(userID, firstName, middleName, lastName, suffixName, birthday, age, email, password)
 
 
 
 
-                            val intent = Intent(this, SendOtp::class.java)
+                            val intent = Intent(this, Home::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                             Toast.makeText(applicationContext, userID, Toast.LENGTH_SHORT).show()

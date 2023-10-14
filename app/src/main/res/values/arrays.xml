@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="spinner_prompt">Select an item</string>
+
+    <string-array name="categories_spinner_items">
+        <item>Natural Disaster</item>
+        <item >Human-caused Disaster</item>
+        <item>Health-related Emergency</item>
+
+
+    </string-array>
+
+
+
+
+
+
+</resources>

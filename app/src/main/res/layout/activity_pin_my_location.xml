@@ -15,6 +15,118 @@
         android:padding="34dp"
         >
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rate_situation"
+            android:textAlignment="textStart"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="20dp"
+            >
+        </TextView>
+
+        <RadioGroup
+            android:id="@+id/rate_radiobutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            >
+
+
+            <RadioButton android:id="@+id/radio_mild"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mild"
+                android:textSize="12sp"
+                android:drawablePadding="10dp"
+                android:drawableTop="@drawable/mild_1"
+                android:gravity="center"
+                android:padding="10dp"
+                android:checked="false"
+                android:button="@null"
+
+
+                />
+
+            <RadioButton
+                android:id="@+id/radio_moderate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/moderate"
+                android:textSize="12sp"
+                android:drawablePadding="10dp"
+                android:drawableTop="@drawable/moderate"
+                android:gravity="center"
+                android:padding="10dp"
+                android:button="@null"
+                android:checked="false"
+                />
+
+            <RadioButton
+                android:id="@+id/radio_severe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/severe"
+                android:textSize="12sp"
+                android:drawablePadding="10dp"
+                android:drawableTop="@drawable/severe"
+                android:gravity="center"
+                android:padding="10dp"
+                android:button="@null"
+                android:checked="false"
+                />
+
+            <RadioButton android:id="@+id/radio_critical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/critical"
+                android:textSize="12sp"
+                android:drawablePadding="10dp"
+                android:drawableTop="@drawable/crtical"
+                android:gravity="center"
+                android:padding="10dp"
+                android:button="@null"
+                android:checked="false"
+                />
+
+            <RadioButton android:id="@+id/radio_catastrophic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/catastrophic"
+                android:textSize="12sp"
+                android:drawablePadding="10dp"
+                android:drawableTop="@drawable/catastropic_4"
+                android:gravity="center"
+                android:padding="10dp"
+                android:button="@null"
+                android:checked="false"
+                />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/type_disaster"
+            android:textAlignment="textStart"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="30dp"
+            >
+        </TextView>
+
+        <Spinner
+            android:id="@+id/spinner_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:paddingHorizontal="10dp"
+            android:elevation="10dp"
+            android:entries="@array/categories_spinner_items"
+            />
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -23,49 +135,97 @@
             android:textAlignment="textStart"
             android:textSize="20sp"
             android:textColor="@color/black"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             >
         </TextView>
+
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
+
             >
 
-
-            <ImageView
-                android:id="@+id/cameraButton"
+            <android.widget.Button
+                android:id="@+id/takePhoto_Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/camera_icon1"
+                android:drawableLeft="@drawable/camera_icon1"
                 android:background="@drawable/rounded_corner"
-                android:padding="10dp"
-                android:layout_alignTop="@id/describeTextLayout"
-                android:layout_marginRight="20dp"
-                />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/describeTextLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_toRightOf="@id/cameraButton"
+                android:text="@string/take_photo"
+                android:textColor="@color/white"
+                android:drawablePadding="10dp"
+                android:padding="12dp"
+                android:layout_marginRight="14dp"
                 >
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/describeTextInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/describe"
-                    >
+            </android.widget.Button>
 
-                </com.google.android.material.textfield.TextInputEditText>
-            </com.google.android.material.textfield.TextInputLayout>
+            <android.widget.Button
+                android:id="@+id/addPhoto_Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/gallery_icon"
+                android:background="@drawable/rounded_corner"
+                android:text="@string/add_photo"
+                android:textColor="@color/white"
+                android:drawablePadding="10dp"
+                android:padding="12dp"
+                android:layout_toRightOf="@id/takePhoto_Button"
+                >
+
+            </android.widget.Button>
+
+
+
+
 
         </RelativeLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/describeTextLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/describeTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/describe"
+                >
+
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+
+<!--        <GridLayout-->
+<!--            android:id="@+id/photo_gridLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:rowCount="2"-->
+<!--            android:numColumns="2"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            >-->
+
+
+        <!--        </GridLayout>-->
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/photo_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/take_photo"
+            android:rowCount="2"
+            android:visibility="visible"
+           >
+
+        </androidx.recyclerview.widget.RecyclerView>
 
         <android.widget.Button
             android:id="@+id/pinMyLocationButton"
