@@ -23,6 +23,10 @@
         </intent>
     </queries>
 
+    <!--    For location runtime permission-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -34,6 +38,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RescYOU"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAGCgwA7wV7tmsmLwg93pDuCntA00InE7M" />
         <activity
             android:name=".TermsAndConditions"
             android:exported="false" />
