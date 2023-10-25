@@ -68,6 +68,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
+
     /** TODO:
      * LOGIC-RELATED
      * GPS - irequire kay user
@@ -129,7 +130,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         var bottomNavigationView: BottomNavigationView = binding.bottomNavView
 
         // Initialize and assign variable
-        val selectedItem = bottomNavigationView.selectedItemId
+        binding.bottomNavView.selectedItemId = R.id.home
 //        Toast.makeText(applicationContext, selectedItem.toString(), Toast.LENGTH_SHORT).show()
 
         bottomNavigationView.setOnNavigationItemSelectedListener(navBarWhenClicked)
@@ -304,20 +305,25 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         finish()
     }
 
+    //NAV BAR
     private val navBarWhenClicked = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.home -> {
-                return@OnNavigationItemSelectedListener false
+                val intent = Intent(this, Home::class.java)
+                startActivity(intent)
+                return@OnNavigationItemSelectedListener true
             }
 
             R.id.tools -> {
                 Toast.makeText(applicationContext, "tools", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, Tools::class.java)
+                startActivity(intent)
                 return@OnNavigationItemSelectedListener true
+
             }
 
             R.id.info -> {
                 Toast.makeText(applicationContext, "info", Toast.LENGTH_SHORT).show()
-
                 return@OnNavigationItemSelectedListener true
             }
 
@@ -325,11 +331,12 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 Toast.makeText(applicationContext, "profile", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, Profile::class.java)
                 startActivity(intent)
-
                 return@OnNavigationItemSelectedListener true
+
+
             }
         }
-        false
+        return@OnNavigationItemSelectedListener false
     }
 
     override fun onDestroy() {
