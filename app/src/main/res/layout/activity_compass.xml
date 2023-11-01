@@ -10,15 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-       >
+        >
+
 
         <RelativeLayout
             android:id="@+id/back_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"
-            android:backgroundTint="@color/light_gray"
-            tools:ignore="MissingConstraints">
+            android:background="@color/light_gray">
 
             <ImageView
                 android:id="@+id/back_button"
@@ -41,13 +41,11 @@
         </RelativeLayout>
 
         <!--COMPASS-->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/compass"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="34dp"
-            >
-
-        </LinearLayout>
-
+            android:src="@drawable/compass" />
+        
     </LinearLayout>
 </ScrollView>
