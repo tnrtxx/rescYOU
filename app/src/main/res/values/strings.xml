@@ -97,5 +97,16 @@
     <!--Profile-->
     <string name="sign_out">Sign Out</string>
 
+    <!--Tools-->
+    <string name="flashlight">Flashlight</string>
+    <string name="siren">Siren</string>
+    <string name="compass">Compass</string>
+
+    <string name="switch_on">On</string>
+    <string name="switch_off">Off</string>
+
+    <string name="play">Play</string>
+    <string name="open">Open</string>
+
 
 </resources>

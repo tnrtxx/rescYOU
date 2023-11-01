@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Home">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="34dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="fill_horizontal">
+
+            <TextView
+                android:id="@+id/flashlight_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/switchFlashlight_button"
+                android:layout_marginRight="10dp"
+                android:text="@string/flashlight"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"></TextView>
+
+            <Switch
+                android:id="@+id/switchFlashlight_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/flashlight_textview"
+                android:padding="12dp"
+                android:text="@string/switch_on"
+                android:textAlignment="viewEnd"
+                android:textSize="18sp"></Switch>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="fill_horizontal">
+
+            <TextView
+                android:id="@+id/siren_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/switchSiren_button"
+                android:layout_marginRight="10dp"
+                android:text="@string/siren"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"></TextView>
+
+            <Switch
+                android:id="@+id/switchSiren_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/siren_textview"
+                android:padding="12dp"
+                android:text="@string/switch_on"
+                android:textAlignment="viewEnd"
+                android:textSize="18sp"></Switch>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="fill_horizontal">
+
+            <TextView
+                android:id="@+id/compass_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/openCompass_Button"
+                android:layout_marginRight="20dp"
+                android:text="@string/compass"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"></TextView>
+
+            <android.widget.Button
+                android:id="@+id/openCompass_Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:layout_toRightOf="@id/compass_textview"
+                android:background="@drawable/rounded_corner"
+                android:foregroundTint="@color/white"
+                android:padding="12dp"
+                android:paddingHorizontal="30dp"
+                android:text="@string/open"
+                android:textColor="@color/white"
+                android:textSize="16sp"></android.widget.Button>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottom_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:backgroundTint="@color/light_gray"
+        app:contentInsetEnd="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
+        app:contentInsetStart="0dp"
+        app:fabCradleMargin="10dp"
+        app:fabCradleRoundedCornerRadius="10dp"
+        app:fabCradleVerticalOffset="5dp">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="0dp"
+            android:background="@color/light_gray"
+            android:visibility="visible"
+            app:itemIconTint="@color/darker_gray"
+            app:itemTextColor="@color/darker_gray"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav_menu"
+
+
+            />
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
