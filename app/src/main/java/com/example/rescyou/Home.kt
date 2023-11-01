@@ -177,6 +177,12 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             locationLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
             locationLayout.addRule(RelativeLayout.ABOVE, layoutZoom.id)
 
+            // Set the camera to the center of Canlubang
+            val canlubangLatLng = LatLng(14.1856, 121.0536) // Coordinates for Canlubang
+            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(canlubangLatLng, Constants.INIT_MAP_LEVEL)
+            googleMap.moveCamera(cameraUpdate)
+
+
             googleMap.setOnMyLocationButtonClickListener {
                 // Handle the click event by obtaining the user's location and zooming the map
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
@@ -185,7 +191,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                         if (location != null) {
                             val userLatLng = LatLng(location.latitude, location.longitude)
                             googleMap.animateCamera(
-                                CameraUpdateFactory.newLatLngZoom(userLatLng, Constants.MAP_LEVEL)
+                                CameraUpdateFactory.newLatLngZoom(userLatLng, Constants.USER_LOCATION_MAP_LEVEL)
                             )
                         } else {
                             Toast.makeText(this, "Location unavailable. Please enable your GPS location.", Toast.LENGTH_SHORT).show()
@@ -205,7 +211,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                     Toast.makeText(this, "Failed to get location: ${e.message}", Toast.LENGTH_SHORT).show()
                 }.addOnSuccessListener { location ->
                     val userLatLng = LatLng(location.latitude, location.longitude)
-                    val zoomLevel = Constants.MAP_LEVEL
+                    val zoomLevel = Constants.USER_LOCATION_MAP_LEVEL
                     googleMap.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(userLatLng, zoomLevel)
                     )
