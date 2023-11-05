@@ -3,10 +3,13 @@ package com.example.rescyou
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.hardware.camera2.CameraManager
 import android.media.AudioManager
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.Switch
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.rescyou.databinding.ActivityTermsAndConditionsBinding
@@ -18,6 +21,9 @@ class Tools : AppCompatActivity() {
     private lateinit var binding: ActivityToolsBinding
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var audioManager: AudioManager
+    private lateinit var cameraManager: CameraManager
+    private var isFlash = false
+    private lateinit var flashlightSwitch: Switch
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +31,11 @@ class Tools : AppCompatActivity() {
         setContentView(binding.root)
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        //Flashlight
+        flashlightSwitch = findViewById(R.id.switchFlashlight_button)
+        cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        flashlightSwitch.setOnClickListener { flashLightOnOrOff(it) }
 
         // Whistle
         binding.whistleButton.setOnClickListener {
@@ -56,6 +67,35 @@ class Tools : AppCompatActivity() {
         // Toast.makeText(applicationContext, selectedItem.toString(), Toast.LENGTH_SHORT).show()
 
         bottomNavigationView.setOnNavigationItemSelectedListener(navBarWhenClicked)
+    }
+
+    private fun flashLightOnOrOff(v: View?) {
+        val switchFlashlight = findViewById<Switch>(R.id.switchFlashlight_button)
+
+        try {
+            val cameraListId = cameraManager.cameraIdList[0]
+
+            if (!isFlash) {
+                cameraManager.setTorchMode(cameraListId, true)
+                isFlash = true
+                switchFlashlight.text = getString(R.string.switch_on)
+                textMessage("Flash Light is On", this)
+            } else {
+                cameraManager.setTorchMode(cameraListId, false)
+                isFlash = false
+                switchFlashlight.text = getString(R.string.switch_off)
+                textMessage("Flash Light is Off", this)
+            }
+        } catch (e: Exception) {
+            // Handle any exceptions that may occur when accessing the camera or turning on/off the flashlight.
+            // If there is an exception, disable the switch.
+            switchFlashlight.isEnabled = false
+            textMessage("Flashlight not available on this device", this)
+        }
+    }
+
+    private fun textMessage(s: String, c:Context) {
+        Toast.makeText(c,s,Toast.LENGTH_SHORT).show()
     }
 
     override fun onStart() {
