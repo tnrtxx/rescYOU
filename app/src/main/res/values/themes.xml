@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.RescYOU" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#B6B6B6</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">#B6B6B6</item>
         <item name="colorOnPrimary">#E6E3E3</item>
     </style>

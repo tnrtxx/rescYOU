@@ -99,7 +99,7 @@
 
     <!--Tools-->
     <string name="flashlight">Flashlight</string>
-    <string name="siren">Siren</string>
+    <string name="whistle">Whistle</string>
     <string name="compass">Compass</string>
 
     <string name="switch_on">On</string>
