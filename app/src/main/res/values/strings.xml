@@ -99,14 +99,34 @@
 
     <!--Tools-->
     <string name="flashlight">Flashlight</string>
-    <string name="siren">Siren</string>
+    <string name="whistle">Whistle</string>
     <string name="compass">Compass</string>
 
     <string name="switch_on">On</string>
     <string name="switch_off">Off</string>
 
-    <string name="play">Play</string>
-    <string name="open">Open</string>
+    <string name="play">PLAY</string>
+    <string name="open">OPEN</string>
+
+    <!--Information-->
+    <string name="preparedness_tips">Preparedness Tips</string>
+    <string name="hotlines">Hotlines</string>
+    <string name="evacuation_centers">Evacuation Centers</string>
+
+    <string name="view">VIEW</string>
+
+    <!--Preparedness Tips-->
+
+    <string name="earthquake">Earthquake</string>
+    <string name="fire">Fire</string>
+    <string name="typhoon">Typhoon</string>
+    <string name="flood">Flood</string>
+    <string name="landslide">Landslide</string>
+    <string name="volcanic">Volcanic Eruption</string>
+
+    <string name="source">Source</string>
+    <string name="image_source">Image:</string>
+    <string name="article_source">Article:</string>
 
 
 </resources>

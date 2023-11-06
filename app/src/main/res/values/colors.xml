@@ -15,6 +15,9 @@
     <!--FOR SHAPES OR TEXTBOX SHAPES-->
     <color name="dark_gray">#E6E3E3</color>
 
+    <!--FOR CARDVIEW-->
+    <color name="slight_dark_gray">#ededed</color>
+
     <!--NAV BAR COLOR-->
     <!--background-->
     <color name="light_gray">#F8F8F8</color>

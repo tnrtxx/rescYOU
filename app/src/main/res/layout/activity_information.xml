@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Tools">
+    tools:context=".Information">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,11 +25,11 @@
             >
 
             <TextView
-                android:id="@+id/tools_textview"
+                android:id="@+id/info_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/tools"
+                android:text="@string/info"
                 android:textColor="@color/black"
                 android:textSize="30sp"
                 android:textStyle="bold"
@@ -53,60 +53,29 @@
             >
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/flashlight_tool_container"
+                android:id="@+id/tips_info_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp">
 
                 <TextView
-                    android:id="@+id/flashlight_textview"
+                    android:id="@+id/tips_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/flashlight"
+                    android:text="@string/preparedness_tips"
                     android:textColor="@color/black"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <Switch
-                    android:id="@+id/switchFlashlight_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/flashlight_textview"
-                    android:padding="12dp"
-                    android:text="@string/switch_on"
-                    android:textAlignment="viewEnd"
-                    android:textSize="18sp"
-                    tools:ignore="MissingConstraints" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/whistle_tool_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
-
-                <TextView
-                    android:id="@+id/whistle_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/whistle"
-                    android:textColor="@color/black"
-                    android:textSize="30sp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
-                    android:id="@+id/whistle_button"
+                    android:id="@+id/tips_button"
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/navy_blue"
-                    android:text="@string/play"
+                    android:text="@string/view"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -114,34 +83,66 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/compass_tool_container"
+                android:id="@+id/hotlines_info_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp">
 
                 <TextView
-                    android:id="@+id/compass_textview"
+                    android:id="@+id/hotlines_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/compass"
+                    android:text="@string/hotlines"
                     android:textColor="@color/black"
-                    android:textSize="30sp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
-                    android:id="@+id/openCompass_Button"
+                    android:id="@+id/hotlines_button"
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/navy_blue"
-                    android:text="@string/open"
-                    android:textSize="15.5sp"
+                    android:text="@string/view"
+                    android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/centers_info_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/centers_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/evacuation_centers"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/centers_button"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/navy_blue"
+                    android:text="@string/view"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         </LinearLayout>
     </LinearLayout>
 

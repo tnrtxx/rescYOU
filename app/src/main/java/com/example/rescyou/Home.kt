@@ -128,6 +128,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
         // Initialize and assign variable
         var bottomNavigationView: BottomNavigationView = binding.bottomNavView
+        binding.bottomNavView.selectedItemId = R.id.home
 
         // Initialize and assign variable
         binding.bottomNavView.selectedItemId = R.id.home
@@ -329,7 +330,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             }
 
             R.id.info -> {
-                Toast.makeText(applicationContext, "info", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "information", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, Information::class.java)
+                startActivity(intent)
                 return@OnNavigationItemSelectedListener true
             }
 

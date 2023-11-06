@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="140dp"
+    android:layout_height="140dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="fill"
+    android:backgroundTint="@color/navy_blue"
+    android:elevation="10dp"
+    app:cardCornerRadius="10dp"
+    android:id="@+id/disaster_cardView"
+    android:layout_marginTop="20dp"
+    android:layout_marginHorizontal="20dp"
+
+    >
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_gravity="center_vertical"
+                        >
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/disasterIcon_imageView"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/earthquake"
+                            android:scaleType="centerCrop"
+                            android:layout_marginTop="20dp"
+                            >
+                        </com.google.android.material.imageview.ShapeableImageView>
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/disaster_imageView"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:src="@drawable/earthquake"
+                            android:scaleType="centerCrop"
+                            android:layout_marginTop="10dp"
+                            >
+                        </com.google.android.material.imageview.ShapeableImageView>
+
+                        <TextView
+                            android:id="@+id/disaster_category"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/earthquake"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="20dp"
+                            />
+
+                        <TextView
+                            android:layout_width="140dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/disaster_desc"
+                            android:text="desc"
+                            android:textSize="14sp"
+                            android:layout_marginStart="20dp"
+                            android:maxLines="0" />
+
+                        <TextView
+                            android:layout_width="140dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/disaster_imageSource"
+                            android:text="desc"
+                            android:textSize="14sp"
+                            android:layout_marginStart="20dp"
+                            android:maxLines="0" />
+                        <TextView
+                            android:layout_width="140dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/disaster_articleSource"
+                            android:text="desc"
+                            android:textSize="14sp"
+                            android:layout_marginStart="20dp"
+                            android:maxLines="0"/>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>

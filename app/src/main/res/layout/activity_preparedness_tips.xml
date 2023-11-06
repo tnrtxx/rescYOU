@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Compass">
+    tools:context=".PreparednessTips">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         >
 
@@ -26,11 +26,11 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/back_button_2"></ImageView>
             <TextView
-                android:id="@+id/compass_textview"
+                android:id="@+id/tips_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/compass"
+                android:text="@string/preparedness_tips"
                 android:textColor="@color/black"
                 android:textSize="30sp"
                 android:textStyle="bold"
@@ -40,12 +40,21 @@
                 />
         </RelativeLayout>
 
-        <!--COMPASS-->
-        <ImageView
-            android:id="@+id/compass"
+        <!--GRID VIEW FOR DISASTERS-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tips_recyclerView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/compass" />
-        
+            android:scrollbars="vertical"
+            android:layout_gravity="center"
+
+            >
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+
+
     </LinearLayout>
 </ScrollView>
+
