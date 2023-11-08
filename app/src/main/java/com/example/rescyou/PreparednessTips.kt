@@ -51,6 +51,9 @@ class PreparednessTips : AppCompatActivity() {
 
 
         databaseReference = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Preparedness Tips")
+        databaseReference.keepSynced(true)  //add this line of code after nung Firebase get instance para sa mga page na need ioffline.
+        // (ex. hotlines and evacuation center(?) not sure if gagana sa evacuation center
+
 
         eventListener = databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
