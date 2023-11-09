@@ -105,6 +105,8 @@
                 />
         </RadioGroup>
 
+        <!--type of disaster-->
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -117,7 +119,7 @@
         </TextView>
 
         <Spinner
-            android:id="@+id/spinner_category"
+            android:id="@+id/spinnerCategory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -125,6 +127,31 @@
             android:paddingHorizontal="10dp"
             android:elevation="10dp"
             android:entries="@array/categories_spinner_items"
+            />
+
+        <!--Sitio-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sitio"
+            android:textAlignment="textStart"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="30dp"
+            >
+        </TextView>
+
+        <Spinner
+            android:id="@+id/spinnerSitio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:paddingHorizontal="10dp"
+            android:elevation="10dp"
+            android:visibility="visible"
+
             />
 
 
@@ -145,6 +172,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
+
 
             >
 
@@ -214,15 +242,29 @@
 
         <!--        </GridLayout>-->
 
+        <!--FOR PHOTOS-->
+
+        <TextView
+            android:id="@+id/totalPhotos_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selected Photos (0/4)"
+            android:textAlignment="textStart"
+            android:textSize="14sp"
+            android:textColor="@color/darker_gray"
+            android:layout_marginTop="20dp"
+            >
+        </TextView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photo_recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:contentDescription="@string/take_photo"
             android:rowCount="2"
             android:visibility="visible"
+            android:layout_gravity="center"
            >
 
         </androidx.recyclerview.widget.RecyclerView>

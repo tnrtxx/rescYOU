@@ -21,7 +21,7 @@ class SplashScreen : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        val firebaseUser: FirebaseUser? = auth.getCurrentUser()
+        val firebaseUser: FirebaseUser? = auth.currentUser
         if (firebaseUser != null) {
             // set the new task and clear flags
             val intent = Intent(this, Home::class.java)
@@ -51,7 +51,7 @@ class SplashScreen : AppCompatActivity() {
     }
 
     private fun checkFirebaseUser() {
-        val firebaseUser: FirebaseUser? = auth.getCurrentUser()
+        val firebaseUser: FirebaseUser? = auth.currentUser
         if (firebaseUser != null) {
             //User is logged in already. You can proceed with your next screen
         } else {

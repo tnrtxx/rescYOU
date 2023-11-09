@@ -3,6 +3,7 @@
     <string name="spinner_prompt">Select an item</string>
 
     <string-array name="categories_spinner_items">
+        <item>Select an item</item>
         <item>Natural Disaster</item>
         <item >Human-caused Disaster</item>
         <item>Health-related Emergency</item>

@@ -45,7 +45,7 @@ class PreparednessTips : AppCompatActivity() {
         val gridLayoutManager = GridLayoutManager(this, 2)
         this.recyclerView.layoutManager = gridLayoutManager
 
-        adapter = DisasterAdapter(this, dataList!!)
+        adapter = DisasterAdapter(this, dataList)
         recyclerView.adapter = adapter
 
 

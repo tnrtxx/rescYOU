@@ -8,12 +8,24 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Spinner
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.rescyou.databinding.ActivityPinMyLocationBinding
+import com.google.firebase.FirebaseApp
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.StorageReference
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import droidninja.filepicker.FilePickerBuilder
@@ -31,6 +43,8 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         // for camera
         const val CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034
         const val GALLERY_IMAGE_PICK_REQUEST_CODE = 3423
+
+        const val TAG = "PinMyLocation"
     }
 
     private lateinit var binding: ActivityPinMyLocationBinding
@@ -46,11 +60,17 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private var radioGroup: RadioGroup? = null
 
     // radio button
+    private var selectedRateName: String = ""
+
     private var mildRadioButton: RadioButton? = null
     private var moderateRadioButton: RadioButton? = null
     private var severeRadioButton: RadioButton? = null
     private var criticalRadioButton: RadioButton? = null
     private var catastrophicRadioButton: RadioButton? = null
+
+    //for type of disaster spinner
+    private var selectedItemValue: String = ""
+    private var selectedSitioValue: String = ""
 
     // SAVING IMAGES AND OPENING CAMERA
     var fileUri: Uri? = null
@@ -63,11 +83,22 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     // var recyclerView: RecyclerView = findViewById(R.id.photo_recyclerView)
     lateinit var adapter: MainAdapter
 
+
     //for camera
     val APP_TAG = "rescYOU"
     val CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034
     val photoFileName = "photo.jpg"
     var photoFile: File? = null
+
+    //for databases
+    private lateinit var storageReference: StorageReference
+    private lateinit var database: DatabaseReference
+
+    //for pins
+    private lateinit var pin: Pins
+
+    //checking if empty
+    private var isEmpty: String = "false"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,9 +116,36 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         //for the ratings of the situation
         setOnCheckedChangeListener()
 
+        //for the Type of Disaster Spinner
+        val spinnerCategory = findViewById<Spinner>(R.id.spinnerCategory)
+        val spinnerSitio = findViewById<Spinner>(R.id.spinnerSitio)
+
+        getTypeOfDisaster(spinnerCategory)
+        getSitio(spinnerSitio)
+
+
+        //initialize the spinner for sitio
+        retrieveSitioList()
+
+        //geting the Pin details
+        pin= Pins()
+
+
+
+
+        //FOR THE NUMBER OF PHOTOS
+        var selectPhotosLimit = binding.totalPhotosTextView
+
         //for recyclerview
-        adapter = MainAdapter(uri)
-        binding.photoRecyclerView.layoutManager = LinearLayoutManager(this)
+        adapter = MainAdapter(uri, object : MainAdapter.CountOfImagesWhenRemoved {
+            override fun clicked(getSize: Int) {
+                // Update your UI with the new count
+                selectPhotosLimit.text = "Selected Photos ($getSize/4)"
+            }
+        })
+
+
+        binding.photoRecyclerView.layoutManager = GridLayoutManager(this, 2)
         binding.photoRecyclerView.adapter = adapter
 
         //TAKE A PHOTO Button Listener
@@ -113,7 +171,121 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 requestGalleryPermission()
             }
         }
+
+        //BUTTONS
+
+        //CANCEL BUTTON
+        binding.cancelPinButton.setOnClickListener {
+
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setTitle("Cancel Confirmation")
+            alertDialogBuilder.setMessage("Are you sure you want to cancel?")
+            alertDialogBuilder.setPositiveButton("Yes") { dialogInterface, _ ->
+                // Handle "Yes" button click, for example, navigate back or finish the activity
+                dialogInterface.dismiss()
+                finish()
+
+                val intent = Intent(this, Home::class.java)
+                startActivity(intent)
+            }
+            alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
+                // Handle "No" button click, dismiss the dialog
+                dialogInterface.dismiss()
+            }
+
+            val alertDialog: AlertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+
+
+
+        }
+
+        //PIN MY LOCATION BUTTON
+        binding.pinMyLocationButton.setOnClickListener {
+
+            checkIfEmpty()
+
+            if (isEmpty == "true"){
+
+            } else if (isEmpty == "false" || uri.size != 0){
+                val alertDialogBuilder = AlertDialog.Builder(this)
+                alertDialogBuilder.setTitle("Confirm Pinning")
+                alertDialogBuilder.setMessage("Are you sure you want to pin this location?")
+                alertDialogBuilder.setPositiveButton("Yes") { dialogInterface, _ ->
+                    // Handle "Yes" button click, for example, proceed with pinning the location
+                    dialogInterface.dismiss()
+                    // Call the function to proceed with pinning the location
+
+                    //uploadImages()
+                    getSelectedRatings()
+                    getTypeOfDisaster(spinnerCategory)
+                    getSitio(spinnerSitio)
+
+
+
+                }
+                alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
+                    // Handle "No" button click, dismiss the dialog
+                    dialogInterface.dismiss()
+                }
+
+                val alertDialog: AlertDialog = alertDialogBuilder.create()
+                alertDialog.show()
+            }
+
+
+        }
+
     }
+
+    private fun checkIfEmpty(){
+        //to check baka may null na selected
+
+//        when(selectedRateName == "" || selectedItemValue =="Select an item" || selectedSitioValue =="Select an item" || selectedSitioValue =="" || binding.describeTextInput.text?.isEmpty() == true){
+//            true ->{
+//                Toast.makeText(applicationContext, "Please fill all the required field." , Toast.LENGTH_SHORT).show()
+//
+//            }
+//            false ->{
+//
+//            }
+//        }
+//        if (selectedRateName == ""){
+//            Toast.makeText(applicationContext, "Please rate your current situation." , Toast.LENGTH_SHORT).show()
+//            true
+//
+//        }
+//        else if(selectedItemValue =="Select an item"){
+//            Toast.makeText(applicationContext, "Please select the type of disaster." , Toast.LENGTH_SHORT).show()
+//            true
+//
+//        }
+//
+//        else if(selectedSitioValue =="Select an item" || selectedSitioValue ==""){
+//            Toast.makeText(applicationContext, "Please the Sitio you are in." , Toast.LENGTH_SHORT).show()
+//            true
+//
+//        }
+//
+//        else if(binding.describeTextInput.text?.isEmpty() == true){
+//            Toast.makeText(applicationContext, "Describe your situation" , Toast.LENGTH_SHORT).show()
+//            true
+//
+//        }
+//
+
+
+        if(selectedRateName == "" || selectedItemValue =="Select an item" || selectedSitioValue =="" || binding.describeTextInput.text?.isEmpty() == true || uri.size == 0){
+            Toast.makeText(applicationContext, "Please fill all the required field." , Toast.LENGTH_SHORT).show()
+            isEmpty="true"
+
+        }
+
+//
+//
+
+    }
+
 
     private fun setOnCheckedChangeListener() {
         // check current state of a radio button (true or false).
@@ -129,6 +301,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
             when (mildRadioButton!!.isChecked) {
                 true -> {
+                    selectedRateName = "Mild"
                     Toast.makeText(applicationContext, "Mild", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.mild_clicked, null)
                     mildRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
@@ -160,6 +333,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
             when (moderateRadioButton!!.isChecked) {
                 true -> {
+                    selectedRateName = "Moderate"
                     Toast.makeText(applicationContext, "Moderate", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.moderate_clicked, null)
                     moderateRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
@@ -191,6 +365,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
             when (severeRadioButton!!.isChecked) {
                 true -> {
+                    selectedRateName = "Severe"
                     Toast.makeText(applicationContext, "Severe", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.severe_clicked, null)
                     severeRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
@@ -221,6 +396,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             }
             when (criticalRadioButton!!.isChecked) {
                 true -> {
+                    selectedRateName = "Critical"
                     Toast.makeText(applicationContext, "Critical", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.crtical_clicked, null)
                     criticalRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
@@ -251,6 +427,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             }
             when (catastrophicRadioButton!!.isChecked) {
                 true -> {
+                    selectedRateName = "Catastrophic"
                     Toast.makeText(applicationContext, "Moderate", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.catastropic_4_clicked, null)
                     catastrophicRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
@@ -360,9 +537,11 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private fun openGallery() {
         FilePickerBuilder.instance
             .setActivityTitle("Select Image")
-            .setMaxCount(4) //optional
+            .setMaxCount(1) //optional
             .setSelectedFiles(uri) //optional
             .pickPhoto(this, GALLERY_IMAGE_PICK_REQUEST_CODE)
+
+
     }
 
     private fun openCamera() {
@@ -378,6 +557,104 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         startActivityForResult(intent, CAPTURE_IMAGE)
     }
 
+    //get the sitio
+    private fun retrieveSitioList(){
+        // Initialize Firebase in your onCreate or onCreateView
+        FirebaseApp.initializeApp(this)
+
+        database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Sitios")
+
+        val sitioList = ArrayList<String>()
+        sitioList.add("Select an item")
+
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.d(TAG, "onDataChange called")
+
+
+                for (postSnapshot in dataSnapshot.children) {
+                    val sitioName = postSnapshot.child("sitioName").getValue(String::class.java)
+
+                    sitioList.add(sitioName!!)
+
+                }
+                val spinner = findViewById<Spinner>(R.id.spinnerSitio)
+                val adapter = ArrayAdapter(this@PinMyLocation, android.R.layout.simple_spinner_item, sitioList)
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinner.adapter = adapter
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+                // ...
+            }
+        })
+    }
+
+    //GETTING THE SELECTED RATING OF THE SITUATION
+    private fun getSelectedRatings(){
+//        Toast.makeText(applicationContext, selectedRateName , Toast.LENGTH_SHORT).show()
+    }
+
+    private fun getTypeOfDisaster(spinnerCategory: Spinner) {
+
+        spinnerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                // Get the selected item value
+                selectedItemValue = parent?.getItemAtPosition(position).toString()
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Handle the case where nothing is selected if needed
+            }
+        }
+
+//        Toast.makeText(applicationContext, selectedItemValue, Toast.LENGTH_SHORT).show()
+
+    }
+
+    private fun getSitio(spinnerSitio: Spinner) {
+
+        spinnerSitio.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                // Get the selected item value
+                selectedSitioValue = parent?.getItemAtPosition(position).toString()
+
+                Toast.makeText(applicationContext, selectedSitioValue, Toast.LENGTH_SHORT).show()
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Handle the case where nothing is selected if needed
+            }
+        }
+
+//        Toast.makeText(applicationContext, selectedSitioValue, Toast.LENGTH_SHORT).show()
+
+    }
+
+
+    //UPLOADING THE PIN DETAILS
+//    private fun uploadImages(){
+//
+//    }
+
+
+
+
+    //ONACTIVITY RESULT
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -386,9 +663,31 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 // Get the selected photos and update the arrayList
                 val selectedPhotos =
                     data.getParcelableArrayListExtra<Uri>(FilePickerConst.KEY_SELECTED_MEDIA)
+
                 if (selectedPhotos != null) {
-                    uri.addAll(selectedPhotos)
-                    adapter.notifyDataSetChanged() // Notify the adapter that data has changed
+                    for (imageUri in selectedPhotos) {
+                        if (uri.size < 4) {
+                            uri.add(imageUri)
+                        } else {
+                            Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
+                            break
+                        }
+                    }
+
+                    adapter.notifyDataSetChanged()
+                    adapter.updateItemCount()
+                }
+                else{
+                    if (uri.size < 4) {
+                        //this part is to get the single images
+                        val imageUri = data.data
+                        if (imageUri != null) {
+                            uri.add(imageUri)
+                        }
+                    } else {
+                        Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
+                    }
+
                 }
             }
         }

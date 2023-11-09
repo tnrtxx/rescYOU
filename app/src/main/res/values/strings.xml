@@ -87,6 +87,8 @@
 
     <string name="type_disaster">Type of Disaster</string>
 
+    <string name="sitio">Enter the Sitio you are in</string>
+
     <string name="take_photo">Take a Photo</string>
     <string name="add_photo">Add Photos</string>
 
