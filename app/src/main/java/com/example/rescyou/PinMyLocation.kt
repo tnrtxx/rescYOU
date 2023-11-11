@@ -1,5 +1,6 @@
 package com.example.rescyou
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -13,13 +14,30 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.RelativeLayout
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.rescyou.Home.Companion.currentLocation
+import com.example.rescyou.Home.Companion.googleMap
+import com.example.rescyou.databinding.ActivityHomeBinding
 import com.example.rescyou.databinding.ActivityPinMyLocationBinding
+import com.example.rescyou.utils.ConnectionLiveData
+import com.example.rescyou.utils.TurnOnGps
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -33,7 +51,7 @@ import droidninja.filepicker.FilePickerConst
 import java.io.File
 
 
-class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
+class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, OnMapReadyCallback {
 
     // Pakilagay nito sa Constants obj pagkatapos para malinis
     companion object {
@@ -101,6 +119,24 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private var isEmpty: String = "false"
 
 
+    //for the map
+    private lateinit var turnOnGps: TurnOnGps
+    private lateinit var dialog: AlertDialog
+    private lateinit var mapFragment: SupportMapFragment
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private var isGpsStatusChanged: Boolean? = null
+    private lateinit var connectionLiveData: ConnectionLiveData
+    private lateinit var auth: FirebaseAuth
+    private lateinit var googleSignInClient: GoogleSignInClient
+
+
+    val currentLocation = Home.currentLocation
+    val latitude = currentLocation?.latitude
+    val longitude = currentLocation?.longitude
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPinMyLocationBinding.inflate(layoutInflater)
@@ -129,6 +165,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
         //geting the Pin details
         pin= Pins()
+
 
 
 
@@ -200,8 +237,19 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
         }
 
+        val currentLocation = Home.currentLocation
+        if (currentLocation != null) {
+            val latitude = currentLocation.latitude
+            val longitude = currentLocation.longitude
+            val locationString = "Latitude: $latitude, Longitude: $longitude"
+            Toast.makeText(this@PinMyLocation, locationString, Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this@PinMyLocation, "huhu", Toast.LENGTH_SHORT).show()
+        }
+
         //PIN MY LOCATION BUTTON
         binding.pinMyLocationButton.setOnClickListener {
+
 
             checkIfEmpty()
 
@@ -220,6 +268,15 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                     getSelectedRatings()
                     getTypeOfDisaster(spinnerCategory)
                     getSitio(spinnerSitio)
+
+                    // Add a marker for the selected location
+                    val currentLocation = Home.currentLocation
+                    pin.latitude= currentLocation?.latitude.toString()
+                    pin.latitude= currentLocation?.longitude.toString()
+
+                    val intent = Intent(this, Home::class.java)
+                    startActivity(intent)
+
 
 
 
@@ -241,49 +298,11 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private fun checkIfEmpty(){
         //to check baka may null na selected
 
-//        when(selectedRateName == "" || selectedItemValue =="Select an item" || selectedSitioValue =="Select an item" || selectedSitioValue =="" || binding.describeTextInput.text?.isEmpty() == true){
-//            true ->{
-//                Toast.makeText(applicationContext, "Please fill all the required field." , Toast.LENGTH_SHORT).show()
-//
-//            }
-//            false ->{
-//
-//            }
-//        }
-//        if (selectedRateName == ""){
-//            Toast.makeText(applicationContext, "Please rate your current situation." , Toast.LENGTH_SHORT).show()
-//            true
-//
-//        }
-//        else if(selectedItemValue =="Select an item"){
-//            Toast.makeText(applicationContext, "Please select the type of disaster." , Toast.LENGTH_SHORT).show()
-//            true
-//
-//        }
-//
-//        else if(selectedSitioValue =="Select an item" || selectedSitioValue ==""){
-//            Toast.makeText(applicationContext, "Please the Sitio you are in." , Toast.LENGTH_SHORT).show()
-//            true
-//
-//        }
-//
-//        else if(binding.describeTextInput.text?.isEmpty() == true){
-//            Toast.makeText(applicationContext, "Describe your situation" , Toast.LENGTH_SHORT).show()
-//            true
-//
-//        }
-//
-
-
         if(selectedRateName == "" || selectedItemValue =="Select an item" || selectedSitioValue =="" || binding.describeTextInput.text?.isEmpty() == true || uri.size == 0){
             Toast.makeText(applicationContext, "Please fill all the required field." , Toast.LENGTH_SHORT).show()
             isEmpty="true"
 
         }
-
-//
-//
-
     }
 
 
@@ -504,15 +523,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-    }
-
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             SettingsDialog.Builder(this).build().show()
@@ -521,6 +531,8 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 requestCameraPermission()
             } else if (requestCode == GALLERY_PERMISSION_REQUEST_CODE) {
                 requestGalleryPermission()
+            }else if(requestCode == Constants.PERMISSION_REQUEST_CODE_ACCESS_FINE_LOCATION){
+                requestLocationPermission()
             }
         }
     }
@@ -531,6 +543,10 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             openCamera()
         } else if (requestCode == GALLERY_PERMISSION_REQUEST_CODE) {
             openGallery()
+        }else if(requestCode == Constants.PERMISSION_REQUEST_CODE_ACCESS_FINE_LOCATION){
+            val intent = intent
+            finish()
+            startActivity(intent)
         }
     }
 
@@ -557,7 +573,11 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         startActivityForResult(intent, CAPTURE_IMAGE)
     }
 
-    //get the sitio
+
+
+    /////////// GET EACH SELECTED VALUES  ///////////
+
+    //RETRIEVE SITIO FROM FIREBASE
     private fun retrieveSitioList(){
         // Initialize Firebase in your onCreate or onCreateView
         FirebaseApp.initializeApp(this)
@@ -597,6 +617,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 //        Toast.makeText(applicationContext, selectedRateName , Toast.LENGTH_SHORT).show()
     }
 
+    //TYPE OF DISASTER
     private fun getTypeOfDisaster(spinnerCategory: Spinner) {
 
         spinnerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -620,6 +641,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     }
 
+    //GET THE SELECTED SITIO
     private fun getSitio(spinnerSitio: Spinner) {
 
         spinnerSitio.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -632,8 +654,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 // Get the selected item value
                 selectedSitioValue = parent?.getItemAtPosition(position).toString()
 
-                Toast.makeText(applicationContext, selectedSitioValue, Toast.LENGTH_SHORT).show()
-
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -641,15 +661,51 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             }
         }
 
-//        Toast.makeText(applicationContext, selectedSitioValue, Toast.LENGTH_SHORT).show()
+    }
 
+        //GET THE URL OF THE IMAGES
+
+
+    //Permission for the map
+    private fun hasLocationPermission(): Boolean =
+        EasyPermissions.hasPermissions(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+
+    private fun requestLocationPermission() {
+        EasyPermissions.requestPermissions(
+            this,
+            "This application requires location permission to work properly.",
+            Constants.PERMISSION_REQUEST_CODE_ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
     }
 
 
-    //UPLOADING THE PIN DETAILS
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+
+
+
+
+
+
+
+    /////////// UPLOADING THE PIN DETAILS  ///////////
+
+
+        // UPLOADING OF IMAGES
 //    private fun uploadImages(){
 //
 //    }
+
+
+        // UPLOADING TO THE DATABASE
 
 
 
@@ -693,7 +749,58 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-}
+    /////////// GET CURRENT LOCATION  ///////////
+
+    @SuppressLint("MissingPermission")
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+        googleMap.uiSettings.isZoomControlsEnabled = true
+
+            googleMap.uiSettings.isMyLocationButtonEnabled = true
+            googleMap.isMyLocationEnabled = true
+
+        // Add a marker for the selected location
+        val currentLocation = Home.currentLocation
+        googleMap.addMarker(MarkerOptions().position(currentLocation!!).title("Selected Location"))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation!!, 15F))
+
+
+
+//            // Modify the layout to adjust the location button's position
+//            val mapView = mapFragment.requireView().findViewById<View>(
+//                Constants.CURRENT_LOCATION_BUTTON_PARENT_ID
+//            ).parent!! as View
+//
+//            // Get map views
+//            val buttonLocation: View = mapView.findViewWithTag("GoogleMapMyLocationButton")
+//            val buttonZoomIn: View = mapView.findViewWithTag("GoogleMapZoomInButton")
+//            val layoutZoom = buttonZoomIn.parent as View
+//
+//            // adjust location button layout params above the zoom layout
+//            val locationLayout = buttonLocation.layoutParams as RelativeLayout.LayoutParams
+//            locationLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
+//            locationLayout.addRule(RelativeLayout.ABOVE, layoutZoom.id)
+//
+//            // Set the camera to the center of the pin
+//
+//            val currentLocation = Home.currentLocation
+//            if (currentLocation != null) {
+//                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLocation, Constants.INIT_MAP_LEVEL)
+//                googleMap.moveCamera(cameraUpdate)
+//
+//                // Add a marker for the current location
+//                googleMap.addMarker(MarkerOptions().position(currentLocation).title("Current Location"))
+//                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15F))
+//
+//            } else {
+//                // Handle the case where the currentLocation is null
+//            }
+
+            }
+
+    }
+
+
 
 
 

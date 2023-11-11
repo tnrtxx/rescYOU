@@ -1,6 +1,7 @@
 package com.example.rescyou
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
@@ -29,6 +30,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -67,6 +69,8 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     private lateinit var connectionLiveData: ConnectionLiveData
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
+
+    private val PIN_LOCATION_REQUEST_CODE = 123 // Use any unique request code
 
 
     /** TODO:
@@ -160,6 +164,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         googleMap = map
         googleMap.uiSettings.isZoomControlsEnabled = true
 
+        // Add a marker if location data is available
+        addMarkerIfLocationAvailable()
+
         if (hasLocationPermission()) {
             googleMap.uiSettings.isMyLocationButtonEnabled = true
             googleMap.isMyLocationEnabled = true
@@ -181,7 +188,8 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
             // Set the camera to the center of Canlubang
             val canlubangLatLng = LatLng(14.1856, 121.0536) // Coordinates for Canlubang
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(canlubangLatLng, Constants.INIT_MAP_LEVEL)
+            val cameraUpdate =
+                CameraUpdateFactory.newLatLngZoom(canlubangLatLng, Constants.INIT_MAP_LEVEL)
             googleMap.moveCamera(cameraUpdate)
 
 
@@ -193,24 +201,36 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                         if (location != null) {
                             val userLatLng = LatLng(location.latitude, location.longitude)
                             googleMap.animateCamera(
-                                CameraUpdateFactory.newLatLngZoom(userLatLng, Constants.USER_LOCATION_MAP_LEVEL)
+                                CameraUpdateFactory.newLatLngZoom(
+                                    userLatLng,
+                                    Constants.USER_LOCATION_MAP_LEVEL
+                                )
                             )
                         } else {
-                            Toast.makeText(this, "Location unavailable. Please enable your GPS location.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this,
+                                "Location unavailable. Please enable your GPS location.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     } else {
                         if (task.exception != null) {
-                            Toast.makeText(this, "Failed to get location: ${task.exception!!.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this,
+                                "Failed to get location: ${task.exception!!.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
                 true // Return true to indicate that you've handled the click event
             }
 
-            googleMap.setOnMyLocationClickListener  {
+            googleMap.setOnMyLocationClickListener {
                 // Handle the click event by obtaining the user's location and zooming the map
                 fusedLocationProviderClient.lastLocation.addOnFailureListener { e ->
-                    Toast.makeText(this, "Failed to get location: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Failed to get location: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
                 }.addOnSuccessListener { location ->
                     val userLatLng = LatLng(location.latitude, location.longitude)
                     val zoomLevel = Constants.USER_LOCATION_MAP_LEVEL
@@ -221,6 +241,14 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             }
         } else {
             requestLocationPermission()
+        }
+    }
+
+    private fun addMarkerIfLocationAvailable() {
+        // Check if currentLocation is not null and add a marker
+        if (currentLocation != null) {
+            googleMap.addMarker(MarkerOptions().position(currentLocation!!).title("Marker Title"))
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation!!, 15F))
         }
     }
 
@@ -351,5 +379,27 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     override fun onDestroy() {
         super.onDestroy()
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
+    // Handle the result from PinMyLocation activity
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == PIN_LOCATION_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val latitude = data?.getDoubleExtra("latitude", 0.0)
+            val longitude = data?.getDoubleExtra("longitude", 0.0)
+
+            // Check if latitude and longitude are not null, then add a marker
+            if (latitude != null && longitude != null) {
+                val locationLatLng = LatLng(latitude, longitude)
+
+                // Add a marker to the map
+                googleMap.addMarker(MarkerOptions().position(locationLatLng).title("Marker Title"))
+
+                // Move the camera to the new position
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 15F))
+            }
+
+        }
     }
 }
