@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -22,7 +21,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -73,7 +71,6 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import android.Manifest
 
 
 class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, OnMapReadyCallback {
@@ -243,7 +240,9 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
         //ADD A PHOTO BUTTON
         binding.addPhotoButton.setOnClickListener {
+            // Check and request gallery permission
             if (hasGalleryPermission()) {
+                // Permission already granted, open gallery here
                 openGallery()
             } else {
                 requestGalleryPermission()
@@ -282,7 +281,9 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             val latitude = currentLocation.latitude
             val longitude = currentLocation.longitude
             val locationString = "Latitude: $latitude, Longitude: $longitude"
+            Toast.makeText(this@PinMyLocation, locationString, Toast.LENGTH_SHORT).show()
         } else {
+            Toast.makeText(this@PinMyLocation, "huhu", Toast.LENGTH_SHORT).show()
         }
 
         //PIN MY LOCATION BUTTON
@@ -337,21 +338,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
         }
 
     }
-
-    //BACK PRESSED
-    override fun onBackPressed() {
-        AlertDialog.Builder(this)
-            .setTitle("Cancel Confirmation")
-            .setMessage("Are you sure you want to cancel?")
-            .setPositiveButton("Yes") { _, _ ->
-                super.onBackPressed()
-                val intent = Intent(this, Home::class.java)
-                startActivity(intent)
-            }
-            .setNegativeButton("No", null)
-            .show()
-    }
-
     //PROGRESS DIALOG
 
     private fun showLoadingDialog() {
@@ -368,17 +354,21 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     }
 
     private fun getCurrentTime() {
+
         // Get the current date and time
         val calendar = Calendar.getInstance()
         val currentDate = calendar.time
 
         // Define date and time formatters
         val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val timeFormatter = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()) // Changed to 12-hour format
+        val timeFormatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
 
         // Format date and time using the formatters
         formattedDate = dateFormatter.format(currentDate)
         formattedTime = timeFormatter.format(currentDate)
+
+
+
     }
 
     private fun getPinDetails() {
@@ -424,6 +414,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             when (mildRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Mild"
+                    Toast.makeText(applicationContext, "Mild", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.mild_clicked, null)
                     mildRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -455,6 +446,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             when (moderateRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Moderate"
+                    Toast.makeText(applicationContext, "Moderate", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.moderate_clicked, null)
                     moderateRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -486,6 +478,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             when (severeRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Severe"
+                    Toast.makeText(applicationContext, "Severe", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.severe_clicked, null)
                     severeRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -516,6 +509,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             when (criticalRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Critical"
+                    Toast.makeText(applicationContext, "Critical", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.crtical_clicked, null)
                     criticalRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -546,6 +540,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             when (catastrophicRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Catastrophic"
+                    Toast.makeText(applicationContext, "Moderate", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.catastropic_4_clicked, null)
                     catastrophicRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -580,10 +575,10 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     }
 
     private fun hasGalleryPermission(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             EasyPermissions.hasPermissions(
                 this,
-                android.Manifest.permission.MANAGE_EXTERNAL_STORAGE
+                android.Manifest.permission.READ_MEDIA_IMAGES
             )
         } else {
             EasyPermissions.hasPermissions(
@@ -603,26 +598,22 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     }
 
     private fun requestGalleryPermission() {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+        val rationale = "Storage permission is required for taking photos via gallery."
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             EasyPermissions.requestPermissions(
                 this,
-                "Storage permission is required for accessing the gallery.",
+                rationale,
                 GALLERY_PERMISSION_REQUEST_CODE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+                android.Manifest.permission.READ_MEDIA_IMAGES
             )
-        }else{
-            openGalleryForAndroid11AndAbove()
-
+        } else {
+            EasyPermissions.requestPermissions(
+                this,
+                rationale,
+                GALLERY_PERMISSION_REQUEST_CODE,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            )
         }
-    }
-
-    private fun openGalleryForAndroid11AndAbove() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "image/*"
-            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        }
-        startActivityForResult(intent, GALLERY_IMAGE_PICK_REQUEST_CODE)
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
@@ -653,20 +644,13 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     }
 
     private fun openGallery() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type = "image/*"
-                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            }
-            startActivityForResult(intent, GALLERY_IMAGE_PICK_REQUEST_CODE)
-        } else {
-            FilePickerBuilder.instance
-                .setActivityTitle("Select Image")
-                .setMaxCount(1) //optional
-                .setSelectedFiles(uri) //optional
-                .pickPhoto(this, GALLERY_IMAGE_PICK_REQUEST_CODE)
-        }
+        FilePickerBuilder.instance
+            .setActivityTitle("Select Image")
+            .setMaxCount(1) //optional
+            .setSelectedFiles(uri) //optional
+            .pickPhoto(this, GALLERY_IMAGE_PICK_REQUEST_CODE)
+
+
     }
 
     private fun openCamera() {
@@ -723,6 +707,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
     //GETTING THE SELECTED RATING OF THE SITUATION
     private fun getSelectedRatings(){
+//        Toast.makeText(applicationContext, selectedRateName , Toast.LENGTH_SHORT).show()
     }
 
     //TYPE OF DISASTER
@@ -745,6 +730,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             }
         }
 
+//        Toast.makeText(applicationContext, selectedItemValue, Toast.LENGTH_SHORT).show()
 
     }
 
@@ -892,54 +878,35 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
         if (resultCode == RESULT_OK && data != null) {
             if (requestCode == GALLERY_IMAGE_PICK_REQUEST_CODE) {
-                // Handle result from system file picker
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    val clipData = data.clipData
-                    if (clipData != null) {
-                        for (i in 0 until clipData.itemCount) {
-                            val imageUri = clipData.getItemAt(i).uri
-                            if (uri.size < 4) {
-                                uri.add(imageUri)
-                            } else {
-                                Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
-                                break
-                            }
-                        }
-                    } else {
-                        val imageUri = data.data
-                        if (imageUri != null) {
-                            if (uri.size < 4) {
-                                uri.add(imageUri)
-                            } else {
-                                Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
-                            }
+                // Get the selected photos and update the arrayList
+                val selectedPhotos =
+                    data.getParcelableArrayListExtra<Uri>(FilePickerConst.KEY_SELECTED_MEDIA)
+
+                if (selectedPhotos != null) {
+                    for (imageUri in selectedPhotos) {
+                        if (uri.size < 4) {
+                            uri.add(imageUri)
+                        } else {
+                            Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
+                            break
                         }
                     }
-                } else {
-                    // Handle result from FilePicker
-                    val selectedPhotos = data.getParcelableArrayListExtra<Uri>(FilePickerConst.KEY_SELECTED_MEDIA)
-                    if (selectedPhotos != null) {
-                        for (imageUri in selectedPhotos) {
-                            if (uri.size < 4) {
-                                uri.add(imageUri)
-                            } else {
-                                Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
-                                break
-                            }
-                        }
-                    } else {
-                        val imageUri = data.data
-                        if (imageUri != null) {
-                            if (uri.size < 4) {
-                                uri.add(imageUri)
-                            } else {
-                                Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
+
+                    adapter.notifyDataSetChanged()
+                    adapter.updateItemCount()
                 }
-                adapter.notifyDataSetChanged()
-                adapter.updateItemCount()
+                else{
+                    if (uri.size < 4) {
+                        //this part is to get the single images
+                        val imageUri = data.data
+                        if (imageUri != null) {
+                            uri.add(imageUri)
+                        }
+                    } else {
+                        Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
             }
         }
     }
