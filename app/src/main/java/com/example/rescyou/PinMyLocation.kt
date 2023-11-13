@@ -1,6 +1,7 @@
 package com.example.rescyou
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -17,8 +18,11 @@ import android.widget.RadioGroup
 import android.widget.RelativeLayout
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.rescyou.Home.Companion.currentLocation
 import com.example.rescyou.Home.Companion.googleMap
@@ -38,17 +42,35 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import droidninja.filepicker.FilePickerBuilder
 import droidninja.filepicker.FilePickerConst
+import kotlinx.coroutines.launch
 import java.io.File
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.UUID
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 
 class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, OnMapReadyCallback {
@@ -109,8 +131,12 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     var photoFile: File? = null
 
     //for databases
-    private lateinit var storageReference: StorageReference
     private lateinit var database: DatabaseReference
+
+    private lateinit var storageRef: StorageReference
+    private lateinit var firestore: FirebaseFirestore
+
+    private lateinit var imageUrl:String
 
     //for pins
     private lateinit var pin: Pins
@@ -136,12 +162,28 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     val latitude = currentLocation?.latitude
     val longitude = currentLocation?.longitude
 
+    //for time
+    private lateinit var formattedDate: String
+    private lateinit var formattedTime: String
 
+    //for a progress dialog
+    private lateinit var progressDialog: ProgressDialog
+
+
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPinMyLocationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
+
+
+        storageRef = FirebaseStorage.getInstance("gs://rescyou-57570.appspot.com").reference.child("Images")
+        firestore = FirebaseFirestore.getInstance()
         // find the radiobutton by returned id
         mildRadioButton = binding.radioMild
         moderateRadioButton = binding.radioModerate
@@ -165,8 +207,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
         //geting the Pin details
         pin= Pins()
-
-
 
 
 
@@ -234,7 +274,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             alertDialog.show()
 
 
-
         }
 
         val currentLocation = Home.currentLocation
@@ -263,20 +302,25 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
                     // Handle "Yes" button click, for example, proceed with pinning the location
                     dialogInterface.dismiss()
                     // Call the function to proceed with pinning the location
+                    showLoadingDialog()
 
                     //uploadImages()
                     getSelectedRatings()
                     getTypeOfDisaster(spinnerCategory)
                     getSitio(spinnerSitio)
+                    getCurrentTime()
+                    uploadImages()
+                    getPinDetails()
 
                     // Add a marker for the selected location
-                    val currentLocation = Home.currentLocation
-                    pin.latitude= currentLocation?.latitude.toString()
-                    pin.latitude= currentLocation?.longitude.toString()
+//                    val currentLocation = Home.currentLocation
+//                    pin.latitude= currentLocation?.latitude.toString()
+//                    pin.latitude= currentLocation?.longitude.toString()
+//
+//                    val intent = Intent(this, Home::class.java)
+//                    startActivity(intent)
 
-                    val intent = Intent(this, Home::class.java)
-                    startActivity(intent)
-
+//
 
 
 
@@ -292,6 +336,55 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
 
         }
+
+    }
+    //PROGRESS DIALOG
+
+    private fun showLoadingDialog() {
+        progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Uploading...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+    }
+
+    private fun dismissLoadingDialog() {
+        if (progressDialog.isShowing) {
+            progressDialog.dismiss()
+        }
+    }
+
+    private fun getCurrentTime() {
+
+        // Get the current date and time
+        val calendar = Calendar.getInstance()
+        val currentDate = calendar.time
+
+        // Define date and time formatters
+        val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val timeFormatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+
+        // Format date and time using the formatters
+        formattedDate = dateFormatter.format(currentDate)
+        formattedTime = timeFormatter.format(currentDate)
+
+
+
+    }
+
+    private fun getPinDetails() {
+        val currentLocation = Home.currentLocation
+        pin.pinUserId=auth.currentUser?.uid.toString()
+        pin.pinName= auth.currentUser?.displayName.toString()
+        pin.date= formattedDate
+        pin.time= formattedTime
+        pin.rate=selectedRateName
+        pin.disasterType=selectedItemValue
+        pin.sitio=selectedSitioValue
+        pin.description= binding.describeTextInput.text.toString()
+        pin.latitude= currentLocation?.latitude.toString()
+        pin.longitude= currentLocation?.longitude.toString()
+        pin.isResolved="false"
+        pin.pinRescuer=""
 
     }
 
@@ -663,7 +756,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
     }
 
-        //GET THE URL OF THE IMAGES
 
 
     //Permission for the map
@@ -697,15 +789,85 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
 
     /////////// UPLOADING THE PIN DETAILS  ///////////
+    private suspend fun uploadImage(imageUri: Uri): String {
+        return suspendCoroutine { continuation ->
+            val storageRef = storageRef.child("${System.currentTimeMillis()}_${UUID.randomUUID()}")
+            storageRef.putFile(imageUri).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                        continuation.resume(downloadUri.toString())
+                    }
+                } else {
+                    continuation.resumeWithException(task.exception ?: Exception("Image upload failed"))
+                }
+            }
+        }
+    }
 
+    private fun uploadImages() {
+        showLoadingDialog()
+        val totalAttachments = uri.size
+        var uploadedCounter = 0
 
-        // UPLOADING OF IMAGES
-//    private fun uploadImages(){
-//
-//    }
+        val latch = CountDownLatch(totalAttachments)
 
+        lifecycleScope.launch {
+            uri.forEach { imageUri ->
+                try {
+                    val imageUrl = uploadImage(imageUri)
+                    imageUrl.let {
+                        pin?.attachmentList?.add(it)
+                        saveImageUrlToDatabase(it)
+                    }
+                    uploadedCounter++
+                } catch (e: Exception) {
+                    Log.e("Attachment List", "Failed to upload image: ${e.message}")
+                } finally {
+                    latch.countDown()
+                }
+            }
 
-        // UPLOADING TO THE DATABASE
+            latch.await() // Wait for all image uploads to complete before updating the database
+
+            // All images have been uploaded and URLs stored in the database
+            updateDatabase()
+            dismissLoadingDialog()
+        }
+    }
+
+    private fun saveImageUrlToDatabase(imageUrl: String) {
+        val databaseReference = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            .getReference("Images")
+        val imageId = databaseReference.push().key
+
+        if (imageId != null) {
+            databaseReference.child(imageId).setValue(imageUrl)
+                .addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Log.e("Attachment List", "Failed to save image URL to database: ${task.exception?.message}")
+                    }
+                }
+        }
+    }
+
+    private fun updateDatabase() {
+        showLoadingDialog()
+        val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            .reference.child("Pins").push()
+        pin?.pinId = dbRef.key.toString()
+        dbRef.setValue(pin)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val intent = Intent(this, Home::class.java)
+                    startActivity(intent)
+                    finishAffinity()
+                    finish()
+                } else {
+                    Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show()
+                }
+                dismissLoadingDialog() // Dismiss the dialog inside the callback
+            }
+    }
 
 
 
@@ -763,38 +925,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
         val currentLocation = Home.currentLocation
         googleMap.addMarker(MarkerOptions().position(currentLocation!!).title("Selected Location"))
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation!!, 15F))
-
-
-
-//            // Modify the layout to adjust the location button's position
-//            val mapView = mapFragment.requireView().findViewById<View>(
-//                Constants.CURRENT_LOCATION_BUTTON_PARENT_ID
-//            ).parent!! as View
-//
-//            // Get map views
-//            val buttonLocation: View = mapView.findViewWithTag("GoogleMapMyLocationButton")
-//            val buttonZoomIn: View = mapView.findViewWithTag("GoogleMapZoomInButton")
-//            val layoutZoom = buttonZoomIn.parent as View
-//
-//            // adjust location button layout params above the zoom layout
-//            val locationLayout = buttonLocation.layoutParams as RelativeLayout.LayoutParams
-//            locationLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
-//            locationLayout.addRule(RelativeLayout.ABOVE, layoutZoom.id)
-//
-//            // Set the camera to the center of the pin
-//
-//            val currentLocation = Home.currentLocation
-//            if (currentLocation != null) {
-//                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLocation, Constants.INIT_MAP_LEVEL)
-//                googleMap.moveCamera(cameraUpdate)
-//
-//                // Add a marker for the current location
-//                googleMap.addMarker(MarkerOptions().position(currentLocation).title("Current Location"))
-//                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15F))
-//
-//            } else {
-//                // Handle the case where the currentLocation is null
-//            }
 
             }
 

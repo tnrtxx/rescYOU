@@ -30,11 +30,16 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 
@@ -70,7 +75,13 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
+    //for the markers
+    private lateinit var pinList: ArrayList<Pins>
+    private lateinit var markerList: ArrayList<Marker>
+
     private val PIN_LOCATION_REQUEST_CODE = 123 // Use any unique request code
+
+    private val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
 
 
     /** TODO:
@@ -162,10 +173,12 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
+
+        getPinLists()
         googleMap.uiSettings.isZoomControlsEnabled = true
 
-        // Add a marker if location data is available
-        addMarkerIfLocationAvailable()
+
+
 
         if (hasLocationPermission()) {
             googleMap.uiSettings.isMyLocationButtonEnabled = true
@@ -186,11 +199,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             locationLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
             locationLayout.addRule(RelativeLayout.ABOVE, layoutZoom.id)
 
-            // Set the camera to the center of Canlubang
-            val canlubangLatLng = LatLng(14.1856, 121.0536) // Coordinates for Canlubang
-            val cameraUpdate =
-                CameraUpdateFactory.newLatLngZoom(canlubangLatLng, Constants.INIT_MAP_LEVEL)
-            googleMap.moveCamera(cameraUpdate)
+            addMarkerIfLocationAvailable()
 
 
             googleMap.setOnMyLocationButtonClickListener {
@@ -247,10 +256,68 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     private fun addMarkerIfLocationAvailable() {
         // Check if currentLocation is not null and add a marker
         if (currentLocation != null) {
-            googleMap.addMarker(MarkerOptions().position(currentLocation!!).title("Marker Title"))
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation!!, 15F))
+            val cameraUpdate =
+                CameraUpdateFactory.newLatLngZoom(currentLocation!!, 18F)
+            googleMap.moveCamera(cameraUpdate)
+        }else{
+            // Set the camera to the center of Canlubang
+            val canlubangLatLng = LatLng(14.1856, 121.0536) // Coordinates for Canlubang
+            val cameraUpdate =
+                CameraUpdateFactory.newLatLngZoom(canlubangLatLng, Constants.INIT_MAP_LEVEL)
+            googleMap.moveCamera(cameraUpdate)
         }
     }
+
+    private fun removeAllMarkers() {
+        for (marker in markerList) {
+            marker.remove()
+        }
+
+        // Clear the list of markers after removing them
+        markerList.clear()
+    }
+
+
+    private fun getPinLists() {
+        // Initialize markerList here
+        markerList = ArrayList()
+
+        // Initialize pinList here
+        pinList = ArrayList()
+
+        database.reference.child("Pins").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                removeAllMarkers() // Now, this should work without an UninitializedPropertyAccessException
+
+                // Clear the pinList before adding new data
+                pinList.clear()
+
+                for (postSnapshot in snapshot.children) {
+                    val pin = postSnapshot.getValue(Pins::class.java)
+                    pin?.let {
+                        pinList.add(it)
+                        val markerOptions = MarkerOptions().position(
+                            LatLng(
+                                it.latitude.toDouble(),
+                                it.longitude.toDouble()
+                            )
+                        ).title(it.pinName + " needs help.")
+
+                        googleMap.addMarker(markerOptions)?.let { markerList.add(it) }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle the error
+                Log.e(TAG, "Error getting Pins from Firebase: ${error.message}")
+            }
+        })
+    }
+
+
+
+
 
     private val resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()

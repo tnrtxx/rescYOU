@@ -3,9 +3,12 @@ package com.example.rescyou
 class Pins {
     lateinit var pinId: String
     lateinit var pinUserId: String
+
     lateinit var pinName: String
+    lateinit var pinRescuer: String
 
     lateinit var date: String
+    lateinit var time: String
 
     lateinit var rate: String
     lateinit var disasterType: String
