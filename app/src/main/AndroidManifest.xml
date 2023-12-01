@@ -10,14 +10,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- For camera and accessing photos -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- For location runtime permission -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission
-        android:name="android.permission.POST_NOTIFICATIONS"
-        tools:node="remove" />
 
     <queries>
 
@@ -40,92 +36,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RescYOU"
-        tools:targetApi="31"
-
-        >
-
-        <!--
-            TODO: Before you run your application, you need a Google Maps API key.
-
-            To get one, follow the directions here:
-
-               https://developers.google.com/maps/documentation/android-sdk/get-api-key
-
-            Once you have your API key (it starts with "AIza"), define a new property in your
-            project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
-            "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
-       -->
-
-        <activity
-            android:name=".EditPin"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
-        <activity
-            android:name=".MyPin"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
-        <activity
-            android:name=".DialogActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+        tools:targetApi="31">
         <activity
             android:name=".ViewPin"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
-
-        <activity
-            android:name=".Hotlines"
-            android:exported="false"
-            android:label=".Information"
-            android:screenOrientation="portrait"
-            >
-        </activity>
-
-        <activity
-            android:name=".EvacuationCenterMap"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAGCgwA7wV7tmsmLwg93pDuCntA00InE7M"/>
-
-        <activity
-            android:name=".EvacuationCenters"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
-
+            android:exported="false" />
         <activity
             android:name=".PerDisaster"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
         <activity
             android:name=".PreparednessTips"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
         <activity
             android:name=".Information"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
         <activity
             android:name=".Compass"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
         <activity
             android:name=".Tools"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -133,9 +62,7 @@
 
         <activity
             android:name=".TermsAndConditions"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -143,50 +70,31 @@
 
         <activity
             android:name=".PinMyLocation"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
         <activity
             android:name=".Profile"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
         <activity
             android:name=".VerifyOtp"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
         <activity
             android:name=".SendOtp"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
         <activity
             android:name=".ForgotPassword"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
         <activity
             android:name=".Home"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
         <activity
             android:name=".SignInEmail"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
         <activity
             android:name=".SignUp"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:exported="false" />
         <activity
             android:name=".SplashScreen"
-            android:exported="true"
-            android:screenOrientation="portrait"
-
-            >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -195,19 +103,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:screenOrientation="portrait"/>
-
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
+            android:exported="true" />
     </application>
 
 </manifest>

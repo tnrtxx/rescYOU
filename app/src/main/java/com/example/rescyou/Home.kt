@@ -2,18 +2,33 @@ package com.example.rescyou
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
+import com.bumptech.glide.Glide
 import com.example.rescyou.databinding.ActivityHomeBinding
 import com.example.rescyou.utils.ConnectionLiveData
 import com.example.rescyou.utils.GpsStatusListener
@@ -34,6 +49,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -136,10 +152,15 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
 
         //PIN MY LOCATION BUTTON
+
         binding.pinMyLocationButton.setOnClickListener {
+            // ----> Create a condition na di pwede mag-pin ng location kapag di pa resolved yung current pin
             val intent = Intent(this, PinMyLocation::class.java)
             startActivity(intent)
+
+
         }
+
 
         // Initialize and assign variable
         var bottomNavigationView: BottomNavigationView = binding.bottomNavView
@@ -169,6 +190,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         binding.offlineModeTextView.visibility = View.GONE
         Log.d("DEBUG", "hideOfflineModeView")
     }
+
+
+
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
@@ -251,6 +275,23 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         } else {
             requestLocationPermission()
         }
+
+        googleMap.setOnMarkerClickListener { marker ->
+            googleMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(
+                        marker.position.latitude,
+                        marker.position.longitude
+                    ), 14F
+                )
+            )
+
+            val report = pinList.find { it.pinId == marker.title }
+            report?.let { showDialog(it) }
+
+            true
+        }
+
     }
 
     private fun addMarkerIfLocationAvailable() {
@@ -301,7 +342,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                                 it.latitude.toDouble(),
                                 it.longitude.toDouble()
                             )
-                        ).title(it.pinName + " needs help.")
+                        ).title(it.pinId)
 
                         googleMap.addMarker(markerOptions)?.let { markerList.add(it) }
                     }
@@ -350,13 +391,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
                     // Log the new position
                     Log.d("New Position", userLatLng.toString())
-
-//                    // Create a camera update to move to the new position with a specific zoom level
-//                    val cameraUpdate =
-//                        CameraUpdateFactory.newLatLngZoom(userLatLng, Constants.MAP_LEVEL)
-//
-//                    // Move the Google Map camera to the new position
-//                    googleMap.moveCamera(cameraUpdate)
                 }
             }
         }
@@ -366,6 +400,125 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             locationRequest, locationCallback, Looper.myLooper()
         )
     }
+
+    //FOR THE DIALOGS
+
+    private fun addNewImageview(data: Uri?, container: LinearLayout, counter: Int) {
+        val imageView = ShapeableImageView(this)
+
+        val layoutParams = LinearLayout.LayoutParams(
+            resources.getDimensionPixelSize(R.dimen.new_img_view_large_size),
+            resources.getDimensionPixelSize(R.dimen.new_img_view_large_size)
+        )
+        layoutParams.marginEnd = 8.dpToPx()
+
+        imageView.layoutParams = layoutParams
+        imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+
+        Glide.with(this)
+            .load(data)
+            .into(imageView)
+
+        container.addView(imageView, counter)
+    }
+
+    private fun Int.dpToPx(): Int {
+        val density = resources.displayMetrics.density
+        return (this * density).toInt()
+    }
+
+    private fun showDialog(pins: Pins) {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.activity_view_pin)
+
+        dialog.show()
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.rgb(241, 242, 242)))
+        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+        dialog.window?.setGravity(Gravity.BOTTOM)
+
+        val pinnedByName = dialog.findViewById<TextView>(R.id.viewPin_pinnedByName)
+        val ratingsSituation = dialog.findViewById<TextView>(R.id.viewPin_ratingsCurrentSituation)
+        val disasterType = dialog.findViewById<TextView>(R.id.viewPin_disasterType)
+        val currentSitio = dialog.findViewById<TextView>(R.id.viewPin_currentSitio)
+        val currentSituation = dialog.findViewById<TextView>(R.id.viewPin_currentSituation)
+
+        pinnedByName.text = pins.pinName
+        ratingsSituation.text = pins.rate
+        disasterType.text = pins.disasterType
+        currentSitio.text = pins.sitio
+        currentSituation.text = pins.description
+
+
+        var attachmentCouner = 0
+        pins.attachmentList.forEach {
+            addNewImageview(
+                it.toUri(),
+                dialog.findViewById<LinearLayout>(R.id.attachmentContainer),
+                attachmentCouner
+            )
+            attachmentCouner += 1
+        }
+
+        //BACK BUTTON
+        val backButtonLayout = dialog.findViewById<RelativeLayout>(R.id.back_layout)
+        backButtonLayout.setOnClickListener {
+            val intent = Intent(this, Home::class.java)
+            startActivity(intent)
+        }
+        //CANCEL BUTTON
+        val cancelButton = dialog.findViewById<Button>(R.id.cancelPinButton)
+        cancelButton.setOnClickListener {
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setTitle("Cancel Confirmation")
+            alertDialogBuilder.setMessage("Are you sure you want to cancel?")
+            alertDialogBuilder.setPositiveButton("Yes") { dialogInterface, _ ->
+                // Handle "Yes" button click, for example, navigate back or finish the activity
+                dialogInterface.dismiss()
+                finish()
+
+                val intent = Intent(this, Home::class.java)
+                startActivity(intent)
+            }
+            alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
+                // Handle "No" button click, dismiss the dialog
+                dialogInterface.dismiss()
+            }
+
+            val alertDialog: AlertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+        }
+        //SEND HELP BUTTON
+        val sendHelpButton = dialog.findViewById<Button>(R.id.sendHelpButton)
+        sendHelpButton.setOnClickListener {
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setTitle("Confirm Pinning")
+            alertDialogBuilder.setMessage("Are you sure you want to pin this location?")
+            alertDialogBuilder.setPositiveButton("Yes") { dialogInterface, _ ->
+                // Handle "Yes" button click, for example, proceed with pinning the location
+                dialogInterface.dismiss()
+                // Call the function to proceed with pinning the location
+                val intent = Intent(this, Home::class.java)
+                startActivity(intent)
+
+            }
+            alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
+                // Handle "No" button click, dismiss the dialog
+                dialogInterface.dismiss()
+            }
+
+            val alertDialog: AlertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+        }
+    }
+
+
+
+    //PERMISSIONS
 
     private fun hasLocationPermission(): Boolean =
         EasyPermissions.hasPermissions(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -406,6 +559,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         startActivity(intent)
         finish()
     }
+
+
+
 
     //NAV BAR
     private val navBarWhenClicked = BottomNavigationView.OnNavigationItemSelectedListener { item ->
