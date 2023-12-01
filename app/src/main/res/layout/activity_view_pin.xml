@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ViewPin"
+    android:backgroundTint="@color/white"
+    >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="34dp"
+
+            >
+
+            <!--HEADER-->
+            <RelativeLayout
+                android:id="@+id/back_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+               >
+
+                <ImageView
+                    android:id="@+id/back_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/back_button_2"></ImageView>
+                <TextView
+                    android:id="@+id/pins_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/view_pin"
+                    android:textColor="@color/black"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@+id/back_button"
+                    android:layout_alignTop="@id/back_button"
+                    android:layout_marginStart="20dp"
+                    />
+            </RelativeLayout>
+
+            <!--START OF LAYOUT-->
+
+            <!--SENDING HELP NAME-->
+            <TextView
+                android:id="@+id/viewPin_sendHelpName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/send_help_name"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/darker_gray"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@id/textView_pinnedBy"
+                >
+            </TextView>
+
+            <!--PINNED NAME-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                >
+
+                <TextView
+                    android:id="@+id/textView_pinnedBy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pinned_by"
+                    android:textAlignment="textStart"
+                    android:textSize="20sp"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="20dp"
+                    android:textStyle="bold"
+                    >
+                </TextView>
+
+                <TextView
+                    android:id="@+id/viewPin_pinnedByName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pinned_by_name"
+                    android:textAlignment="textStart"
+                    android:textSize="20sp"
+                    android:textColor="@color/navy_blue"
+                    android:layout_marginTop="20dp"
+                    android:layout_toRightOf="@id/textView_pinnedBy"
+                    android:layout_marginLeft="20dp"
+                    android:textStyle="bold"
+
+                    >
+                </TextView>
+            </RelativeLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ratings_current_situation"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="20dp"
+                android:textStyle="bold"
+                >
+            </TextView>
+
+            <TextView
+                android:id="@+id/viewPin_ratingsCurrentSituation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/situation"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="20dp"
+                >
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/type_disaster"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="20dp"
+                android:textStyle="bold"
+                >
+            </TextView>
+
+            <TextView
+                android:id="@+id/viewPin_disasterType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Natural Disaster"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="20dp"
+                >
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/your_sitio"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="20dp"
+                android:textStyle="bold"
+                >
+            </TextView>
+
+            <TextView
+                android:id="@+id/viewPin_currentSitio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Asia 2"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="20dp"
+                >
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/current_situation"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="20dp"
+                android:textStyle="bold"
+                >
+            </TextView>
+
+            <TextView
+                android:id="@+id/viewPin_currentSituation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Describe current situation"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="20sp"></TextView>
+
+            <HorizontalScrollView
+                android:id="@+id/scrollAttachments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:fillViewport="true"
+                android:scrollbarSize="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewPin_currentSituation">
+
+                <LinearLayout
+                    android:id="@+id/attachmentContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <LinearLayout
+                android:id="@+id/photo_LinearView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                >
+            </LinearLayout>
+
+
+            <android.widget.Button
+                android:id="@+id/sendHelpButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/rounded_corner"
+                android:foregroundTint="@color/white"
+                android:padding="12dp"
+                android:text="@string/send_help"
+                android:textColor="@color/white"
+                android:textSize="20sp"></android.widget.Button>
+
+            <android.widget.Button
+                android:id="@+id/cancelPinButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/cancel_pin"
+                android:background="@drawable/rounded_corner_gray"
+                android:foregroundTint="@color/navy_blue"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:padding="12dp"
+                >
+            </android.widget.Button>
+
+        </LinearLayout>
+
+
+
+
+    </ScrollView>

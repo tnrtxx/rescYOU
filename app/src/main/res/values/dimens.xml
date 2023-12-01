@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="new_img_view_size">75dp</dimen>
+    <dimen name="new_img_view_medium_size">100dp</dimen>
+    <dimen name="new_img_view_large_size">130dp</dimen>
+    <dimen name="dropdown_item_height">48dp</dimen>
+
+
+</resources>

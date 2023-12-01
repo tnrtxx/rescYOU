@@ -132,4 +132,21 @@
     <string name="title_activity_evacuation_center_map">EvacuationCenterMap</string>
 
 
+
+    <!--View Pins-->
+    <string name="view_pin">View Pin</string>
+    <string name="send_help">Send Help</string>
+
+    <string name="pinned_by">Pinned by:</string>
+    <string name="pinned_by_name">Unknown</string>
+
+    <string name="send_help_name">No one is sending help yet.</string>
+
+    <string name="ratings_current_situation">Ratings of Current Situation:</string>
+    <string name="current_situation">Current Situation:</string>
+    <string name="situation">Happy</string>
+
+    <string name="your_sitio">Current Sitio:</string>
+
+
 </resources>
