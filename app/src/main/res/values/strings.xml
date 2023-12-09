@@ -131,7 +131,6 @@
     <string name="article_source">Article:</string>
 
 
-
     <!--View Pins-->
     <string name="view_pin">View Pin</string>
     <string name="send_help">Send Help</string>
@@ -146,6 +145,15 @@
     <string name="situation">Happy</string>
 
     <string name="your_sitio">Current Sitio:</string>
+
+
+    <!--My Pin-->
+    <string name="my_pin">My Pin</string>
+
+    <string name="resolved">Resolved</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="msg_token_fmt">hello</string>
 
 
 </resources>

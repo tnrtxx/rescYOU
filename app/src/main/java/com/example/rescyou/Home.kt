@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -25,12 +24,13 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.example.rescyou.databinding.ActivityHomeBinding
 import com.example.rescyou.utils.ConnectionLiveData
+import com.example.rescyou.utils.FirebaseUtil
+import com.example.rescyou.utils.FirebaseUtil.currentUserId
 import com.example.rescyou.utils.GpsStatusListener
 import com.example.rescyou.utils.TurnOnGps
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -50,7 +50,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.imageview.ShapeableImageView
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -58,6 +57,15 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
 
 private const val TAG = "Home"
@@ -77,6 +85,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
         var currentLocation: LatLng? = null
         lateinit var googleMap: GoogleMap
+
+        //FOR THE NOTIFICATIONS
+        private const val FCM_API_KEY = "AAAA6jJJnJg:APA91bG-D1uEV29YYYCsxUtGQPoNpMUVWTt9V1Nq8q5mGibbF45F7ukPYkKpqgZ34zbW5wcav3GtXN_9zLwydF7U6-i956Sz9aWyBU5MAQYLaYe4MP6TYsvWXcjMKa2T1pqmeOgEtfiD"
     }
 
     private lateinit var binding: ActivityHomeBinding
@@ -98,6 +109,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     private val PIN_LOCATION_REQUEST_CODE = 123 // Use any unique request code
 
     private val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+
+    private var otherUser: UserModel? = null
+
 
 
     /** TODO:
@@ -150,9 +164,11 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
         setContentView(binding.root)
 
+        // Initialize Firebase
+        FirebaseUtil.initializeFirebase(this)
+
 
         //PIN MY LOCATION BUTTON
-
         binding.pinMyLocationButton.setOnClickListener {
             // ----> Create a condition na di pwede mag-pin ng location kapag di pa resolved yung current pin
             val intent = Intent(this, PinMyLocation::class.java)
@@ -286,8 +302,22 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 )
             )
 
-            val report = pinList.find { it.pinId == marker.title }
-            report?.let { showDialog(it) }
+            val pins = pinList.find { it.pinId == marker.title }
+            pins?.let { showDialog(it)
+
+//                fetchOtherUserData(it.pinUserId)
+            }
+
+
+
+//            // Assuming you associate user data with the marker (e.g., marker.tag)
+//            val otherUserId = marker.tag as? String
+//            if (otherUserId != null) {
+//                // Fetch otherUser data
+//                fetchOtherUserData(otherUserId)
+//            } else {
+//                Log.e(TAG, "Failed to obtain otherUserId from marker.")
+//            }
 
             true
         }
@@ -333,6 +363,22 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 // Clear the pinList before adding new data
                 pinList.clear()
 
+//                for (postSnapshot in snapshot.children) {
+//                    val pin = postSnapshot.getValue(Pins::class.java)
+//                    pin?.let {
+//                        pinList.add(it)
+//                        val markerOptions = MarkerOptions().position(
+//                            LatLng(
+//                                it.latitude.toDouble(),
+//                                it.longitude.toDouble()
+//                            )
+//                        ).title(it.pinId)
+//
+//                      googleMap.addMarker(markerOptions)?.let { markerList.add(it) }
+//                          Marker.tag = it.pinUserId
+//                    }
+//
+//                }
                 for (postSnapshot in snapshot.children) {
                     val pin = postSnapshot.getValue(Pins::class.java)
                     pin?.let {
@@ -344,16 +390,25 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                             )
                         ).title(it.pinId)
 
-                        googleMap.addMarker(markerOptions)?.let { markerList.add(it) }
+                        val marker = googleMap.addMarker(markerOptions)
+                        markerList.add(marker!!)
+                        marker.tag = it.pinUserId
+
+                        // Fetch otherUser data here
+
+                        fetchOtherUserData(it.pinUserId)
                     }
                 }
             }
+
 
             override fun onCancelled(error: DatabaseError) {
                 // Handle the error
                 Log.e(TAG, "Error getting Pins from Firebase: ${error.message}")
             }
         })
+
+
     }
 
 
@@ -432,7 +487,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.activity_view_pin)
 
-        dialog.show()
+        if (!isFinishing) {
+            dialog.show()
+        }
         dialog.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -446,6 +503,8 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         val disasterType = dialog.findViewById<TextView>(R.id.viewPin_disasterType)
         val currentSitio = dialog.findViewById<TextView>(R.id.viewPin_currentSitio)
         val currentSituation = dialog.findViewById<TextView>(R.id.viewPin_currentSituation)
+
+        otherUser?.pinUserId =pins.pinUserId
 
         pinnedByName.text = pins.pinName
         ratingsSituation.text = pins.rate
@@ -492,22 +551,22 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             val alertDialog: AlertDialog = alertDialogBuilder.create()
             alertDialog.show()
         }
-        //SEND HELP BUTTON
         val sendHelpButton = dialog.findViewById<Button>(R.id.sendHelpButton)
         sendHelpButton.setOnClickListener {
             val alertDialogBuilder = AlertDialog.Builder(this)
             alertDialogBuilder.setTitle("Confirm Pinning")
             alertDialogBuilder.setMessage("Are you sure you want to pin this location?")
-            alertDialogBuilder.setPositiveButton("Yes") { dialogInterface, _ ->
-                // Handle "Yes" button click, for example, proceed with pinning the location
-                dialogInterface.dismiss()
-                // Call the function to proceed with pinning the location
-                val intent = Intent(this, Home::class.java)
-                startActivity(intent)
-
+            alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
+                val senderUserId = currentUserId()
+                if (senderUserId != null) {
+                    sendHelpButtonClicked(pins.pinUserId, senderUserId, pins.pinId)
+                    Toast.makeText(this, "receiver" + pins.pinUserId, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "sender" + senderUserId, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Failed to get sender user ID.", Toast.LENGTH_SHORT).show()
+                }
             }
             alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
-                // Handle "No" button click, dismiss the dialog
                 dialogInterface.dismiss()
             }
 
@@ -516,7 +575,143 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         }
     }
 
+    //SENDING HELP BUTTON
+    private fun fetchOtherUserData(pinUserId: String) {
+        val userRef = database.reference.child("Users").child(pinUserId)
+//        Toast.makeText(this, pinUserId, Toast.LENGTH_SHORT).show()
 
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                // Assuming UserModel has a constructor that takes a DataSnapshot
+                otherUser = snapshot.getValue(UserModel::class.java)
+                // Assign pinUserId directly to otherUser
+                otherUser?.pinUserId = pinUserId
+
+                // Fetch FCM token of the receiver
+                otherUser?.fcmToken = snapshot.child("fcmToken").getValue(String::class.java).toString()
+
+//                // Save the displayName from Firebase to otherUser's pinRescuerName
+//                otherUser?.pinRescuerName = snapshot.child("displayName").getValue(String::class.java).toString()
+
+
+
+
+
+                // Check if otherUser is not null
+                if (otherUser != null) {
+                    // Now, otherUser is initialized with the fetched data
+                    Log.d(TAG, "otherUser data: $otherUser")
+                } else {
+                    Log.e(TAG, "Failed to fetch otherUser data.")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle the error
+                Log.e(TAG, "Error fetching otherUser data: ${error.message}")
+            }
+        })
+    }
+
+
+    private fun sendHelpNotification(
+        senderUserId: String,
+        senderDisplayName: String,
+        pinId: String
+    ){
+                Toast.makeText(this, "pls" + senderDisplayName, Toast.LENGTH_SHORT).show()
+
+        try {
+            val jsonObject = JSONObject().apply {
+                put("to", otherUser?.fcmToken ?: "")
+                put("notification", JSONObject().apply {
+                    put("title", "Help is on the way.")
+                    put("body", "Someone wants to send you a help request.")
+                })
+                put("data", JSONObject().apply {
+                    put("userId", senderUserId)
+                    put("rescuerName", senderDisplayName)
+                    put("pinId", pinId)// Include the rescuerName in the data payload
+                })
+            }
+
+            if (otherUser?.fcmToken.isNullOrBlank()) {
+                Toast.makeText(this, otherUser?.fcmToken, Toast.LENGTH_SHORT).show()
+
+                Log.e(TAG, "Receiver FCM token is null or empty.")
+                Toast.makeText(this, "Failed to send help notification: Receiver FCM token is null or empty.", Toast.LENGTH_SHORT).show()
+                return
+            }
+            Toast.makeText(this, otherUser?.fcmToken, Toast.LENGTH_SHORT).show()
+
+            callApi(jsonObject)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error building notification payload: ${e.message}")
+            Toast.makeText(this, "Failed to send help notification: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun callApi(jsonObject: JSONObject) {
+        val JSON = MediaType.get("application/json; charset=utf-8")
+        val client = OkHttpClient()
+        val url = "https://fcm.googleapis.com/fcm/send"
+        val body: RequestBody = RequestBody.create(JSON, jsonObject.toString()) // Swap the parameters
+        val request = Request.Builder()
+            .url(url)
+            .post(body)
+            .header("Authorization", "key=AAAA6jJJnJg:APA91bG-D1uEV29YYYCsxUtGQPoNpMUVWTt9V1Nq8q5mGibbF45F7ukPYkKpqgZ34zbW5wcav3GtXN_9zLwydF7U6-i956Sz9aWyBU5MAQYLaYe4MP6TYsvWXcjMKa2T1pqmeOgEtfiD")
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+            }
+        })
+    }
+
+
+    // Inside sendHelpButton.setOnClickListener
+    private fun sendHelpButtonClicked(
+        receiverUserId: String,
+        senderUserId: String,
+        pinId: String
+    ) {
+        fetchOtherUserData(receiverUserId)
+        fetchSenderUserData(senderUserId,receiverUserId, pinId)
+    }
+
+
+    private fun fetchSenderUserData(senderUserId: String, receiverUserId: String, pinId: String) {
+        val userRef = FirebaseDatabase.getInstance().reference.child("Users").child(senderUserId)
+
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val senderUser = snapshot.getValue(UserModel::class.java)
+
+                // Save the displayName from Firebase to senderUser's displayName
+                val senderDisplayName = snapshot.child("displayName").getValue(String::class.java).toString()
+                senderUser?.pinRescuerName = senderDisplayName
+
+                // After fetching the otherUser data
+                val sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putString("rescuerName", senderDisplayName)
+                editor.putString("pinId", pinId)
+                editor.apply()
+
+
+                // Now, senderDisplayName contains the display name of the sender
+                Log.d(TAG, "Sender display name: $senderDisplayName")
+                sendHelpNotification(receiverUserId, senderDisplayName, pinId)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle the error
+                Log.e(TAG, "Error fetching sender user data: ${error.message}")
+            }
+        })
+    }
 
     //PERMISSIONS
 

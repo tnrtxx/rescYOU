@@ -1,20 +1,8 @@
 package com.example.rescyou
 
-import android.app.Dialog
-import android.content.ContentValues
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.util.Log
-import android.view.Gravity
-import android.view.ViewGroup
-import android.view.Window
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.rescyou.databinding.ActivityMainBinding
@@ -38,28 +26,30 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 
 
-class MainActivity : AppCompatActivity() {
+private lateinit var binding: ActivityMainBinding
 
-    private lateinit var binding: ActivityMainBinding
-
-    //Initialize variables
+//Initialize variables
 //Personal Information
-    var firstName: String?= null
-    var middleName: String?= null
-    var lastName: String?= null
-    var suffixName: String?= null
-    var birthday: String = ""
-    var age: Int = 0
+private lateinit var firstName: String
+private lateinit var middleName: String
+private lateinit var lastName: String
+private lateinit var suffixName: String
+private lateinit var birthday: String
+private var age: Int = 0
 
 //Account Information
-    private lateinit var email: String
-    private lateinit var password: String
+private lateinit var email: String
+private lateinit var password: String
 
-    //For Realtime Database
-    private lateinit var database: DatabaseReference
-    private lateinit var data: FirebaseDatabase
+//For Realtime Database
+private lateinit var database: DatabaseReference
+private lateinit var data: FirebaseDatabase
 
-    //for FirebaseAuth (SIGN UP/REGISTRATION OF USER)
+//for FirebaseAuth (SIGN UP/REGISTRATION OF USER)
+private lateinit var auth: FirebaseAuth
+
+class MainActivity : AppCompatActivity() {
+
 
     private lateinit var googleSignInClient : GoogleSignInClient
 
@@ -87,6 +77,7 @@ class MainActivity : AppCompatActivity() {
         // Initialize Firebase Auth
         auth = Firebase.auth
         // [END initialize_auth]
+
 
 
 
@@ -134,6 +125,36 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
                 firebaseAuthWithGoogle(account.idToken!!)
 
+//                checkIfFirstTime()
+
+//                //initialize database
+//                database = Firebase.database.reference
+//
+//                //Check if user exists in database
+//                //Get the User details
+//                val user = auth.currentUser
+//                updateUI(user)
+//
+//                //geting the userID
+//                val userID= user?.uid.toString()
+//
+//                val rootRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("Users").child(userID)
+//                rootRef.addListenerForSingleValueEvent(object : ValueEventListener {
+//                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                        if (dataSnapshot.exists()) {
+//                            // firebase user data is present in db, do appropiate action or take user to home screen
+//                            return
+//                        } else {
+//                            val intent = Intent(this, TermsAndConditions::class.java)
+////                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                            startActivity(intent)
+//
+//                        }
+//                    }
+//
+//                    override fun onCancelled(databaseError: DatabaseError) {}
+//                })
+//
 
             } catch (e: ApiException) {
 
@@ -145,18 +166,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveDisplayNameToFirebase(displayName: String) {
         // Assuming you have a reference to your Firebase Database
-        val user = auth.currentUser ?: return
         val userID: String = auth.currentUser?.uid ?: return
-        email = user.email ?: "No email" // Default value in case email is null
         val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
         val userRef = database.reference
 
         //store data to the REALTIME DATABASE
-        // Save the personal details' field in the user's node
+        // Save the display name to the "displayName" field in the user's node
         userRef.child("Users").child(userID).child("displayName").setValue(displayName)
-        userRef.child("Users").child(userID).child("birthday").setValue(birthday)
-        userRef.child("Users").child(userID).child("age").setValue(age)
-        userRef.child("Users").child(userID).child("email").setValue(email) // Save email
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -169,6 +185,7 @@ class MainActivity : AppCompatActivity() {
 
             // Log and toast
             Log.d(TAG, token)
+            Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
 
             // Save the FCM token to Firebase
             saveFcmTokenToFirebase(token)
@@ -193,19 +210,18 @@ class MainActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    val user = auth.currentUser
+                    updateUI(user)
+                    // Now you can save the display name to Firebase
+                    saveDisplayNameToFirebase(user?.displayName ?: "")
+                    Toast.makeText(applicationContext, "Success", Toast.LENGTH_SHORT).show()
 
-                    // Check if it's the first sign in
-                    val isNewUser = task.result?.additionalUserInfo?.isNewUser
-                    val intent = if (isNewUser == true) {
-                        showTermsAndConditions()
-                    } else {
-                        // If it's not the first time, start Home activity
-                        val intent = Intent(this, Home::class.java) // Create the Intent object
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent) // Use the Intent object to start the Home activity
-                        Toast.makeText(applicationContext, "Sign in successfully.", Toast.LENGTH_SHORT).show()
-                    }
-
+                    // Start Home activity here
+                    val intent = Intent(this, Home::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
@@ -214,6 +230,26 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+//    fun storeData(userID:String, firstName: String, middleName: String, lastName: String, suffixName: String,  birthday: String, age: Int, email: String){
+//        //initialize database
+//        database = Firebase.database.reference
+//
+//        data = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+//        val myRef = data.reference
+//
+//        //store data to the REALTIME DATABASE
+//        myRef.child("Users").child(userID).child("firstName").setValue(firstName)
+//        myRef.child("Users").child(userID).child("middleName").setValue(middleName)
+//        myRef.child("Users").child(userID).child("lastName").setValue(lastName)
+//        myRef.child("Users").child(userID).child("suffix").setValue(suffixName)
+//        myRef.child("Users").child(userID).child("birthday").setValue(birthday)
+//        myRef.child("Users").child(userID).child("age").setValue(age)
+//        myRef.child("Users").child(userID).child("email").setValue(email)
+//
+//
+//
+//    }
+    // [END auth_with_google]
 
     // [START signin]
     private fun signIn() {
@@ -223,88 +259,55 @@ class MainActivity : AppCompatActivity() {
     }
     // [END signin]
 
-    private fun showTermsAndConditions() {
-        val dialog = Dialog(this@MainActivity)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.activity_terms_and_conditions)
-
-        // Find the TextView in the dialog
-        val termsTextView = dialog.findViewById<TextView>(R.id.TC_content)
-        var termsAndConditions = getString(R.string.termsAncConditions_content)
-        termsAndConditions = termsAndConditions.replace("\n", "<br/>").replace(" ", "&nbsp;")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            termsTextView.text = Html.fromHtml(termsAndConditions, Html.FROM_HTML_MODE_COMPACT)
-        } else {
-            termsTextView.text = Html.fromHtml(termsAndConditions)
-        }
-
-        if (!isFinishing) {
-            dialog.show()
-        }
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.rgb(241, 242, 242)))
-        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
-        dialog.window?.setGravity(Gravity.BOTTOM)
-
-
-
-        //AGREE BUTTON
-        val agreeButton = dialog.findViewById<Button>(R.id.agreeButton)
-        agreeButton.setOnClickListener {
-            val checkBox = dialog.findViewById<CheckBox>(R.id.acceptCheckbox)
-            if (checkBox.isChecked) {
-
-                // Sign in success, update UI with the signed-in user's information
-                Log.d(TAG, "signInWithCredential:success")
-                val user = auth.currentUser
-                updateUI(user)
-                // Now you can save the display name to Firebase
-                saveDisplayNameToFirebase(user?.displayName ?: "")
-                val intent = Intent(this, Home::class.java) // Create the Intent object
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent) // Use the Intent object to start the Home activity
-                Toast.makeText(applicationContext, "Sign in successfully.", Toast.LENGTH_SHORT).show()
-
-                dialog.dismiss()
-
-            } else {
-                Toast.makeText(this, "Please agree to the terms and conditions.", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        //DISAGREE BUTTON
-        val declineButton = dialog.findViewById<Button>(R.id.declineButton)
-        declineButton.setOnClickListener {
-            // Get the current user
-            val user = auth.currentUser
-            user?.delete()?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "User account deleted.")
-                }
-            }
-
-            // Sign out from Google
-            googleSignInClient.signOut().addOnCompleteListener {
-                // After sign out is completed, navigate back to MainActivity
-                val intent = Intent(this@MainActivity, MainActivity::class.java) // Create the Intent object
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent) // Use the Intent object to start the MainActivity
-            }
-        }
-
-    }
-
     private fun updateUI(user: FirebaseUser?) {
     }
 
     companion object {
-        const val TAG = "GoogleActivity"
+        private const val TAG = "GoogleActivity"
         private const val RC_SIGN_IN = 9001
     }
 
+    //SAVING TO DATABASE
+//    fun checkIfFirstTime(){
+//        //initialize database
+//        database = Firebase.database.reference
+//
+//        //Check if user exists in database
+//                //Get the User details
+//                val user = auth.currentUser
+//                updateUI(user)
+//
+//                //geting the userID
+//                val userID= user?.uid.toString()
+//
+//        val rootRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("Users").child(userID)
+//                rootRef.addListenerForSingleValueEvent(object : ValueEventListener {
+//                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                        if (dataSnapshot.exists()) {
+//                            HomeActivity()
+//                            return
+//                        } else {
+//                            TermsAndConditionsActivity()
+//                        }
+//                    }
+//
+//                    override fun onCancelled(databaseError: DatabaseError) {}
+//                })
+//
+//    }
+
+    //NEW INTENT
+//    fun TermsAndConditionsActivity(){
+//        val intent = Intent(this, TermsAndConditions::class.java)
+////                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//        startActivity(intent)
+//    }
+//
+//    fun HomeActivity(){
+//            val intent = Intent(this, Home::class.java)
+//            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//            startActivity(intent)
+//        }
 
 }
 

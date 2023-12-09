@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MyPin"
     android:backgroundTint="@color/white"
-    android:background="@color/white"
     >
 
     <LinearLayout
@@ -51,36 +50,12 @@
             android:id="@+id/viewPin_sendHelpName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="@string/send_help_name"
             android:textAlignment="textStart"
             android:textSize="20sp"
             android:textColor="@color/darker_gray"
             android:layout_marginTop="20dp"
-            >
-        </TextView>
-
-        <!--THIN LINE-->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/dark_gray"
-            android:layout_below="@id/viewPin_sendHelpName"
-            android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/textView_pinnedBy"
-            />
-
-        <!--TIME-->
-        <TextView
-            android:id="@+id/dateAndTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Last updated: 12:00 PM, 12/12/2020"
-            android:textAlignment="textStart"
-            android:textSize="18sp"
-            android:textColor="@color/darker_gray"
-            android:layout_marginTop="10dp"
-            android:layout_toRightOf="@id/textView_pinnedBy"
-            android:textStyle="italic"
             >
         </TextView>
 
@@ -88,6 +63,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
             >
 
             <TextView
@@ -98,7 +74,7 @@
                 android:textAlignment="textStart"
                 android:textSize="20sp"
                 android:textColor="@color/black"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:textStyle="bold"
                 >
             </TextView>
@@ -111,7 +87,7 @@
                 android:textAlignment="textStart"
                 android:textSize="20sp"
                 android:textColor="@color/navy_blue"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:layout_toRightOf="@id/textView_pinnedBy"
                 android:layout_marginLeft="20dp"
                 android:textStyle="bold"
@@ -209,7 +185,7 @@
             android:id="@+id/viewPin_currentSituation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="20dp"
             android:text="Describe current situation"
             android:textAlignment="textStart"
             android:textColor="@color/black"
@@ -273,6 +249,19 @@
             >
         </android.widget.Button>
 
+        <android.widget.Button
+            android:id="@+id/deletePinButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/delete"
+            android:background="@drawable/rounded_corner_gray"
+            android:foregroundTint="@color/navy_blue"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:padding="12dp"
+            >
+        </android.widget.Button>
 
     </LinearLayout>
 

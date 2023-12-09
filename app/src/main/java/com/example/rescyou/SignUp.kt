@@ -347,6 +347,8 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
         data = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
         val myRef = data.reference
 
+        var displayName: String = firstName + " " + lastName
+
         //store data to the REALTIME DATABASE
         myRef.child("Users").child(userID).child("firstName").setValue(firstName)
         myRef.child("Users").child(userID).child("middleName").setValue(middleName)
