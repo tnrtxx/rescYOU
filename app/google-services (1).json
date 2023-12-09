@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1005866032280",
+    "firebase_url": "https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "rescyou-57570",
     "storage_bucket": "rescyou-57570.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "1005866032280-idbg0k8ahtjefoc1kbvsh4t1cd59cp64.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rescyou",
+            "certificate_hash": "70f65786f7b3a069ac26c9b01a988da4071b44ac"
+          }
+        },
         {
           "client_id": "1005866032280-in6ljm34otj2k73u0ni85ers0gutv3up.apps.googleusercontent.com",
           "client_type": 1,

@@ -10,6 +10,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -22,6 +23,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.auth.User
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 private lateinit var binding: ActivityMainBinding
@@ -118,7 +120,6 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
@@ -154,10 +155,6 @@ class MainActivity : AppCompatActivity() {
 //                    override fun onCancelled(databaseError: DatabaseError) {}
 //                })
 //
-//
-                val intent = Intent(this, Home::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
 
             } catch (e: ApiException) {
 
@@ -165,6 +162,45 @@ class MainActivity : AppCompatActivity() {
                 Log.w(TAG, "Google sign in failed", e)
             }
         }
+    }
+
+    private fun saveDisplayNameToFirebase(displayName: String) {
+        // Assuming you have a reference to your Firebase Database
+        val userID: String = auth.currentUser?.uid ?: return
+        val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        val userRef = database.reference
+
+        //store data to the REALTIME DATABASE
+        // Save the display name to the "displayName" field in the user's node
+        userRef.child("Users").child(userID).child("displayName").setValue(displayName)
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            Log.d(TAG, token)
+            Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
+
+            // Save the FCM token to Firebase
+            saveFcmTokenToFirebase(token)
+        })
+    }
+
+    private fun saveFcmTokenToFirebase(token: String?) {
+        // Assuming you have a reference to your Firebase Database
+        val userID: String = auth.currentUser?.uid ?: return
+        val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        val userRef = database.reference
+
+        // Save the FCM token to the "fcmToken" field in the user's node
+        userRef.child("Users").child(userID).child("fcmToken").setValue(token)
+
     }
     // [END onactivityresult]
 
@@ -176,9 +212,16 @@ class MainActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
-//                    checkIfFirstTime()
+                    val user = auth.currentUser
+                    updateUI(user)
+                    // Now you can save the display name to Firebase
+                    saveDisplayNameToFirebase(user?.displayName ?: "")
                     Toast.makeText(applicationContext, "Success", Toast.LENGTH_SHORT).show()
 
+                    // Start Home activity here
+                    val intent = Intent(this, Home::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
