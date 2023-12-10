@@ -554,8 +554,8 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         val sendHelpButton = dialog.findViewById<Button>(R.id.sendHelpButton)
         sendHelpButton.setOnClickListener {
             val alertDialogBuilder = AlertDialog.Builder(this)
-            alertDialogBuilder.setTitle("Confirm Pinning")
-            alertDialogBuilder.setMessage("Are you sure you want to pin this location?")
+            alertDialogBuilder.setTitle("Confirm Send Help")
+            alertDialogBuilder.setMessage("Are you sure you want to send help?")
             alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
                 val senderUserId = currentUserId()
                 if (senderUserId != null) {
