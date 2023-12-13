@@ -616,10 +616,11 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
     private fun sendHelpNotification(
         senderUserId: String,
+        otherUserID: String,
         senderDisplayName: String,
         pinId: String
     ){
-                Toast.makeText(this, "pls" + senderDisplayName, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "pls" + senderDisplayName, Toast.LENGTH_SHORT).show()
 
         try {
             val jsonObject = JSONObject().apply {
@@ -630,8 +631,11 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 })
                 put("data", JSONObject().apply {
                     put("userId", senderUserId)
+                    put("otherUserID", otherUserID)
                     put("rescuerName", senderDisplayName)
                     put("pinId", pinId)// Include the rescuerName in the data payload
+                    put("type", "sendRequest") // Set the notification type here
+
                 })
             }
 
@@ -697,13 +701,14 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 val sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
                 editor.putString("rescuerName", senderDisplayName)
+                editor.putString("receiverUserId", receiverUserId)
                 editor.putString("pinId", pinId)
                 editor.apply()
 
 
                 // Now, senderDisplayName contains the display name of the sender
                 Log.d(TAG, "Sender display name: $senderDisplayName")
-                sendHelpNotification(receiverUserId, senderDisplayName, pinId)
+                sendHelpNotification(receiverUserId, senderUserId, senderDisplayName, pinId)
             }
 
             override fun onCancelled(error: DatabaseError) {

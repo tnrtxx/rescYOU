@@ -9,6 +9,7 @@ import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.rescyou.databinding.ActivitySignUpBinding
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -16,6 +17,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -29,6 +31,7 @@ private lateinit var binding: ActivitySignUpBinding
 private lateinit var firstName: String
 private lateinit var middleName: String
 private lateinit var lastName: String
+private lateinit var displayName: String
 private lateinit var suffixName: String
 private lateinit var birthday: String
 private var age: Int = 0
@@ -44,6 +47,9 @@ private lateinit var data: FirebaseDatabase
 
 //for FirebaseAuth (SIGN UP/REGISTRATION OF USER)
 private lateinit var auth: FirebaseAuth
+
+private lateinit var userID: String
+
 
 
 //Initialize DateSetListener
@@ -100,13 +106,28 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success")
                             val user = auth.currentUser
+                            userID= user?.uid.toString()
+                            displayName = firstName + " " + lastName
+
+
+                            //Set the display name of the user
+                            val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                                .setDisplayName(displayName)
+                                .build()
+
+                            user?.updateProfile(profileUpdates)
+                                ?.addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        Log.d(TAG, "User profile updated.")
+                                    }
+                                }
+
                             updateUI(user)
-                            val userID= user?.uid.toString()
 
                             Toast.makeText(applicationContext, userID, Toast.LENGTH_SHORT).show()
 
 
-                            storeData(userID, firstName, middleName, lastName, suffixName, birthday, age, email, password)
+                            storeData(userID, firstName, middleName, lastName, displayName, suffixName, birthday, age, email, password)
 
 
 
@@ -211,7 +232,7 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
     private fun updateUI(user: FirebaseUser?) {
     }
 
-    fun storeData(userID:String, firstName: String, middleName: String, lastName: String, suffixName: String,  birthday: String, age: Int, email: String, password: String){
+    fun storeData(userID:String, firstName: String, middleName: String, lastName: String, displayName:String, suffixName: String,  birthday: String, age: Int, email: String, password: String){
         //initialize database
         database = Firebase.database.reference
 
@@ -230,7 +251,34 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
         myRef.child("Users").child(userID).child("age").setValue(age)
         myRef.child("Users").child(userID).child("email").setValue(email)
 
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
 
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            Log.d(TAG, token)
+            Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
+
+            // Save the FCM token to Firebase
+            saveFcmTokenToFirebase(token)
+        })
+
+
+
+    }
+
+    private fun saveFcmTokenToFirebase(token: String?) {
+
+        val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        val userRef = database.reference
+
+        // Save the FCM token to the "fcmToken" field in the user's node
+        userRef.child("Users").child(userID).child("fcmToken").setValue(token)
 
     }
 

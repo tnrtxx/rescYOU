@@ -1,6 +1,9 @@
 package com.example.rescyou
 
 class MyPinModel {
+
+    lateinit var fcmToken: String
+
     lateinit var pinId: String
     lateinit var pinUserId: String
 

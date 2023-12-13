@@ -1,6 +1,7 @@
 package com.example.rescyou
 
 import android.app.Dialog
+import android.content.ContentValues
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
@@ -28,12 +29,23 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
 class DialogActivity : AppCompatActivity() {
 
     private lateinit var pinId:String
+    private lateinit var otherUserID:String
+    private lateinit var status:String
 
-    private lateinit var myPinModel: MyPinModel
+    private var myPinModel: MyPinModel ? = null
 
 
     private val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
@@ -44,17 +56,24 @@ class DialogActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dialog)
 
+        // Initialize myPinModel
+        myPinModel = MyPinModel()
+
         // Retrieve the helper's name from the Intent
         val rescuerName = intent.getStringExtra("rescuerName")
+        otherUserID = intent.getStringExtra("otherUserID")!!
         pinId = intent.getStringExtra("pinId")!!
 
-        Toast.makeText(this, pinId, Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, otherUserID, Toast.LENGTH_SHORT).show()
 
         // Create a dialog
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Help Request")
         alertDialogBuilder.setMessage("Do you want to accept help from $rescuerName?")
         alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
+            status = "Accepted"
+            fetchFCMToken(otherUserID)
+
 
 
             showDialog(pinId, rescuerName.toString())
@@ -63,6 +82,11 @@ class DialogActivity : AppCompatActivity() {
             Log.d(TAG, "Rescuer name in DialogActivity: $rescuerName")
         }
         alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
+            status = "Declined"
+            Toast.makeText(this, "sendDeclineNotification(fcmToken: String", Toast.LENGTH_SHORT).show()
+
+            fetchFCMToken(otherUserID)
+//            sendDeclineNotification(myPinModel.fcmToken)
             dialogInterface.dismiss()
         }
 
@@ -73,7 +97,133 @@ class DialogActivity : AppCompatActivity() {
 
     }
 
-    private fun showDialog(pinId: String, rescuerName: String) {
+
+    private fun fetchFCMToken(userId: String) {
+        val myRef = FirebaseDatabase.getInstance().reference.child("Users").child(userId)
+
+        Toast.makeText(this, "user id:" + userId, Toast.LENGTH_SHORT).show()
+
+
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+//                myPinModel = dataSnapshot.getValue(MyPinModel::class.java)
+//                myPinModel?.fcmToken = dataSnapshot.child("fcmToken").getValue(String::class.java).toString()
+//                sendDeclineNotification("yooo" + myPinModel?.fcmToken.toString())
+
+                myPinModel = dataSnapshot.getValue(MyPinModel::class.java)
+                myPinModel?.fcmToken = dataSnapshot.child("fcmToken").getValue(String::class.java).toString()
+                if (myPinModel?.fcmToken != null) {
+                    if (status == "Accepted"){
+                        sendAcceptNotification(myPinModel?.fcmToken.toString())}
+                    else if (status == "Declined"){
+                        sendDeclineNotification(myPinModel?.fcmToken.toString())
+                    }
+
+                } else {
+                    Log.e(TAG, "FCM token is null.")
+                    Toast.makeText(this@DialogActivity, "null", Toast.LENGTH_SHORT).show()
+
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException())
+            }
+        })
+
+
+
+    }
+
+    private fun sendAcceptNotification(fcmToken: String) {
+//        Toast.makeText(this, "sendDeclineNotification(fcmToken: String yo" + fcmToken, Toast.LENGTH_SHORT).show()
+
+
+        try {
+            val jsonObject = JSONObject().apply {
+                put("to", fcmToken)
+                put("notification", JSONObject().apply {
+                    put("title", "Help is on the way.")
+                    put("body", "Someone wants to send you a help request.")
+                })
+                put("data", JSONObject().apply {
+                    put("pinId", pinId)// Include the rescuerName in the data payload
+                    put("type", "acceptRequest") // Set the notification type here
+                })
+            }
+
+            if (fcmToken.isNullOrBlank()) {
+                Toast.makeText(this, "yo " + fcmToken, Toast.LENGTH_SHORT).show()
+
+                Log.e(ContentValues.TAG, "Receiver FCM token is null or empty.")
+                Toast.makeText(this, "Failed to send help notification: Receiver FCM token is null or empty.", Toast.LENGTH_SHORT).show()
+                return
+            }
+            Toast.makeText(this, fcmToken, Toast.LENGTH_SHORT).show()
+
+            callApi(jsonObject)
+        } catch (e: Exception) {
+            Log.e(ContentValues.TAG, "Error building notification payload: ${e.message}")
+            Toast.makeText(this, "Failed to send help notification: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun sendDeclineNotification(fcmToken: String) {
+//        Toast.makeText(this, "sendDeclineNotification(fcmToken: String yo" + fcmToken, Toast.LENGTH_SHORT).show()
+
+
+        try {
+            val jsonObject = JSONObject().apply {
+                put("to", fcmToken)
+                put("notification", JSONObject().apply {
+                    put("title", "Help is on the way.")
+                    put("body", "Someone wants to send you a help request.")
+                })
+                put("data", JSONObject().apply {
+                    put("pinId", pinId)// Include the rescuerName in the data payload
+                    put("type", "declineRequest") // Set the notification type here
+                })
+            }
+
+            if (fcmToken.isNullOrBlank()) {
+                Toast.makeText(this, "yo " + fcmToken, Toast.LENGTH_SHORT).show()
+
+                Log.e(ContentValues.TAG, "Receiver FCM token is null or empty.")
+                Toast.makeText(this, "Failed to send help notification: Receiver FCM token is null or empty.", Toast.LENGTH_SHORT).show()
+                return
+            }
+            Toast.makeText(this, fcmToken, Toast.LENGTH_SHORT).show()
+
+            callApi(jsonObject)
+        } catch (e: Exception) {
+            Log.e(ContentValues.TAG, "Error building notification payload: ${e.message}")
+            Toast.makeText(this, "Failed to send help notification: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+fun callApi(jsonObject: JSONObject) {
+    val JSON = MediaType.get("application/json; charset=utf-8")
+    val client = OkHttpClient()
+    val url = "https://fcm.googleapis.com/fcm/send"
+    val body: RequestBody = RequestBody.create(JSON, jsonObject.toString()) // Swap the parameters
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .header("Authorization", "key=AAAA6jJJnJg:APA91bG-D1uEV29YYYCsxUtGQPoNpMUVWTt9V1Nq8q5mGibbF45F7ukPYkKpqgZ34zbW5wcav3GtXN_9zLwydF7U6-i956Sz9aWyBU5MAQYLaYe4MP6TYsvWXcjMKa2T1pqmeOgEtfiD")
+        .build()
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {}
+
+        @Throws(IOException::class)
+        override fun onResponse(call: Call, response: Response) {
+        }
+    })
+}
+
+private fun showDialog(pinId: String, rescuerName: String) {
+
 
 
         // Get a reference to the "Pins" node in the database
