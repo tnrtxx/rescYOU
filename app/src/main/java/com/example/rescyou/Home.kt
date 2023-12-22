@@ -6,10 +6,14 @@ import android.app.Dialog
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -111,6 +115,8 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     private val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
 
     private var otherUser: UserModel? = null
+
+    var pinRescuer: String? = null
 
 
 
@@ -498,6 +504,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
         dialog.window?.setGravity(Gravity.BOTTOM)
 
+        val rescuerName = dialog.findViewById<TextView>(R.id.viewPin_sendHelpName)
         val pinnedByName = dialog.findViewById<TextView>(R.id.viewPin_pinnedByName)
         val ratingsSituation = dialog.findViewById<TextView>(R.id.viewPin_ratingsCurrentSituation)
         val disasterType = dialog.findViewById<TextView>(R.id.viewPin_disasterType)
@@ -506,11 +513,51 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
         otherUser?.pinUserId =pins.pinUserId
 
-        pinnedByName.text = pins.pinName
-        ratingsSituation.text = pins.rate
-        disasterType.text = pins.disasterType
-        currentSitio.text = pins.sitio
-        currentSituation.text = pins.description
+        val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        val myRef = database.getReference("Pins").child(pins.pinId)
+
+
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                pinRescuer = dataSnapshot.child("pinRescuer").getValue(String::class.java)
+                val pinName = dataSnapshot.child("pinName").getValue(String::class.java)
+                val rescuerID = dataSnapshot.child("pinRescuerID").getValue(String::class.java)
+                val rate = dataSnapshot.child("rate").getValue(String::class.java)
+                val disaster = dataSnapshot.child("disasterType").getValue(String::class.java)
+                val sitio = dataSnapshot.child("sitio").getValue(String::class.java)
+                val description = dataSnapshot.child("description").getValue(String::class.java)
+
+
+                Toast.makeText(this@Home, currentUserId(), Toast.LENGTH_SHORT).show()
+
+                if(pinRescuer==null || pinRescuer==""){
+                    rescuerName?.text = "No one is sending help yet."
+                }
+                else{
+                    if(currentUserId()==rescuerID){
+                        rescuerName.text = "You are sending a help."
+
+                    }else{
+                        val message = SpannableString("$pinRescuer is sending a help.")
+                        message.setSpan(StyleSpan(Typeface.BOLD), 0, pinRescuer!!.length, 0)
+                        message.setSpan(ForegroundColorSpan(Color.parseColor("#072A4D")), 0, pinRescuer!!.length, 0) // Navy blue color
+
+                        rescuerName.text = message
+                    }
+
+                }
+
+                pinnedByName.text = pinName
+                ratingsSituation.text = rate
+                disasterType.text = disaster
+                currentSitio.text = sitio
+                currentSituation.text = description
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle possible errors.
+            }
+        })
 
 
         var attachmentCouner = 0
