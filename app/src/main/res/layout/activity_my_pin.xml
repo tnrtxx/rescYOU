@@ -50,12 +50,11 @@
             android:id="@+id/viewPin_sendHelpName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/send_help_name"
+            android:text=""
             android:textAlignment="textStart"
             android:textSize="20sp"
             android:textColor="@color/darker_gray"
             android:layout_marginTop="20dp"
-            android:layout_toRightOf="@id/textView_pinnedBy"
             >
         </TextView>
 

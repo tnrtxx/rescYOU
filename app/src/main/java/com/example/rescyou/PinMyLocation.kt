@@ -354,21 +354,17 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     }
 
     private fun getCurrentTime() {
-
         // Get the current date and time
         val calendar = Calendar.getInstance()
         val currentDate = calendar.time
 
         // Define date and time formatters
         val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val timeFormatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        val timeFormatter = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()) // Changed to 12-hour format
 
         // Format date and time using the formatters
         formattedDate = dateFormatter.format(currentDate)
         formattedTime = timeFormatter.format(currentDate)
-
-
-
     }
 
     private fun getPinDetails() {

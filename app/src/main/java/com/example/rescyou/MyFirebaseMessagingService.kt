@@ -39,7 +39,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
 
                     sendDeclineNotification(remoteMessage.notification!!.body, pinId)
 
-        }else if (notificationType == "acceptRequest"){
+                }else if (notificationType == "acceptRequest"){
                     val pinId = remoteMessage.data["pinId"]
 
                     sendAcceptNotification(remoteMessage.notification!!.body, pinId)
