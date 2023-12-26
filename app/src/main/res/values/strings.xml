@@ -129,14 +129,14 @@
     <string name="source">Source</string>
     <string name="image_source">Image:</string>
     <string name="article_source">Article:</string>
+
+    <!--    Evaucation Centers-->
     <string name="title_activity_evacuation_center_map">EvacuationCenterMap</string>
     <string name="title_activity_evacuation_centers">EvacuationCenters</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
+
+
+    <!--    Helper Strings-->
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
