@@ -177,7 +177,7 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
 
         val path: MutableList<List<LatLng>> = ArrayList()
         val urlDirections =
-            "https://maps.googleapis.com/maps/api/directions/json?origin=${latLngOrigin.latitude},${latLngOrigin.longitude}&destination=${latLngDestination.latitude},${latLngDestination.longitude}&key=AIzaSyAGCgwA7wV7tmsmLwg93pDuCntA00InE7M"
+            "https://maps.googleapis.com/maps/api/directions/json?origin=${latLngOrigin.latitude},${latLngOrigin.longitude}&destination=${latLngDestination.latitude},${latLngDestination.longitude}&key=${Constants.GOOGLE_MAPS_API_KEY}"
         val directionsRequest = object :
             StringRequest(
                 Method.GET,
