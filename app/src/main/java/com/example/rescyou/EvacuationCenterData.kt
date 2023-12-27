@@ -7,8 +7,8 @@ data class EvacuationCenterData(
     var placeId: String? = null,                // Foreign key to Google Places
     var name: String? = null,
     var address: String? = null,
-    var latitude: String? = null,
-    var longitude: String? = null,
+    var latitude: Double? = 0.0,
+    var longitude: Double? = 0.0,
     var status: String? = null,
     var inCharge: String? = null,
     var inChargeContactNum: String? = null,

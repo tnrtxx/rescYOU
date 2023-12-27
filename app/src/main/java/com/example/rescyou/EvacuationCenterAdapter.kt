@@ -2,6 +2,7 @@ package com.example.rescyou
 
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -85,9 +86,9 @@ class EvacuationCenterAdapter(private var evacuationCenterArrayList: List<Evacua
             val isFull = item.status.equals("FULL", ignoreCase = true)
 
             val statusColor = when {
-                isAvailable -> R.color.navy_blue
-                isFull -> R.color.dark_gray
-                else -> R.color.slight_dark_gray
+                isAvailable -> R.color.isAvailable
+                isFull -> R.color.isFull
+                else -> R.color.isNotAvailable
             }
 
             val tintList = ColorStateList.valueOf(ContextCompat.getColor(context, statusColor))

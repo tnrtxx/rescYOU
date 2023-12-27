@@ -133,7 +133,12 @@
     <!--    Evaucation Centers-->
     <string name="title_activity_evacuation_center_map">EvacuationCenterMap</string>
     <string name="title_activity_evacuation_centers">EvacuationCenters</string>
-
+    <string name="view_in_map">View in Map</string>
+    <string name="occupant_s">Occupant/s:</string>
+    <string name="address">Address:</string>
+    <string name="contact_number">Contact Number:</string>
+    <string name="in_charge">In-Charge:</string>
+    <string name="go_back">Go Back</string>
 
 
     <!--    Helper Strings-->
@@ -173,12 +178,4 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
-    <string name="view_in_map">View in Map</string>
-    <string name="occupant_s">Occupant/s:</string>
-    <string name="address">Address:</string>
-    <string name="contact_number">Contact Number:</string>
-    <string name="in_charge">In-Charge:</string>
-    <string name="go_back">Go Back</string>
-
-
 </resources>

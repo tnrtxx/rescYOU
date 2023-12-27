@@ -45,8 +45,7 @@ class EvacuationCenters : AppCompatActivity() {
     private fun initializeUI() {
         // Back Button: Navigate to the Home activity
         binding.backButton.setOnClickListener {
-            val intent = Intent(this, Information::class.java)
-            startActivity(intent)
+            finish()
         }
     }
 
@@ -63,7 +62,9 @@ class EvacuationCenters : AppCompatActivity() {
     private fun getEvacuationCenterData() {
 
         // Firebase setup
-        databaseReference = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Evacuation Centers")
+        databaseReference =
+            FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference("Evacuation Centers")
         databaseReference.keepSynced(true) // add this line of code after nung Firebase get instance para sa mga page na need ioffline.
 
         // Event listener for data changes
