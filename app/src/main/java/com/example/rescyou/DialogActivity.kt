@@ -1,5 +1,6 @@
 package com.example.rescyou
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.ContentValues
@@ -307,6 +308,7 @@ private fun showDialog(pinId: String) {
 
         // Attach a listener to read the data at the "Pins" reference
         pinsRef.child(pinId).addListenerForSingleValueEvent(object : ValueEventListener {
+            @SuppressLint("SuspiciousIndentation")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Pin data from snapshot
                 val pinData = dataSnapshot.getValue(MyPinModel::class.java)
@@ -408,40 +410,21 @@ private fun showDialog(pinId: String) {
                     //RESOLVED BUTTON
                     val resolvedButtonLayout = dialog.findViewById<Button>(R.id.resolvedButton)
                     resolvedButtonLayout.setOnClickListener {
-                        val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                            .reference
-                            dbRef.child("Pins").child(pinId).child("resolved").setValue("true")
+                        AlertDialog.Builder(this@DialogActivity)
+                            .setTitle("Resolve Confirmation")
+                            .setMessage("Are you sure you want to mark this as resolved?")
+                            .setPositiveButton("Yes") { _, _ ->
+                                val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                    .reference
 
-                        val intent = Intent(this@DialogActivity, Home::class.java)
-                        startActivity(intent)
+                                dbRef.child("Pins").child(pinId).child("resolved").setValue("true")
 
+                                val intent = Intent(this@DialogActivity, Home::class.java)
+                                startActivity(intent)
+                            }
+                            .setNegativeButton("No", null)
+                            .show()
                     }
-
-
-                    //DELETE BUTTON
-                    val deleteButton = dialog.findViewById<Button>(R.id.deletePinButton)
-                    deleteButton.setOnClickListener {
-                        val alertDialogBuilder = AlertDialog.Builder(this@DialogActivity)
-                        alertDialogBuilder.setTitle("Delete Confirmation")
-                        alertDialogBuilder.setMessage("Are you sure you want to delete?")
-                        alertDialogBuilder.setPositiveButton("Yes") { dialogInterface, _ ->
-                            // Handle "Yes" button click, for example, navigate back or finish the activity
-                            dialogInterface.dismiss()
-                            finish()
-
-                            val intent = Intent(this@DialogActivity, Home::class.java)
-                            startActivity(intent)
-                        }
-                        alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
-                            // Handle "No" button click, dismiss the dialog
-                            dialogInterface.dismiss()
-                        }
-
-                        val alertDialog: AlertDialog = alertDialogBuilder.create()
-                        alertDialog.show()
-                    }
-
-
 
                 } else {
                     Log.d(TAG, "No Pin data found for pinId: $pinId")
@@ -562,30 +545,6 @@ private fun showDialog(pinId: String) {
 
                     }
 
-
-                    //DELETE BUTTON
-                    val deleteButton = dialog.findViewById<Button>(R.id.deletePinButton)
-                    deleteButton.setOnClickListener {
-                        val alertDialogBuilder = AlertDialog.Builder(this@DialogActivity)
-                        alertDialogBuilder.setTitle("Delete Confirmation")
-                        alertDialogBuilder.setMessage("Are you sure you want to delete?")
-                        alertDialogBuilder.setPositiveButton("Yes") { dialogInterface, _ ->
-                            // Handle "Yes" button click, for example, navigate back or finish the activity
-                            dialogInterface.dismiss()
-                            finish()
-
-                            val intent = Intent(this@DialogActivity, Home::class.java)
-                            startActivity(intent)
-                        }
-                        alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
-                            // Handle "No" button click, dismiss the dialog
-                            dialogInterface.dismiss()
-                        }
-
-                        val alertDialog: AlertDialog = alertDialogBuilder.create()
-                        alertDialog.show()
-                    }
-
                 } else {
                     Log.d(TAG, "No Pin data found for pinId: $pinId")
                 }
@@ -701,34 +660,48 @@ private fun showDialog(pinId: String) {
         // When the "Save" button is clicked, update the values in the database
         val saveButton = dialog.findViewById<Button>(R.id.saveButton)
         saveButton.setOnClickListener {
-            checkIfEmpty()
-            Toast.makeText(this, selectedRateName + selectedItemValue + selectedSitioValue +  descriptionInputEditText.text.toString(), Toast.LENGTH_SHORT).show()
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setTitle("Save Confirmation")
+            alertDialogBuilder.setMessage("Are you sure you want to save?")
+            alertDialogBuilder.setPositiveButton("Yes") { dialogInterface, _ ->
+                // Handle "Yes" button click
+                dialogInterface.dismiss()
 
-            val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .reference
+                checkIfEmpty()
+                Toast.makeText(this, selectedRateName + selectedItemValue + selectedSitioValue +  descriptionInputEditText.text.toString(), Toast.LENGTH_SHORT).show()
 
-            // Show loading dialog
-            showLoadingDialog()
+                val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                    .reference
 
-            if (pinId != null){
-                dbRef.child("Pins").child(pinId).child("rate").setValue(selectedRateName)
-                dbRef.child("Pins").child(pinId).child("disasterType").setValue(selectedItemValue)
-                dbRef.child("Pins").child(pinId).child("sitio").setValue(selectedSitioValue)
-                dbRef.child("Pins").child(pinId).child("description").setValue(descriptionInputEditText.text.toString())
-                dbRef.child("Pins").child(pinId).child("date").setValue(formattedDate)
-                dbRef.child("Pins").child(pinId).child("time").setValue(formattedTime)
-                    .addOnCompleteListener { task ->
-                        // Dismiss loading dialog
-                        dismissLoadingDialog()
-                        if (task.isSuccessful) {
-                           showDialog(pinId)
-                            Toast.makeText(this, "Pin details edited successfully.", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(this, "Failed to save data", Toast.LENGTH_SHORT).show()
+                // Show loading dialog
+                showLoadingDialog()
+
+                if (pinId != null){
+                    dbRef.child("Pins").child(pinId).child("rate").setValue(selectedRateName)
+                    dbRef.child("Pins").child(pinId).child("disasterType").setValue(selectedItemValue)
+                    dbRef.child("Pins").child(pinId).child("sitio").setValue(selectedSitioValue)
+                    dbRef.child("Pins").child(pinId).child("description").setValue(descriptionInputEditText.text.toString())
+                    dbRef.child("Pins").child(pinId).child("date").setValue(formattedDate)
+                    dbRef.child("Pins").child(pinId).child("time").setValue(formattedTime)
+                        .addOnCompleteListener { task ->
+                            // Dismiss loading dialog
+                            dismissLoadingDialog()
+                            if (task.isSuccessful) {
+                                showDialog(pinId)
+                                Toast.makeText(this, "Pin details edited successfully.", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "Failed to save data", Toast.LENGTH_SHORT).show()
+                            }
                         }
-                    }
-
+                }
             }
+            alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
+                // Handle "No" button click, dismiss the dialog
+                dialogInterface.dismiss()
+            }
+
+            val alertDialog: AlertDialog = alertDialogBuilder.create()
+            alertDialog.show()
         }
 
         //BACK BUTTON
@@ -741,16 +714,35 @@ private fun showDialog(pinId: String) {
         //DELETE BUTTON
         val deleteButton = dialog.findViewById<Button>(R.id.deletePinButton)
         deleteButton.setOnClickListener {
+            Toast.makeText(this, pinId, Toast.LENGTH_SHORT).show()
+
             val alertDialogBuilder = AlertDialog.Builder(this@DialogActivity)
             alertDialogBuilder.setTitle("Delete Confirmation")
             alertDialogBuilder.setMessage("Are you sure you want to delete?")
             alertDialogBuilder.setPositiveButton("Yes") { dialogInterface, _ ->
                 // Handle "Yes" button click, for example, navigate back or finish the activity
                 dialogInterface.dismiss()
-                finish()
 
-                val intent = Intent(this@DialogActivity, Home::class.java)
-                startActivity(intent)
+                if (pinId != null) {
+                    // Delete the pin from the database if the pinId is not null
+                    val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                        .reference
+                    dbRef.child("Pins").child(pinId).removeValue()
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(this, "Pin deleted successfully", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "Failed to delete pin", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                    finish()
+
+                    val intent = Intent(this@DialogActivity, Home::class.java)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(this, "Pin ID is null", Toast.LENGTH_SHORT).show()
+                }
             }
             alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
                 // Handle "No" button click, dismiss the dialog
@@ -1076,7 +1068,7 @@ private fun showDialog(pinId: String) {
     //PROGRESS DIALOG
     private fun showLoadingDialog() {
         progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Uploading...")
+        progressDialog.setMessage("Updating...")
         progressDialog.setCancelable(false)
         progressDialog.show()
     }
