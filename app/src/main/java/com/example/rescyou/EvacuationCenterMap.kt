@@ -9,9 +9,6 @@ import android.view.View
 import android.widget.RelativeLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.navigation.fragment.findNavController
-import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -100,99 +97,16 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
     override fun onMapReady(googleMap: GoogleMap) {
         evacuationCenterMap = googleMap
         evacuationCenterMap.uiSettings.isZoomControlsEnabled = true
-
         setupMap()
     }
-
 
     @SuppressLint("MissingPermission")
     private fun setupMap() {
         if (hasLocationPermission() && Home.currentLocation != null && isGpsTurnedOn) {
-            evacuationCenterMap.uiSettings.isMapToolbarEnabled = false
-            evacuationCenterMap.uiSettings.isMyLocationButtonEnabled = true
             evacuationCenterMap.isMyLocationEnabled = true
-
-            // Find views within the MapView based on their tags
-            val buttonLocation: View =
-                mapFragment.view?.findViewWithTag("GoogleMapMyLocationButton") as View
-            val buttonZoomIn: View =
-                mapFragment.view?.findViewWithTag("GoogleMapZoomInButton") as View
-            val layoutZoom = buttonZoomIn.parent as View
-
-            // adjust location button layout params above the zoom layout
-            val locationLayout = buttonLocation.layoutParams as RelativeLayout.LayoutParams
-            locationLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
-            locationLayout.addRule(RelativeLayout.ABOVE, layoutZoom.id)
-
-
-            val latLngOrigin =
-                LatLng(Home.currentLocation!!.latitude, Home.currentLocation!!.longitude)
-            val latLngDestination = LatLng(latitude!!, longitude!!)
-
-            evacuationCenterMap.addMarker(
-                MarkerOptions().position(latLngDestination).title(name)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                    .snippet(
-                        "Status: $status | Contact: $inChargeContactNum"
-                    )
-            )
-
-            evacuationCenterMap.setOnMapLoadedCallback {
-                val boundsBuilder = LatLngBounds.builder()
-                    .include(latLngOrigin)
-                    .include(latLngDestination)
-                val bounds = boundsBuilder.build()
-                evacuationCenterMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 300))
-            }
-
-            val path: MutableList<List<LatLng>> = ArrayList()
-            val urlDirections =
-                "https://maps.googleapis.com/maps/api/directions/json?origin=${latLngOrigin.latitude},${latLngOrigin.longitude}&destination=${latLngDestination.latitude},${latLngDestination.longitude}&key=AIzaSyAGCgwA7wV7tmsmLwg93pDuCntA00InE7M"
-            val directionsRequest = object :
-                StringRequest(
-                    Method.GET,
-                    urlDirections,
-                    Response.Listener { response ->
-                        val jsonResponse = JSONObject(response)
-                        val routes = jsonResponse.getJSONArray("routes")
-                        val legs = routes.getJSONObject(0).getJSONArray("legs")
-                        val steps = legs.getJSONObject(0).getJSONArray("steps")
-                        for (i in 0 until steps.length()) {
-                            val points =
-                                steps.getJSONObject(i).getJSONObject("polyline")
-                                    .getString("points")
-                            path.add(PolyUtil.decode(points))
-                        }
-                        for (i in 0 until path.size) {
-                            this.evacuationCenterMap.addPolyline(
-                                PolylineOptions().addAll(path[i]).color(Color.BLUE)
-                            )
-                        }
-                    },
-                    Response.ErrorListener { _ ->
-                        Log.d(TAG, Response.ErrorListener::class.java.toString())
-                    }) {}
-
-            val requestQueue = Volley.newRequestQueue(this)
-            requestQueue.add(directionsRequest)
-
+            displayEvacuationCenterWithDirection()
         } else {
-            marker = evacuationCenterMap.addMarker(
-                MarkerOptions()
-                    .position(LatLng(latitude!!, longitude!!))
-                    .title(name)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                    .snippet(
-                        "Status: $status | Contact: $inChargeContactNum"
-                    )
-            )
-
-            val cameraPosition = CameraPosition.Builder()
-                .target(LatLng(latitude!!, longitude!!))
-                .zoom(Constants.INIT_MAP_LEVEL)
-                .build()
-
-            evacuationCenterMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+            displayEvacuationCenterWithoutDirection()
         }
     }
 
@@ -219,11 +133,98 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
         EasyPermissions.hasPermissions(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
 
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
-        TODO("Not yet implemented")
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
-        TODO("Not yet implemented")
     }
+
+    private fun displayEvacuationCenterWithDirection() {
+        evacuationCenterMap.uiSettings.isMapToolbarEnabled = false
+        evacuationCenterMap.uiSettings.isMyLocationButtonEnabled = true
+
+        // Find views within the MapView based on their tags
+        val buttonLocation: View =
+            mapFragment.view?.findViewWithTag("GoogleMapMyLocationButton") as View
+        val buttonZoomIn: View =
+            mapFragment.view?.findViewWithTag("GoogleMapZoomInButton") as View
+        val layoutZoom = buttonZoomIn.parent as View
+
+        // adjust location button layout params above the zoom layout
+        val locationLayout = buttonLocation.layoutParams as RelativeLayout.LayoutParams
+        locationLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
+        locationLayout.addRule(RelativeLayout.ABOVE, layoutZoom.id)
+
+
+        val latLngOrigin =
+            LatLng(Home.currentLocation!!.latitude, Home.currentLocation!!.longitude)
+        val latLngDestination = LatLng(latitude!!, longitude!!)
+
+        evacuationCenterMap.addMarker(
+            MarkerOptions().position(latLngDestination).title(name)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                .snippet(
+                    "Status: $status | Contact: $inChargeContactNum"
+                )
+        )
+
+        evacuationCenterMap.setOnMapLoadedCallback {
+            val boundsBuilder = LatLngBounds.builder()
+                .include(latLngOrigin)
+                .include(latLngDestination)
+            val bounds = boundsBuilder.build()
+            evacuationCenterMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 300))
+        }
+
+        val path: MutableList<List<LatLng>> = ArrayList()
+        val urlDirections =
+            "https://maps.googleapis.com/maps/api/directions/json?origin=${latLngOrigin.latitude},${latLngOrigin.longitude}&destination=${latLngDestination.latitude},${latLngDestination.longitude}&key=AIzaSyAGCgwA7wV7tmsmLwg93pDuCntA00InE7M"
+        val directionsRequest = object :
+            StringRequest(
+                Method.GET,
+                urlDirections,
+                Response.Listener { response ->
+                    val jsonResponse = JSONObject(response)
+                    val routes = jsonResponse.getJSONArray("routes")
+                    val legs = routes.getJSONObject(0).getJSONArray("legs")
+                    val steps = legs.getJSONObject(0).getJSONArray("steps")
+                    for (i in 0 until steps.length()) {
+                        val points =
+                            steps.getJSONObject(i).getJSONObject("polyline")
+                                .getString("points")
+                        path.add(PolyUtil.decode(points))
+                    }
+                    for (i in 0 until path.size) {
+                        this.evacuationCenterMap.addPolyline(
+                            PolylineOptions().addAll(path[i]).color(Color.BLUE)
+                        )
+                    }
+                },
+                Response.ErrorListener { _ ->
+                    Log.d(TAG, Response.ErrorListener::class.java.toString())
+                }) {}
+
+        val requestQueue = Volley.newRequestQueue(this)
+        requestQueue.add(directionsRequest)
+    }
+
+    private fun displayEvacuationCenterWithoutDirection() {
+        marker = evacuationCenterMap.addMarker(
+            MarkerOptions()
+                .position(LatLng(latitude!!, longitude!!))
+                .title(name)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                .snippet(
+                    "Status: $status | Contact: $inChargeContactNum"
+                )
+        )
+
+        val cameraPosition = CameraPosition.Builder()
+            .target(LatLng(latitude!!, longitude!!))
+            .zoom(Constants.INIT_MAP_LEVEL)
+            .build()
+
+        evacuationCenterMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
+
 
 }
