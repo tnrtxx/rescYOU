@@ -248,19 +248,6 @@
             >
         </android.widget.Button>
 
-        <android.widget.Button
-            android:id="@+id/deletePinButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/delete"
-            android:background="@drawable/rounded_corner_gray"
-            android:foregroundTint="@color/navy_blue"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:padding="12dp"
-            >
-        </android.widget.Button>
 
     </LinearLayout>
 
