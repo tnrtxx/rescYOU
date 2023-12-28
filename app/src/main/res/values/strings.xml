@@ -34,8 +34,11 @@
 
 
     <!--Terms and Conditions-->
+    <string name="termsAndCondTitle">Terms and Conditions</string>
     <string name="termsAndConditions">By signing up, you agree to our terms and conditions.</string>
-
+    <string name="continue_button">Continue</string>
+    <string name="back">Back</string>
+    <string name="accept">I accept and agree to the Terms and Conditions.</string>
 
     <!--Sign In EMAIL Page-->
     <string name="welcome">Welcome Back</string>
@@ -210,6 +213,77 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+
+
+    <!--    Terms and Conditons Content-->
+
+    <string name="termsAncConditions_content">
+Please read these terms and conditions carefully before using the rescYOU operated by Group 6 ("we," "us," or "our"). By downloading, installing, or using the App, you agree to be bound by these terms and conditions. If you do not agree to these terms, please do not use the App.
+\n\n\n
+1. Acceptance of Terms
+\n\n
+1.1. By using the App, you agree to comply with these Terms and Conditions, our Privacy Policy, and any other policies and guidelines provided within the App.
+\n\n
+2. Use of the App
+\n\n
+2.1. The App is intended for users who require assistance in emergency situations. It provides tools and resources to connect users with rescue services, but it does not guarantee response times or the availability of such services.
+\n\n
+2.2. You must use the App responsibly and only in genuine emergency situations. False alarms or misuse of the App may result in legal action.
+\n\n
+2.3. Users are liable and responsible for the accuracy of the emergencies reported when creating a PIN. If an emergency has been proven false or fake, users will be held responsible for the consequences.
+\n\n
+3. Account Registration
+\n\n
+3.1. To use certain features of the App, you may be required to create an account. You agree to provide accurate, current, and complete information during the registration process.
+\n\n
+3.2. You are responsible for maintaining the confidentiality of your account login credentials and for any activities that occur under your account.
+\n\n
+4. Privacy
+\n\n
+4.1. Our Privacy Policy explains how we collect, use, and disclose your personal information. By using the App, you consent to the collection and use of your data as described in the Privacy Policy.
+\n\n
+5. Prohibited Conduct
+\n\n
+5.1. Using the App for any illegal or unauthorized purposes is strictly prohibited.
+\n\n
+5.2. Modifying, adapting, or attempting to hack the App is not allowed.
+\n\n
+5.3. Intentionally interfering with or disrupting the operation of the App or its servers is prohibited.
+\n\n
+5.4. Attempting to gain unauthorized access to any part of the App or its related systems is strictly prohibited.
+\n\n
+5.5. Sharing your account or login information with others is not allowed.
+\n\n
+6. Disclaimers
+\n\n
+6.1. The App is provided "as is" and "as available," without any warranties, express or implied. We do not guarantee the availability, accuracy, or reliability of the App.
+\n\n
+6.2. We are not responsible for the actions, response times, or conduct of emergency services or third-party service providers.
+\n\n
+7. Limitation of Liability
+\n\n
+7.1. To the fullest extent permitted by law, we shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, arising out of or related to your use of the App.
+\n\n
+8. Termination
+\n\n
+8.1. We reserve the right to terminate or suspend your access to the App at our discretion, without prior notice, for any reason, including but not limited to a violation of these Terms and Conditions.
+\n\n
+9. Governing Law
+\n\n
+9.1. These Terms and Conditions shall be governed by and construed in accordance with the laws of the Philippines, without regard to its conflict of law principles.
+\n\n
+10. Changes to Terms
+\n\n
+10.1. We may update these Terms and Conditions from time to time. Any changes will be posted within the App, and your continued use of the App after such changes will constitute your acceptance of the revised terms.
+\n\n
+11. Contact Us
+\n\n
+11.1. If you have any questions or concerns about these Terms and Conditions, please contact us at rescyou.6@gmail.com
+\n\n
+11.2. This application was developed and operated by Group 6 in Sto. Tomas City, Batangas as part of a capstone project.
+
+</string>
+
 
 
 </resources>
