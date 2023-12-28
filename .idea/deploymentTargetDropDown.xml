@@ -20,30 +20,10 @@
         <deviceKey>
           <Key>
             <type value="SERIAL_NUMBER" />
-            <value value="adb-R9WWA0CN4MJ-hq0iFc._adb-tls-connect._tcp" />
-          </Key>
-        </deviceKey>
-      </Target>
-      <Target>
-        <type value="RUNNING_DEVICE_TARGET" />
-        <deviceKey>
-          <Key>
-            <type value="SERIAL_NUMBER" />
             <value value="adb-RR8MB0D022A-rZE0Il._adb-tls-connect._tcp" />
           </Key>
         </deviceKey>
       </Target>
     </runningDeviceTargetsSelectedWithDialog>
-    <targetsSelectedWithDialog>
-      <Target>
-        <type value="QUICK_BOOT_TARGET" />
-        <deviceKey>
-          <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\maria\.android\avd\Pixel_4_API_25.avd" />
-          </Key>
-        </deviceKey>
-      </Target>
-    </targetsSelectedWithDialog>
   </component>
 </project>

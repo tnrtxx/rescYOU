@@ -156,25 +156,11 @@
         </com.google.android.material.textfield.TextInputLayout>
 
 
-        <!--TERMS AND CONDITIONS-->
-        <TextView
-            android:id="@+id/termsAndConditionsTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/termsAndConditions"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/darker_gray"
-            android:layout_marginTop="60dp"
-            >
-        </TextView>
-
-
         <android.widget.Button
             android:id="@+id/signUpButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="60dp"
             android:text="@string/sign_up"
             android:background="@drawable/rounded_corner"
             android:foregroundTint="@color/white"

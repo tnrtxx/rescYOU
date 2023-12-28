@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import com.example.rescyou.databinding.ActivityMainBinding
 import com.example.rescyou.databinding.ActivityTermsAndConditionsBinding
+import com.example.rescyou.utils.FirebaseUtil.currentUserId
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -55,19 +56,40 @@ class TermsAndConditions : AppCompatActivity() {
             val userID= user?.uid.toString()
 
 
-            //getting the displayName and saving it as First Name
-            val displayName= user?.displayName
-            firstName= displayName!!
+            //AGRREE BUTTON
+            binding.agreeButton.setOnClickListener {
+                if (binding.acceptCheckbox.isChecked) {
+                    val intent = Intent(this, Home::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(this, "Please agree to the terms and conditions.", Toast.LENGTH_SHORT).show()
+                }
+            }
 
-            //store data to the REALTIME DATABASE
-            myRef.child("Users").child(userID).child("firstName").setValue(firstName)
+            //DISAGREE BUTTON
+            binding.declineButton.setOnClickListener {
+
+                val i  = Intent(this,MainActivity::class.java)
+                i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(i)
+
+//                user?.delete()?.addOnCompleteListener { task ->
+//                    if (task.isSuccessful) {
+//                        FirebaseAuth.getInstance().signOut()
+//                        val i  = Intent(this,MainActivity::class.java)
+//                        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                        startActivity(i)
+//                    } else {
+//                        Toast.makeText(this, "Failed to delete account.", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
 
 
-            Toast.makeText(applicationContext, "Saved successfully", Toast.LENGTH_SHORT).show()
 
-            val intent = Intent(this, Home::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+
+
         }
     }
+}
 }
