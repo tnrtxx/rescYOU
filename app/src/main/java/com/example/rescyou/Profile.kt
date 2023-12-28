@@ -63,7 +63,6 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid.toString()
 
-        Toast.makeText(applicationContext,userId, Toast.LENGTH_SHORT).show()
 
         val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
         val myRef = database.getReference("Users").child(userId)
@@ -135,14 +134,12 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
         // Initialize and assign variable
         val selectedItem = bottomNavigationView.selectedItemId
-        // Toast.makeText(applicationContext, selectedItem.toString(), Toast.LENGTH_SHORT).show()
 
         bottomNavigationView.setOnNavigationItemSelectedListener(navBarWhenClicked)
     }
 
     //EDITING THE PROFILE
     private fun showProfileEdit(userId: String?) {
-        Toast.makeText(this, "Edit button clicked", Toast.LENGTH_SHORT).show()
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.activity_profile_edit)
@@ -340,8 +337,6 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
     private fun displayFormattedDate(timestamp: Long) {
         birthdayInputEditText.setText(formatter.format(timestamp))
         birthday = birthdayInputEditText.text.toString()
-        Toast.makeText(applicationContext, birthday, Toast.LENGTH_SHORT).show()
-
         Log.i("Formatting", timestamp.toString())
     }
 
@@ -361,7 +356,7 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
     private fun signOut() {
 
-        Toast.makeText(applicationContext,"signout", Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext,"Sign out successfully.", Toast.LENGTH_SHORT).show()
 
 
         FirebaseAuth.getInstance().signOut()
@@ -380,7 +375,6 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
             }
 
             R.id.tools -> {
-                Toast.makeText(applicationContext, "tools", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, Tools::class.java)
                 startActivity(intent)
 //                binding.bottomNavView.isSelected= true
@@ -388,14 +382,12 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
             }
 
             R.id.info -> {
-                Toast.makeText(applicationContext, "information", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, Information::class.java)
                 startActivity(intent)
                 return@OnNavigationItemSelectedListener true
             }
 
             R.id.profile -> {
-                Toast.makeText(applicationContext, "profile", Toast.LENGTH_SHORT).show()
                 // Check if the current activity is not Profile before starting it
                 if (this !is Profile) {
                     val intent = Intent(this, Profile::class.java)

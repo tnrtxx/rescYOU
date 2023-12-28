@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -21,6 +22,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -71,6 +73,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import android.Manifest
 
 
 class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, OnMapReadyCallback {
@@ -240,7 +243,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
         //ADD A PHOTO BUTTON
         binding.addPhotoButton.setOnClickListener {
-            // Check and request gallery permission
             if (hasGalleryPermission()) {
                 openGallery()
             } else {
@@ -280,9 +282,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             val latitude = currentLocation.latitude
             val longitude = currentLocation.longitude
             val locationString = "Latitude: $latitude, Longitude: $longitude"
-            Toast.makeText(this@PinMyLocation, locationString, Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this@PinMyLocation, "huhu", Toast.LENGTH_SHORT).show()
         }
 
         //PIN MY LOCATION BUTTON
@@ -409,7 +409,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             when (mildRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Mild"
-                    Toast.makeText(applicationContext, "Mild", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.mild_clicked, null)
                     mildRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -441,7 +440,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             when (moderateRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Moderate"
-                    Toast.makeText(applicationContext, "Moderate", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.moderate_clicked, null)
                     moderateRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -473,7 +471,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             when (severeRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Severe"
-                    Toast.makeText(applicationContext, "Severe", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.severe_clicked, null)
                     severeRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -504,7 +501,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             when (criticalRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Critical"
-                    Toast.makeText(applicationContext, "Critical", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.crtical_clicked, null)
                     criticalRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -535,7 +531,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             when (catastrophicRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Catastrophic"
-                    Toast.makeText(applicationContext, "Moderate", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.catastropic_4_clicked, null)
                     catastrophicRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -571,7 +566,10 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
     private fun hasGalleryPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            true
+            EasyPermissions.hasPermissions(
+                this,
+                android.Manifest.permission.MANAGE_EXTERNAL_STORAGE
+            )
         } else {
             EasyPermissions.hasPermissions(
                 this,
@@ -590,14 +588,26 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     }
 
     private fun requestGalleryPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
             EasyPermissions.requestPermissions(
                 this,
                 "Storage permission is required for accessing the gallery.",
                 GALLERY_PERMISSION_REQUEST_CODE,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
+                Manifest.permission.READ_EXTERNAL_STORAGE
             )
+        }else{
+            openGalleryForAndroid11AndAbove()
+
         }
+    }
+
+    private fun openGalleryForAndroid11AndAbove() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "image/*"
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        }
+        startActivityForResult(intent, GALLERY_IMAGE_PICK_REQUEST_CODE)
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
@@ -698,7 +708,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
     //GETTING THE SELECTED RATING OF THE SITUATION
     private fun getSelectedRatings(){
-//        Toast.makeText(applicationContext, selectedRateName , Toast.LENGTH_SHORT).show()
     }
 
     //TYPE OF DISASTER
@@ -721,7 +730,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
             }
         }
 
-//        Toast.makeText(applicationContext, selectedItemValue, Toast.LENGTH_SHORT).show()
 
     }
 

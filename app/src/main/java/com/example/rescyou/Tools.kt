@@ -66,7 +66,6 @@ class Tools : AppCompatActivity() {
 
         // Initialize and assign variable
         val selectedItem = bottomNavigationView.selectedItemId
-        // Toast.makeText(applicationContext, selectedItem.toString(), Toast.LENGTH_SHORT).show()
 
         bottomNavigationView.setOnNavigationItemSelectedListener(navBarWhenClicked)
     }
@@ -139,7 +138,6 @@ class Tools : AppCompatActivity() {
             }
 
             R.id.tools -> {
-                Toast.makeText(applicationContext, "tools", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, Tools::class.java)
                 startActivity(intent)
 //                binding.bottomNavView.isSelected= true
@@ -147,14 +145,12 @@ class Tools : AppCompatActivity() {
             }
 
             R.id.info -> {
-                Toast.makeText(applicationContext, "information", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, Information::class.java)
                 startActivity(intent)
                 return@OnNavigationItemSelectedListener true
             }
 
             R.id.profile -> {
-                Toast.makeText(applicationContext, "profile", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, Profile::class.java)
                 startActivity(intent)
                 return@OnNavigationItemSelectedListener true

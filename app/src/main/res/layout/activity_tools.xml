@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/flashlight_textview"
                     android:padding="12dp"
-                    android:text="@string/switch_on"
+                    android:text="@string/switch_off"
                     android:textAlignment="viewEnd"
                     android:textSize="18sp"
                     tools:ignore="MissingConstraints" />

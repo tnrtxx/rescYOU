@@ -46,7 +46,6 @@ class PerDisaster : AppCompatActivity() {
 
         val bundle = intent.extras
         if (bundle != null) {
-            Toast.makeText(this, "bundle", Toast.LENGTH_SHORT)
             disasterDesc.text = bundle.getString("Description")
             disasterTitle.text = bundle.getString("Title")
 
