@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MyPin"
+    android:backgroundTint="@color/white"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="34dp"
+
+        >
+
+        <!--HEADER-->
+        <RelativeLayout
+            android:id="@+id/back_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <ImageView
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/back_button_2"></ImageView>
+
+            <TextView
+                android:id="@+id/editProfile_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/back_button"
+                android:layout_gravity="center"
+                android:layout_marginStart="20dp"
+                android:layout_toEndOf="@+id/back_button"
+                android:text="@string/profile_edit"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!--START OF LAYOUT-->
+        <!--PERSONAL DETAILS-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/personal_details"
+            android:textAlignment="textStart"
+            android:textColor="@color/navy_blue"
+            android:textSize="30sp"
+            android:textStyle="bold"></TextView>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/display_name"
+            android:textAlignment="textStart"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"></TextView>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/displayNameTextLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/displayNameTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/display_name"
+
+                >
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/birthday"
+            android:textAlignment="textStart"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"></TextView>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/birthdayTextLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/birthdayTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/birthday_req"
+                android:inputType="date"
+                android:focusableInTouchMode="false"
+                >
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <android.widget.Button
+            android:id="@+id/saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/rounded_corner"
+            android:foregroundTint="@color/white"
+            android:padding="12dp"
+            android:text="@string/save"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+
+            />
+
+
+        <android.widget.Button
+            android:id="@+id/cancelButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/cancel_pin"
+            android:background="@drawable/rounded_corner_gray"
+            android:foregroundTint="@color/navy_blue"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:padding="12dp"
+            >
+        </android.widget.Button>
+
+
+
+
+    </LinearLayout>
+
+
+
+
+</ScrollView>

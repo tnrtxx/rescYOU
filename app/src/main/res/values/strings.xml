@@ -25,6 +25,9 @@
     <string name="last_name">Last Name </string>
     <string name="suffix_name">Suffix</string>
     <string name="birthday">Birthday </string>
+    <string name="display_name">Display Name </string>
+    <string name="age">Age</string>
+
 
     <!--Account Details-->
     <string name="account_details">Account Details</string>
@@ -156,6 +159,9 @@
     <string name="save">Save</string>
     <string name="delete">Delete</string>
     <string name="msg_token_fmt">hello</string>
+
+    <!--Profile Edit-->
+    <string name="profile_edit">Edit Profile</string>
 
 
 </resources>

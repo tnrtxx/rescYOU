@@ -26,30 +26,28 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 
 
-private lateinit var binding: ActivityMainBinding
-
-//Initialize variables
-//Personal Information
-private lateinit var firstName: String
-private lateinit var middleName: String
-private lateinit var lastName: String
-private lateinit var suffixName: String
-private lateinit var birthday: String
-private var age: Int = 0
-
-//Account Information
-private lateinit var email: String
-private lateinit var password: String
-
-//For Realtime Database
-private lateinit var database: DatabaseReference
-private lateinit var data: FirebaseDatabase
-
-//for FirebaseAuth (SIGN UP/REGISTRATION OF USER)
-private lateinit var auth: FirebaseAuth
-
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
+
+    //Initialize variables
+//Personal Information
+    var firstName: String?= null
+    var middleName: String?= null
+    var lastName: String?= null
+    var suffixName: String?= null
+    var birthday: String = ""
+    var age: Int = 0
+
+//Account Information
+    private lateinit var email: String
+    private lateinit var password: String
+
+    //For Realtime Database
+    private lateinit var database: DatabaseReference
+    private lateinit var data: FirebaseDatabase
+
+    //for FirebaseAuth (SIGN UP/REGISTRATION OF USER)
 
     private lateinit var googleSignInClient : GoogleSignInClient
 
@@ -166,13 +164,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveDisplayNameToFirebase(displayName: String) {
         // Assuming you have a reference to your Firebase Database
+        val user = auth.currentUser ?: return
         val userID: String = auth.currentUser?.uid ?: return
+        email = user.email ?: "No email" // Default value in case email is null
         val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
         val userRef = database.reference
 
         //store data to the REALTIME DATABASE
-        // Save the display name to the "displayName" field in the user's node
+        // Save the personal details' field in the user's node
         userRef.child("Users").child(userID).child("displayName").setValue(displayName)
+        userRef.child("Users").child(userID).child("birthday").setValue(birthday)
+        userRef.child("Users").child(userID).child("age").setValue(age)
+        userRef.child("Users").child(userID).child("email").setValue(email) // Save email
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {

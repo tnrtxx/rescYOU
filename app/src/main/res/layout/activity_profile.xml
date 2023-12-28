@@ -1,26 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Profile">
 
-    <android.widget.Button
-        android:id="@+id/signOutButton"
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+    <!--HEADER-->
+        <LinearLayout
+            android:id="@+id/header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:backgroundTint="@color/light_gray"
+            android:paddingTop="24dp"
+            >
+
+            <TextView
+                android:id="@+id/info_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/profile"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/darker_gray"
+                android:layout_marginTop="20dp"
+                />
+
+        </LinearLayout>
+
+        <!--CONTENT-->
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="34dp"
+            >
+            <!--PERSONAL DETAILS-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/personal_details"
+                android:textAlignment="textStart"
+                android:textColor="@color/navy_blue"
+                android:textSize="30sp"
+                android:textStyle="bold"></TextView>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/display_name"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"></TextView>
+
+            <TextView
+                android:id="@+id/displayName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Juan Dela Cruz"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="24sp"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/birthday"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"></TextView>
+
+            <TextView
+                android:id="@+id/birthday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Enter your birthday"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="24sp"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/age"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"></TextView>
+
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Enter your birthday to calculate your age."
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="24sp"></TextView>
+
+
+            <!--ACCOUNT DETAILS-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="@string/account_details"
+                android:textAlignment="textStart"
+                android:textColor="@color/navy_blue"
+                android:textSize="30sp"
+                android:textStyle="bold"></TextView>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/email"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"></TextView>
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Juan@gmail.com"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="24sp"></TextView>
+
+        <android.widget.Button
+            android:id="@+id/editButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:text="@string/edit"
+            android:background="@drawable/rounded_corner_gray"
+            android:foregroundTint="@color/navy_blue"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:padding="12dp"
+            >
+        </android.widget.Button>
+
+
+            <android.widget.Button
+                android:id="@+id/signOutButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/rounded_corner"
+                android:foregroundTint="@color/white"
+                android:padding="12dp"
+                android:text="@string/sign_out"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:layout_marginBottom="150dp"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+    </ScrollView>
+
+
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottom_app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="sign out"
-        android:background="@drawable/rounded_corner"
-        android:foregroundTint="@color/white"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:padding="12dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        />
+        android:layout_gravity="bottom"
+        android:backgroundTint="@color/light_gray"
+        app:contentInsetEnd="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
+        app:contentInsetStart="0dp"
+        app:fabCradleMargin="10dp"
+        app:fabCradleRoundedCornerRadius="10dp"
+        app:fabCradleVerticalOffset="5dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="0dp"
+            android:background="@color/light_gray"
+            android:visibility="visible"
+            app:itemIconTint="@color/darker_gray"
+            app:itemTextColor="@color/darker_gray"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav_menu"
+            />
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
