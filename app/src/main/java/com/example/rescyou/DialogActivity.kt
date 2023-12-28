@@ -202,7 +202,7 @@ class DialogActivity : AppCompatActivity() {
 
                 } else {
                     Log.e(TAG, "FCM token is null.")
-                    Toast.makeText(this@DialogActivity, "null", Toast.LENGTH_SHORT).show()
+
 
                 }
             }
@@ -218,8 +218,6 @@ class DialogActivity : AppCompatActivity() {
     }
 
     private fun sendAcceptNotification(fcmToken: String) {
-//        Toast.makeText(this, "sendDeclineNotification(fcmToken: String yo" + fcmToken, Toast.LENGTH_SHORT).show()
-
 
         try {
             val jsonObject = JSONObject().apply {
@@ -235,13 +233,11 @@ class DialogActivity : AppCompatActivity() {
             }
 
             if (fcmToken.isNullOrBlank()) {
-                Toast.makeText(this, "yo " + fcmToken, Toast.LENGTH_SHORT).show()
 
                 Log.e(ContentValues.TAG, "Receiver FCM token is null or empty.")
                 Toast.makeText(this, "Failed to send help notification: Receiver FCM token is null or empty.", Toast.LENGTH_SHORT).show()
                 return
             }
-            Toast.makeText(this, fcmToken, Toast.LENGTH_SHORT).show()
 
             callApi(jsonObject)
         } catch (e: Exception) {
@@ -251,9 +247,6 @@ class DialogActivity : AppCompatActivity() {
     }
 
     private fun sendDeclineNotification(fcmToken: String) {
-//        Toast.makeText(this, "sendDeclineNotification(fcmToken: String yo" + fcmToken, Toast.LENGTH_SHORT).show()
-
-
         try {
             val jsonObject = JSONObject().apply {
                 put("to", fcmToken)
@@ -268,14 +261,10 @@ class DialogActivity : AppCompatActivity() {
             }
 
             if (fcmToken.isNullOrBlank()) {
-                Toast.makeText(this, "yo " + fcmToken, Toast.LENGTH_SHORT).show()
-
                 Log.e(ContentValues.TAG, "Receiver FCM token is null or empty.")
                 Toast.makeText(this, "Failed to send help notification: Receiver FCM token is null or empty.", Toast.LENGTH_SHORT).show()
                 return
             }
-            Toast.makeText(this, fcmToken, Toast.LENGTH_SHORT).show()
-
             callApi(jsonObject)
         } catch (e: Exception) {
             Log.e(ContentValues.TAG, "Error building notification payload: ${e.message}")
@@ -659,7 +648,6 @@ private fun showDialog(pinId: String) {
 
     //EDIT
     private fun showEditDialog(pinId: String) {
-        Toast.makeText(this, "Edit button clicked", Toast.LENGTH_SHORT).show()
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.activity_edit_pin)
@@ -742,7 +730,6 @@ private fun showDialog(pinId: String) {
                 dialogInterface.dismiss()
 
                 checkIfEmpty()
-                Toast.makeText(this, selectedRateName + selectedItemValue + selectedSitioValue +  descriptionInputEditText.text.toString(), Toast.LENGTH_SHORT).show()
 
                 val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
                     .reference
@@ -788,8 +775,6 @@ private fun showDialog(pinId: String) {
         //DELETE BUTTON
         val deleteButton = dialog.findViewById<Button>(R.id.deletePinButton)
         deleteButton.setOnClickListener {
-            Toast.makeText(this, pinId, Toast.LENGTH_SHORT).show()
-
             val alertDialogBuilder = AlertDialog.Builder(this@DialogActivity)
             alertDialogBuilder.setTitle("Delete Confirmation")
             alertDialogBuilder.setMessage("Are you sure you want to delete?")
@@ -871,7 +856,6 @@ private fun showDialog(pinId: String) {
             when (mildRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Mild"
-                    Toast.makeText(applicationContext, "Mild", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.mild_clicked, null)
                     mildRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -903,7 +887,6 @@ private fun showDialog(pinId: String) {
             when (moderateRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Moderate"
-                    Toast.makeText(applicationContext, "Moderate", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.moderate_clicked, null)
                     moderateRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -935,7 +918,6 @@ private fun showDialog(pinId: String) {
             when (severeRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Severe"
-                    Toast.makeText(applicationContext, "Severe", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.severe_clicked, null)
                     severeRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -966,7 +948,6 @@ private fun showDialog(pinId: String) {
             when (criticalRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Critical"
-                    Toast.makeText(applicationContext, "Critical", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.crtical_clicked, null)
                     criticalRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -997,7 +978,6 @@ private fun showDialog(pinId: String) {
             when (catastrophicRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Catastrophic"
-                    Toast.makeText(applicationContext, "Moderate", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.catastropic_4_clicked, null)
                     catastrophicRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -1065,7 +1045,6 @@ private fun showDialog(pinId: String) {
 
     //GETTING THE SELECTED RATING OF THE SITUATION
     private fun getSelectedRatings(){
-//        Toast.makeText(applicationContext, selectedRateName , Toast.LENGTH_SHORT).show()
     }
 
     //TYPE OF DISASTER
@@ -1088,7 +1067,6 @@ private fun showDialog(pinId: String) {
             }
         }
 
-//        Toast.makeText(applicationContext, selectedItemValue, Toast.LENGTH_SHORT).show()
 
     }
 

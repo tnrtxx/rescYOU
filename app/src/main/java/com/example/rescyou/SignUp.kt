@@ -203,8 +203,6 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
     private fun displayFormattedDate(timestamp: Long) {
         binding.birthdayTextInput.setText(formatter.format(timestamp))
         birthday=binding.birthdayTextInput.text.toString()
-        Toast.makeText(applicationContext, birthday, Toast.LENGTH_SHORT).show()
-
         Log.i("Formatting", timestamp.toString())
 
     }
@@ -276,9 +274,6 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
 
                 updateUI(user)
 
-                Toast.makeText(applicationContext, userID, Toast.LENGTH_SHORT).show()
-
-
                 storeData(userID, firstName, middleName, lastName, displayName, suffixName, birthday, age, email, password)
 
 
@@ -287,8 +282,6 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
                 val intent = Intent(this, Home::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
-                Toast.makeText(applicationContext, userID, Toast.LENGTH_SHORT).show()
-
                 dialog.dismiss()
 
             } else {
@@ -351,8 +344,6 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
 
             // Log and toast
             Log.d(TAG, token)
-            Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
-
             // Save the FCM token to Firebase
             saveFcmTokenToFirebase(token)
         })

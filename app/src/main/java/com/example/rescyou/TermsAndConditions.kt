@@ -74,20 +74,6 @@ class TermsAndConditions : AppCompatActivity() {
                 i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(i)
 
-//                user?.delete()?.addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        FirebaseAuth.getInstance().signOut()
-//                        val i  = Intent(this,MainActivity::class.java)
-//                        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//                        startActivity(i)
-//                    } else {
-//                        Toast.makeText(this, "Failed to delete account.", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-
-
-
-
 
         }
     }

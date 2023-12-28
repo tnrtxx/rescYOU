@@ -169,7 +169,6 @@ class MainActivity : AppCompatActivity() {
 
             // Log and toast
             Log.d(TAG, token)
-            Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
 
             // Save the FCM token to Firebase
             saveFcmTokenToFirebase(token)
@@ -204,7 +203,7 @@ class MainActivity : AppCompatActivity() {
                         val intent = Intent(this, Home::class.java) // Create the Intent object
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent) // Use the Intent object to start the Home activity
-                        Toast.makeText(applicationContext, "Success", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "Sign in successfully.", Toast.LENGTH_SHORT).show()
                     }
 
                 } else {
@@ -267,7 +266,7 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this, Home::class.java) // Create the Intent object
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent) // Use the Intent object to start the Home activity
-                Toast.makeText(applicationContext, "Success", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Sign in successfully.", Toast.LENGTH_SHORT).show()
 
                 dialog.dismiss()
 

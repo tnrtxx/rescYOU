@@ -237,7 +237,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         //PIN MY LOCATION BUTTON
         binding.pinMyLocationButton.setOnClickListener {
             if(pinIds.isEmpty()){
-                Toast.makeText(this, "null", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, PinMyLocation::class.java)
                 startActivity(intent)
             }else{
@@ -287,7 +286,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
         // Initialize and assign variable
         binding.bottomNavView.selectedItemId = R.id.home
-//        Toast.makeText(applicationContext, selectedItem.toString(), Toast.LENGTH_SHORT).show()
 
         bottomNavigationView.setOnNavigationItemSelectedListener(navBarWhenClicked)
 
@@ -820,7 +818,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     //SENDING HELP BUTTON
     private fun fetchOtherUserData(pinUserId: String) {
         val userRef = database.reference.child("Users").child(pinUserId)
-//        Toast.makeText(this, pinUserId, Toast.LENGTH_SHORT).show()
 
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -862,7 +859,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         senderDisplayName: String,
         pinId: String
     ){
-        Toast.makeText(this, "pls" + senderDisplayName, Toast.LENGTH_SHORT).show()
 
         try {
             val jsonObject = JSONObject().apply {
@@ -882,13 +878,11 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             }
 
             if (otherUser?.fcmToken.isNullOrBlank()) {
-                Toast.makeText(this, otherUser?.fcmToken, Toast.LENGTH_SHORT).show()
 
                 Log.e(TAG, "Receiver FCM token is null or empty.")
                 Toast.makeText(this, "Failed to send help notification: Receiver FCM token is null or empty.", Toast.LENGTH_SHORT).show()
                 return
             }
-            Toast.makeText(this, otherUser?.fcmToken, Toast.LENGTH_SHORT).show()
 
             callApi(jsonObject)
         } catch (e: Exception) {
@@ -1071,11 +1065,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 resolved = dataSnapshot.child("resolved").getValue(String::class.java)
 
 
-
-
-
-                Toast.makeText(this@Home, currentUserId(), Toast.LENGTH_SHORT).show()
-
                 if(pinRescuer==null || pinRescuer==""){
                     rescuerName?.text = "No one is sending help yet."
                 }
@@ -1181,8 +1170,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                     val senderUserId = currentUserId()
                     if (senderUserId != null) {
                         sendHelpButtonClicked(pins.pinUserId, senderUserId, pins.pinId)
-                        Toast.makeText(this, "receiver" + pins.pinUserId, Toast.LENGTH_SHORT).show()
-                        Toast.makeText(this, "sender" + senderUserId, Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(this, "Failed to get sender user ID.", Toast.LENGTH_SHORT).show()
                     }
@@ -1205,7 +1192,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
     //SHOW MY DIALOG (for my pin)
     private fun showEditDialog(pinId: String) {
-        Toast.makeText(this, "Edit button clicked", Toast.LENGTH_SHORT).show()
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.activity_edit_pin)
@@ -1288,7 +1274,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 dialogInterface.dismiss()
 
                 checkIfEmpty()
-                Toast.makeText(this, selectedRateName + selectedItemValue + selectedSitioValue +  descriptionInputEditText.text.toString(), Toast.LENGTH_SHORT).show()
 
                 val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
                     .reference
@@ -1334,8 +1319,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         //DELETE BUTTON
         val deleteButton = dialog.findViewById<Button>(R.id.deletePinButton)
         deleteButton.setOnClickListener {
-            Toast.makeText(this, pinId, Toast.LENGTH_SHORT).show()
-
             val alertDialogBuilder = AlertDialog.Builder(this@Home)
             alertDialogBuilder.setTitle("Delete Confirmation")
             alertDialogBuilder.setMessage("Are you sure you want to delete?")
@@ -1417,7 +1400,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             when (mildRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Mild"
-                    Toast.makeText(applicationContext, "Mild", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.mild_clicked, null)
                     mildRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -1449,7 +1431,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             when (moderateRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Moderate"
-                    Toast.makeText(applicationContext, "Moderate", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.moderate_clicked, null)
                     moderateRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -1481,7 +1462,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             when (severeRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Severe"
-                    Toast.makeText(applicationContext, "Severe", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.severe_clicked, null)
                     severeRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -1512,7 +1492,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             when (criticalRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Critical"
-                    Toast.makeText(applicationContext, "Critical", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.crtical_clicked, null)
                     criticalRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -1543,7 +1522,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             when (catastrophicRadioButton!!.isChecked) {
                 true -> {
                     selectedRateName = "Catastrophic"
-                    Toast.makeText(applicationContext, "Moderate", Toast.LENGTH_SHORT).show()
                     selectedDrawable = resources.getDrawable(R.drawable.catastropic_4_clicked, null)
                     catastrophicRadioButton!!.setCompoundDrawablesWithIntrinsicBounds(
                         null,
@@ -1611,7 +1589,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
     //GETTING THE SELECTED RATING OF THE SITUATION
     private fun getSelectedRatings(){
-//        Toast.makeText(applicationContext, selectedRateName , Toast.LENGTH_SHORT).show()
     }
 
     //TYPE OF DISASTER
@@ -1634,7 +1611,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             }
         }
 
-//        Toast.makeText(applicationContext, selectedItemValue, Toast.LENGTH_SHORT).show()
 
     }
 
@@ -1714,7 +1690,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             }
 
             R.id.tools -> {
-                Toast.makeText(applicationContext, "tools", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, Tools::class.java)
                 startActivity(intent)
                 return@OnNavigationItemSelectedListener true
@@ -1722,14 +1697,12 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             }
 
             R.id.info -> {
-                Toast.makeText(applicationContext, "information", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, Information::class.java)
                 startActivity(intent)
                 return@OnNavigationItemSelectedListener true
             }
 
             R.id.profile -> {
-                Toast.makeText(applicationContext, "profile", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, Profile::class.java)
                 startActivity(intent)
                 return@OnNavigationItemSelectedListener true
