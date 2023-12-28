@@ -56,50 +56,74 @@
 
         <activity
             android:name=".EditPin"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".MyPin"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".DialogActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".ViewPin"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
 
         <activity
             android:name=".Hotlines"
             android:exported="false"
-            android:label=".Information">
+            android:label=".Information"
+            android:screenOrientation="portrait"
+            >
         </activity>
 
         <activity
             android:name=".EvacuationCenterMap"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAGCgwA7wV7tmsmLwg93pDuCntA00InE7M" />
+            android:value="AIzaSyAGCgwA7wV7tmsmLwg93pDuCntA00InE7M"/>
 
         <activity
             android:name=".EvacuationCenters"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
 
         <activity
             android:name=".PerDisaster"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".PreparednessTips"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".Information"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".Compass"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".Tools"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -107,7 +131,9 @@
 
         <activity
             android:name=".TermsAndConditions"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -115,31 +141,49 @@
 
         <activity
             android:name=".PinMyLocation"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".Profile"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".VerifyOtp"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".SendOtp"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".ForgotPassword"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".Home"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".SignInEmail"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".SignUp"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".SplashScreen"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -148,7 +192,8 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".MyFirebaseMessagingService"
