@@ -1,9 +1,10 @@
 package com.example.rescyou
 
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import com.example.rescyou.databinding.ActivityCompassBinding
 import com.example.rescyou.databinding.ActivityInformationBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -23,6 +24,13 @@ class Information : AppCompatActivity() {
             val intent = Intent(this, PreparednessTips::class.java)
             startActivity(intent)
         }
+
+        //HOTLINES
+        binding.hotlinesButton.setOnClickListener {
+            val intent = Intent(this, Hotlines::class.java)
+            startActivity(intent)
+        }
+
 
         //EVACUATION CENTERS
         binding.centersButton.setOnClickListener {

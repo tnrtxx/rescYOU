@@ -22,6 +22,10 @@
     <!--background-->
     <color name="light_gray">#F8F8F8</color>
 
+    <!--EVACUATION CENTER STATUS COLORS-->
+    <color name="isAvailable">#4CAF50</color>
+    <color name="isFull">#F44336</color>
+    <color name="isNotAvailable">#9E9E9E</color>
 
 
 
