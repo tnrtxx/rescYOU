@@ -242,7 +242,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
         binding.addPhotoButton.setOnClickListener {
             // Check and request gallery permission
             if (hasGalleryPermission()) {
-                // Permission already granted, open gallery here
                 openGallery()
             } else {
                 requestGalleryPermission()
@@ -571,11 +570,8 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     }
 
     private fun hasGalleryPermission(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            EasyPermissions.hasPermissions(
-                this,
-                android.Manifest.permission.READ_MEDIA_IMAGES
-            )
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            true
         } else {
             EasyPermissions.hasPermissions(
                 this,
@@ -594,18 +590,10 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     }
 
     private fun requestGalleryPermission() {
-        val rationale = "Storage permission is required for taking photos via gallery."
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             EasyPermissions.requestPermissions(
                 this,
-                rationale,
-                GALLERY_PERMISSION_REQUEST_CODE,
-                android.Manifest.permission.READ_MEDIA_IMAGES
-            )
-        } else {
-            EasyPermissions.requestPermissions(
-                this,
-                rationale,
+                "Storage permission is required for accessing the gallery.",
                 GALLERY_PERMISSION_REQUEST_CODE,
                 android.Manifest.permission.READ_EXTERNAL_STORAGE
             )
@@ -640,13 +628,20 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     }
 
     private fun openGallery() {
-        FilePickerBuilder.instance
-            .setActivityTitle("Select Image")
-            .setMaxCount(1) //optional
-            .setSelectedFiles(uri) //optional
-            .pickPhoto(this, GALLERY_IMAGE_PICK_REQUEST_CODE)
-
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "image/*"
+                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            }
+            startActivityForResult(intent, GALLERY_IMAGE_PICK_REQUEST_CODE)
+        } else {
+            FilePickerBuilder.instance
+                .setActivityTitle("Select Image")
+                .setMaxCount(1) //optional
+                .setSelectedFiles(uri) //optional
+                .pickPhoto(this, GALLERY_IMAGE_PICK_REQUEST_CODE)
+        }
     }
 
     private fun openCamera() {
@@ -874,35 +869,54 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
         if (resultCode == RESULT_OK && data != null) {
             if (requestCode == GALLERY_IMAGE_PICK_REQUEST_CODE) {
-                // Get the selected photos and update the arrayList
-                val selectedPhotos =
-                    data.getParcelableArrayListExtra<Uri>(FilePickerConst.KEY_SELECTED_MEDIA)
-
-                if (selectedPhotos != null) {
-                    for (imageUri in selectedPhotos) {
-                        if (uri.size < 4) {
-                            uri.add(imageUri)
-                        } else {
-                            Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
-                            break
-                        }
-                    }
-
-                    adapter.notifyDataSetChanged()
-                    adapter.updateItemCount()
-                }
-                else{
-                    if (uri.size < 4) {
-                        //this part is to get the single images
-                        val imageUri = data.data
-                        if (imageUri != null) {
-                            uri.add(imageUri)
+                // Handle result from system file picker
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val clipData = data.clipData
+                    if (clipData != null) {
+                        for (i in 0 until clipData.itemCount) {
+                            val imageUri = clipData.getItemAt(i).uri
+                            if (uri.size < 4) {
+                                uri.add(imageUri)
+                            } else {
+                                Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
+                                break
+                            }
                         }
                     } else {
-                        Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
+                        val imageUri = data.data
+                        if (imageUri != null) {
+                            if (uri.size < 4) {
+                                uri.add(imageUri)
+                            } else {
+                                Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
-
+                } else {
+                    // Handle result from FilePicker
+                    val selectedPhotos = data.getParcelableArrayListExtra<Uri>(FilePickerConst.KEY_SELECTED_MEDIA)
+                    if (selectedPhotos != null) {
+                        for (imageUri in selectedPhotos) {
+                            if (uri.size < 4) {
+                                uri.add(imageUri)
+                            } else {
+                                Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
+                                break
+                            }
+                        }
+                    } else {
+                        val imageUri = data.data
+                        if (imageUri != null) {
+                            if (uri.size < 4) {
+                                uri.add(imageUri)
+                            } else {
+                                Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
                 }
+                adapter.notifyDataSetChanged()
+                adapter.updateItemCount()
             }
         }
     }
