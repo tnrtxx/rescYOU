@@ -6,12 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".MyPin"
     android:backgroundTint="@color/white"
-    android:background="@color/white"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="34dp"
 
@@ -78,7 +77,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/display_name"
-                android:textColor="@color/black"
 
                 >
             </com.google.android.material.textfield.TextInputEditText>
@@ -109,7 +107,6 @@
                 android:hint="@string/birthday_req"
                 android:inputType="date"
                 android:focusableInTouchMode="false"
-                android:textColor="@color/black"
                 >
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -141,7 +138,6 @@
             android:textColor="@color/black"
             android:textSize="20sp"
             android:padding="12dp"
-            android:layout_marginBottom="150dp"
             >
         </android.widget.Button>
 
