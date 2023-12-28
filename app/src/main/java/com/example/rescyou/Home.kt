@@ -134,6 +134,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     var pinRescuer: String? = null
     var pinId: String? = null
     private var pinIds = mutableListOf<String>()
+    var pinUserId: String? = null
 
 
     // FOR RATING YOUR SITUATION
@@ -506,12 +507,34 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                     val currentSitio = dialog.findViewById<TextView>(R.id.viewPin_currentSitio)
                     val currentSituation = dialog.findViewById<TextView>(R.id.viewPin_currentSituation)
 
+                    //for the display namme of the one who pinned
+                    val usersRef = database.getReference("Users")
+
                     val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
                     val myRef = database.getReference("Pins").child(pinId)
 
 
-                    myRef.addValueEventListener(object : ValueEventListener {
+                    myRef.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val pinUserId = dataSnapshot.child("pinUserId").getValue(String::class.java)
+
+                            usersRef.child(pinUserId.toString()).addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    val displayName = dataSnapshot.child("displayName").getValue(String::class.java)
+
+                                    if (displayName != null) {
+                                        val pinsRef = database.getReference("Pins").child(pinId)
+                                        pinsRef.child("pinName").setValue(displayName)
+                                    }
+                                }
+
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    // Handle possible errors.
+                                }
+                            })
+
+
+
                             pinRescuer =
                                 dataSnapshot.child("pinRescuer").getValue(String::class.java).toString()
                             val pinName = dataSnapshot.child("pinName").getValue(String::class.java)
@@ -668,22 +691,22 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 //                }
                 for (postSnapshot in snapshot.children) {
                     val pin = postSnapshot.getValue(Pins::class.java)
-                    pin?.let {
-                        pinList.add(it)
+                    if (pin != null && postSnapshot.hasChild("latitude")) {
+                        pin.latitude = postSnapshot.child("latitude").getValue(String::class.java) ?: ""
+                        pinList.add(pin)
                         val markerOptions = MarkerOptions().position(
                             LatLng(
-                                it.latitude.toDouble(),
-                                it.longitude.toDouble()
+                                pin.latitude.toDouble(),
+                                pin.longitude.toDouble()
                             )
-                        ).title(it.pinId)
+                        ).title(pin.pinId)
 
                         val marker = googleMap.addMarker(markerOptions)
                         markerList.add(marker!!)
-                        marker.tag = it.pinUserId
+                        marker.tag = pin.pinUserId
 
                         // Fetch otherUser data here
-
-                        fetchOtherUserData(it.pinUserId)
+                        fetchOtherUserData(pin.pinUserId)
                     }
                 }
             }
@@ -990,9 +1013,28 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
         val myRef = database.getReference("Pins").child(pins.pinId)
 
+        val usersRef = database.getReference("Users")
 
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val pinUserId = dataSnapshot.child("pinUserId").getValue(String::class.java)
+
+                usersRef.child(pinUserId.toString()).addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val displayName = dataSnapshot.child("displayName").getValue(String::class.java)
+
+                        if (displayName != null) {
+                            val pinsRef = database.getReference("Pins").child(pins.pinId)
+                            pinsRef.child("pinName").setValue(displayName)
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // Handle possible errors.
+                    }
+                })
+
+
                 pinRescuer = dataSnapshot.child("pinRescuer").getValue(String::class.java)
                 val pinName = dataSnapshot.child("pinName").getValue(String::class.java)
                 val rescuerID = dataSnapshot.child("pinRescuerID").getValue(String::class.java)

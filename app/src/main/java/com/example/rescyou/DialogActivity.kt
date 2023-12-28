@@ -110,6 +110,8 @@ class DialogActivity : AppCompatActivity() {
     //for a progress dialog
     private lateinit var progressDialog: ProgressDialog
 
+    var pinUserId: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -340,9 +342,28 @@ private fun showDialog(pinId: String) {
                     val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
                     val myRef = database.getReference("Pins").child(pinId)
 
+                    val usersRef = database.getReference("Users")
 
                     myRef.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val pinUserId = dataSnapshot.child("pinUserId").getValue(String::class.java)
+
+                            usersRef.child(pinUserId.toString()).addValueEventListener(object : ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    val displayName = dataSnapshot.child("displayName").getValue(String::class.java)
+
+                                    if (displayName != null) {
+                                        val pinsRef = database.getReference("Pins").child(pinId)
+                                        pinsRef.child("pinName").setValue(displayName)
+                                    }
+                                }
+
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    // Handle possible errors.
+                                }
+                            })
+
+
                             pinRescuer =
                                 dataSnapshot.child("pinRescuer").getValue(String::class.java).toString()
                             val pinName = dataSnapshot.child("pinName").getValue(String::class.java)
@@ -477,9 +498,30 @@ private fun showDialog(pinId: String) {
                     val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
                     val myRef = database.getReference("Pins").child(pinId)
 
+                    val usersRef = database.getReference("Users")
+
 
                     myRef.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val pinUserId = dataSnapshot.child("pinUserId").getValue(String::class.java)
+
+                            usersRef.child(pinUserId.toString()).addValueEventListener(object : ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    val displayName = dataSnapshot.child("displayName").getValue(String::class.java)
+
+                                    if (displayName != null) {
+                                        val pinsRef = database.getReference("Pins").child(pinId)
+                                        pinsRef.child("pinName").setValue(displayName)
+                                    }
+                                }
+
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    // Handle possible errors.
+                                }
+                            })
+
+
+
                             pinRescuer =
                                 dataSnapshot.child("pinRescuer").getValue(String::class.java).toString()
                             val pinName = dataSnapshot.child("pinName").getValue(String::class.java)
