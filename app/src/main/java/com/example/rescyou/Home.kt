@@ -18,6 +18,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.util.Log
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -135,6 +136,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     var pinId: String? = null
     private var pinIds = mutableListOf<String>()
     var pinUserId: String? = null
+    var resolved: String? = null
 
 
     // FOR RATING YOUR SITUATION
@@ -506,6 +508,8 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                     val disasterType = dialog.findViewById<TextView>(R.id.viewPin_disasterType)
                     val currentSitio = dialog.findViewById<TextView>(R.id.viewPin_currentSitio)
                     val currentSituation = dialog.findViewById<TextView>(R.id.viewPin_currentSituation)
+                    val dateAndTime: TextView = dialog.findViewById(R.id.dateAndTime)
+
 
                     //for the display namme of the one who pinned
                     val usersRef = database.getReference("Users")
@@ -543,10 +547,15 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                             val disaster = dataSnapshot.child("disasterType").getValue(String::class.java)
                             val sitio = dataSnapshot.child("sitio").getValue(String::class.java)
                             val description = dataSnapshot.child("description").getValue(String::class.java)
+                            val date = dataSnapshot.child("date").getValue(String::class.java)
+                            val time = dataSnapshot.child("time").getValue(String::class.java)
+                            resolved = dataSnapshot.child("resolved").getValue(String::class.java)
 
 
                             if(pinRescuer==null || pinRescuer==""){
                                 helperNameTextView.text = "No one is sending help yet."
+                            }else if(resolved == "true"){
+                                helperNameTextView.text = "This pin has been resolved."
                             }
                             else{
                                 val message = SpannableString("$pinRescuer is sending a help.")
@@ -562,6 +571,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                             disasterType.text = disaster
                             currentSitio.text = sitio
                             currentSituation.text = description
+                            dateAndTime.text = "Last updated: $time, $date"
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {
@@ -595,27 +605,40 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                     //EDIT BUTTON
                     val editButtonLayout = dialog.findViewById<Button>(R.id.editPinButton)
                     editButtonLayout.setOnClickListener {
-                        showEditDialog(pinId)
-                        Toast.makeText(this@Home, "Edit button clicked", Toast.LENGTH_SHORT).show()
+                        if(resolved == "true"){
+                            Toast.makeText(this@Home, "This pin has been resolved.", Toast.LENGTH_SHORT).show()
+                        } else{
+                            showEditDialog(pinId)
+                            Toast.makeText(this@Home, "Edit button clicked", Toast.LENGTH_SHORT).show()
+                        }
+
                     }
 
                     //RESOLVED BUTTON
                     val resolvedButtonLayout = dialog.findViewById<Button>(R.id.resolvedButton)
                     resolvedButtonLayout.setOnClickListener {
-                        AlertDialog.Builder(this@Home)
-                            .setTitle("Resolve Confirmation")
-                            .setMessage("Are you sure you want to mark this as resolved?")
-                            .setPositiveButton("Yes") { _, _ ->
-                                val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                                    .reference
+                        if(resolved == "true"){
+                            Toast.makeText(this@Home, "This pin has been resolved.", Toast.LENGTH_SHORT).show()
+                        } else{
+                            AlertDialog.Builder(this@Home)
+                                .setTitle("Resolve Confirmation")
+                                .setMessage("Are you sure you want to mark this as resolved?")
+                                .setPositiveButton("Yes") { _, _ ->
+                                    val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                        .reference
 
-                                dbRef.child("Pins").child(pinId).child("resolved").setValue("true")
 
-                                val intent = Intent(this@Home, Home::class.java)
-                                startActivity(intent)
-                            }
-                            .setNegativeButton("No", null)
-                            .show()
+                                    dbRef.child("Pins").child(pinId).child("resolved").setValue("true")
+
+                                    val intent = Intent(this@Home, Home::class.java)
+                                    startActivity(intent)
+                                }
+                                .setNegativeButton("No", null)
+                                .show()
+
+                        }
+
+
                     }
 
                 } else {
@@ -1007,6 +1030,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         val disasterType = dialog.findViewById<TextView>(R.id.viewPin_disasterType)
         val currentSitio = dialog.findViewById<TextView>(R.id.viewPin_currentSitio)
         val currentSituation = dialog.findViewById<TextView>(R.id.viewPin_currentSituation)
+        val dateAndTime: TextView = dialog.findViewById(R.id.dateAndTime)
 
         otherUser?.pinUserId =pins.pinUserId
 
@@ -1042,6 +1066,12 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 val disaster = dataSnapshot.child("disasterType").getValue(String::class.java)
                 val sitio = dataSnapshot.child("sitio").getValue(String::class.java)
                 val description = dataSnapshot.child("description").getValue(String::class.java)
+                val date = dataSnapshot.child("date").getValue(String::class.java)
+                val time = dataSnapshot.child("time").getValue(String::class.java)
+                resolved = dataSnapshot.child("resolved").getValue(String::class.java)
+
+
+
 
 
                 Toast.makeText(this@Home, currentUserId(), Toast.LENGTH_SHORT).show()
@@ -1049,11 +1079,15 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 if(pinRescuer==null || pinRescuer==""){
                     rescuerName?.text = "No one is sending help yet."
                 }
+                else if(resolved == "true"){
+                    rescuerName.text = "This pin has been resolved."
+                }
                 else{
                     if(currentUserId()==rescuerID){
                         rescuerName.text = "You are sending a help."
 
-                    }else{
+                    }
+                    else{
                         val message = SpannableString("$pinRescuer is sending a help.")
                         message.setSpan(StyleSpan(Typeface.BOLD), 0, pinRescuer!!.length, 0)
                         message.setSpan(ForegroundColorSpan(Color.parseColor("#072A4D")), 0, pinRescuer!!.length, 0) // Navy blue color
@@ -1083,6 +1117,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 disasterType.text = disaster
                 currentSitio.text = sitio
                 currentSituation.text = description
+                dateAndTime.text = "Last updated: $time, $date"
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -1130,28 +1165,40 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             val alertDialog: AlertDialog = alertDialogBuilder.create()
             alertDialog.show()
         }
+
+        //SEND HELP BUTTON
+
+
         val sendHelpButton = dialog.findViewById<Button>(R.id.sendHelpButton)
         sendHelpButton.setOnClickListener {
-            val alertDialogBuilder = AlertDialog.Builder(this)
-            alertDialogBuilder.setTitle("Confirm Send Help")
-            alertDialogBuilder.setMessage("Are you sure you want to send help?")
-            alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
-                val senderUserId = currentUserId()
-                if (senderUserId != null) {
-                    sendHelpButtonClicked(pins.pinUserId, senderUserId, pins.pinId)
-                    Toast.makeText(this, "receiver" + pins.pinUserId, Toast.LENGTH_SHORT).show()
-                    Toast.makeText(this, "sender" + senderUserId, Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "Failed to get sender user ID.", Toast.LENGTH_SHORT).show()
+            if(resolved=="true"){
+                Toast.makeText(this, "This pin has already been resolved.", Toast.LENGTH_SHORT).show()
+            }else{
+                val alertDialogBuilder = AlertDialog.Builder(this)
+                alertDialogBuilder.setTitle("Confirm Send Help")
+                alertDialogBuilder.setMessage("Are you sure you want to send help?")
+                alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
+                    val senderUserId = currentUserId()
+                    if (senderUserId != null) {
+                        sendHelpButtonClicked(pins.pinUserId, senderUserId, pins.pinId)
+                        Toast.makeText(this, "receiver" + pins.pinUserId, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "sender" + senderUserId, Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Failed to get sender user ID.", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-            alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
-                dialogInterface.dismiss()
+                alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                }
+
+                val alertDialog: AlertDialog = alertDialogBuilder.create()
+                alertDialog.show()
+
             }
 
-            val alertDialog: AlertDialog = alertDialogBuilder.create()
-            alertDialog.show()
         }
+
+
 
     }
 

@@ -111,6 +111,7 @@ class DialogActivity : AppCompatActivity() {
     private lateinit var progressDialog: ProgressDialog
 
     var pinUserId: String? = null
+    var resolved: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -338,6 +339,7 @@ private fun showDialog(pinId: String) {
                     val disasterType = dialog.findViewById<TextView>(R.id.viewPin_disasterType)
                     val currentSitio = dialog.findViewById<TextView>(R.id.viewPin_currentSitio)
                     val currentSituation = dialog.findViewById<TextView>(R.id.viewPin_currentSituation)
+                    val dateAndTime: TextView = dialog.findViewById(R.id.dateAndTime)
 
                     val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
                     val myRef = database.getReference("Pins").child(pinId)
@@ -372,10 +374,14 @@ private fun showDialog(pinId: String) {
                             val disaster = dataSnapshot.child("disasterType").getValue(String::class.java)
                             val sitio = dataSnapshot.child("sitio").getValue(String::class.java)
                             val description = dataSnapshot.child("description").getValue(String::class.java)
-
+                            val date = dataSnapshot.child("date").getValue(String::class.java)
+                            val time = dataSnapshot.child("time").getValue(String::class.java)
+                            resolved = dataSnapshot.child("resolved").getValue(String::class.java)
 
                             if(pinRescuer==null || pinRescuer==""){
                                 helperNameTextView.text = "No one is sending help yet."
+                            }else if(resolved == "true"){
+                                helperNameTextView.text = "This pin has been resolved."
                             }
                             else{
                                     val message = SpannableString("$pinRescuer is sending a help.")
@@ -391,6 +397,7 @@ private fun showDialog(pinId: String) {
                             disasterType.text = disaster
                             currentSitio.text = sitio
                             currentSituation.text = description
+                            dateAndTime.text = "Last updated: $time, $date"
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {
@@ -424,8 +431,12 @@ private fun showDialog(pinId: String) {
                     //EDIT BUTTON
                     val editButtonLayout = dialog.findViewById<Button>(R.id.editPinButton)
                     editButtonLayout.setOnClickListener {
-                        showEditDialog(pinId)
-                        Toast.makeText(this@DialogActivity, "Edit button clicked", Toast.LENGTH_SHORT).show()
+                        if (resolved == "true"){
+                            Toast.makeText(this@DialogActivity, "This pin has been resolved.", Toast.LENGTH_SHORT).show()
+                        } else{
+                            showEditDialog(pinId)
+                            Toast.makeText(this@DialogActivity, "Edit button clicked", Toast.LENGTH_SHORT).show()
+                        }
                     }
 
                     //RESOLVED BUTTON
@@ -494,6 +505,7 @@ private fun showDialog(pinId: String) {
                     val disasterType = dialog.findViewById<TextView>(R.id.viewPin_disasterType)
                     val currentSitio = dialog.findViewById<TextView>(R.id.viewPin_currentSitio)
                     val currentSituation = dialog.findViewById<TextView>(R.id.viewPin_currentSituation)
+                    val dateAndTime: TextView = dialog.findViewById(R.id.dateAndTime)
 
                     val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
                     val myRef = database.getReference("Pins").child(pinId)
@@ -530,7 +542,13 @@ private fun showDialog(pinId: String) {
                             val disaster = dataSnapshot.child("disasterType").getValue(String::class.java)
                             val sitio = dataSnapshot.child("sitio").getValue(String::class.java)
                             val description = dataSnapshot.child("description").getValue(String::class.java)
+                            val date = dataSnapshot.child("date").getValue(String::class.java)
+                            val time = dataSnapshot.child("time").getValue(String::class.java)
+                            resolved = dataSnapshot.child("resolved").getValue(String::class.java)
 
+                            if(resolved == "true"){
+                                helperNameTextView.text = "This pin has been resolved."
+                            }
 
                             helperNameTextView.text = "No one is sending help yet."
                             pinnedByName.text = pinName
@@ -538,6 +556,7 @@ private fun showDialog(pinId: String) {
                             disasterType.text = disaster
                             currentSitio.text = sitio
                             currentSituation.text = description
+                            dateAndTime.text = "Last updated: $time, $date"
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {
@@ -545,11 +564,6 @@ private fun showDialog(pinId: String) {
                         }
                     })
 
-                    pinnedByName.text = pinData.pinName
-                    ratingsSituation.text = pinData.rate
-                    disasterType.text = pinData.disasterType
-                    currentSitio.text = pinData.sitio
-                    currentSituation.text = pinData.description
 
                     var attachmentCounter = 0
                     pinData.attachmentList.forEach {
@@ -571,19 +585,39 @@ private fun showDialog(pinId: String) {
                     //EDIT BUTTON
                     val editButtonLayout = dialog.findViewById<Button>(R.id.editPinButton)
                     editButtonLayout.setOnClickListener {
-                        showEditDialog(pinId)
-                        Toast.makeText(this@DialogActivity, "Edit button clicked", Toast.LENGTH_SHORT).show()
+                        if(resolved == "true"){
+                            Toast.makeText(this@DialogActivity, "This pin has been resolved.", Toast.LENGTH_SHORT).show()
+                        } else{
+                            showEditDialog(pinId)
+                            Toast.makeText(this@DialogActivity, "Edit button clicked", Toast.LENGTH_SHORT).show()
+                        }
+
                     }
 
                     //RESOLVED BUTTON
                     val resolvedButtonLayout = dialog.findViewById<Button>(R.id.resolvedButton)
                     resolvedButtonLayout.setOnClickListener {
-                        val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                            .reference
-                        dbRef.child("Pins").child(pinId).child("resolved").setValue("true")
+                        if(resolved == "true"){
+                            Toast.makeText(this@DialogActivity, "This pin has been resolved.", Toast.LENGTH_SHORT).show()
+                        } else{
+                            AlertDialog.Builder(this@DialogActivity)
+                                .setTitle("Resolve Confirmation")
+                                .setMessage("Are you sure you want to mark this as resolved?")
+                                .setPositiveButton("Yes") { _, _ ->
+                                    val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                        .reference
 
-                        val intent = Intent(this@DialogActivity, Home::class.java)
-                        startActivity(intent)
+
+                                    dbRef.child("Pins").child(pinId).child("resolved").setValue("true")
+
+                                    val intent = Intent(this@DialogActivity, Home::class.java)
+                                    startActivity(intent)
+                                }
+                                .setNegativeButton("No", null)
+                                .show()
+
+                        }
+
 
                     }
 
