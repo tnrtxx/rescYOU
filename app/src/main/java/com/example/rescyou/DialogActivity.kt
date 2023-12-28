@@ -127,7 +127,7 @@ class DialogActivity : AppCompatActivity() {
         otherUserID = intent.getStringExtra("otherUserID").toString()
         pinId = intent.getStringExtra("pinId").toString()
 
-        Toast.makeText(this, "other:" + otherUserID, Toast.LENGTH_SHORT).show()
+
 
         // Create a dialog
         val alertDialogBuilder = AlertDialog.Builder(this)
@@ -164,7 +164,6 @@ class DialogActivity : AppCompatActivity() {
         }
         alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
             status = "Declined"
-            Toast.makeText(this, "sendDeclineNotification(fcmToken: String", Toast.LENGTH_SHORT).show()
 
             fetchFCMToken(otherUserID)
             showDeclineDialog(pinId)
@@ -183,7 +182,6 @@ class DialogActivity : AppCompatActivity() {
     private fun fetchFCMToken(userId: String) {
         val myRef = FirebaseDatabase.getInstance().reference.child("Users").child(userId)
 
-        Toast.makeText(this, "user id:" + userId, Toast.LENGTH_SHORT).show()
 
 
         myRef.addValueEventListener(object : ValueEventListener {
