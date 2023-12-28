@@ -62,6 +62,12 @@
             android:exported="false"
             android:parentActivityName=".Information" />
         <activity
+            android:name=".Hotlines"
+            android:exported="false"
+            android:label=".Information">
+        </activity>
+
+        <activity
             android:name=".PerDisaster"
             android:exported="false" />
         <activity

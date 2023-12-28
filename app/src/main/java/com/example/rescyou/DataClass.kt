@@ -8,6 +8,7 @@ data class DataClass(
     var dataImageSource: String? = null,
     var dataArticleSource: String? = null,
     var key: String? = null
+
 ) {
 
     // No-argument constructor to satisfy Firebase's deserialization requirements

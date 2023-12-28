@@ -24,6 +24,11 @@ class Information : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.hotlinesButton.setOnClickListener {
+            val intent = Intent(this, Hotlines::class.java)
+            startActivity(intent)
+        }
+
         //EVACUATION CENTERS
         binding.centersButton.setOnClickListener {
             val intent = Intent(this, EvacuationCenters::class.java)
