@@ -63,6 +63,14 @@ class EvacuationCenterAdapter(private var evacuationCenterArrayList: List<Evacua
             // !! This is for debugging purposes only!!
             // TODO: Remove this later
             Log.d(TAG, toString())
+
+            // Add bottom margin to the last item
+            val layoutParams = holder.itemView.layoutParams as RecyclerView.LayoutParams
+            if (position == itemCount - 1) {
+                layoutParams.bottomMargin = holder.itemView.context.resources.getDimensionPixelSize(R.dimen.margin_bottom_last_item)
+            } else {
+                layoutParams.bottomMargin = 0
+            }
         }
     }
 
