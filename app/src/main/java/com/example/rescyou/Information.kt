@@ -69,9 +69,13 @@ class Information : AppCompatActivity() {
             }
 
             R.id.info -> {
-                val intent = Intent(this, Information::class.java)
-                startActivity(intent)
-                finish()  // Finish the current activity
+                // Check if the current activity is not this
+                if (this !is Information) {
+                    val intent = Intent(this, Information::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                 // Finish the current activity
                 return@OnNavigationItemSelectedListener true
             }
 

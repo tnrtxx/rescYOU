@@ -26,6 +26,22 @@ class Tools : AppCompatActivity() {
     private var isFlash = false
     private lateinit var flashlightSwitch: Switch
 
+    private var torchCallback: CameraManager.TorchCallback = object : CameraManager.TorchCallback() {
+        override fun onTorchModeUnavailable(cameraId: String) {
+            super.onTorchModeUnavailable(cameraId)
+            // Handle the case where the flashlight is unavailable.
+            isFlash = false
+            updateFlashlightButton()
+        }
+
+        override fun onTorchModeChanged(cameraId: String, enabled: Boolean) {
+            super.onTorchModeChanged(cameraId, enabled)
+            // Update the flashlight status and the flashlight button when the flashlight status changes.
+            isFlash = enabled
+            updateFlashlightButton()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityToolsBinding.inflate(layoutInflater)
@@ -37,6 +53,9 @@ class Tools : AppCompatActivity() {
         flashlightSwitch = findViewById(R.id.switchFlashlight_button)
         cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
         flashlightSwitch.setOnClickListener { flashLightOnOrOff(it) }
+
+        // Register the torch callback to get updates about the flashlight status.
+        cameraManager.registerTorchCallback(torchCallback, null)
 
 
         // Whistle
@@ -70,6 +89,21 @@ class Tools : AppCompatActivity() {
         bottomNavigationView.setOnNavigationItemSelectedListener(navBarWhenClicked)
     }
 
+    private fun updateFlashlightButton() {
+        // Update the flashlight button based on the flashlight status.
+        if (isFlash) {
+            flashlightSwitch.text = getString(R.string.switch_on)
+        } else {
+            flashlightSwitch.text = getString(R.string.switch_off)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Unregister the torch callback when the activity is destroyed to avoid memory leaks.
+        cameraManager.unregisterTorchCallback(torchCallback)
+    }
+
     private fun flashLightOnOrOff(v: View?) {
         val switchFlashlight = findViewById<Switch>(R.id.switchFlashlight_button)
 
@@ -80,12 +114,10 @@ class Tools : AppCompatActivity() {
                 cameraManager.setTorchMode(cameraListId, true)
                 isFlash = true
                 switchFlashlight.text = getString(R.string.switch_on)
-                textMessage("Flash Light is On", this)
             } else {
                 cameraManager.setTorchMode(cameraListId, false)
                 isFlash = false
                 switchFlashlight.text = getString(R.string.switch_off)
-                textMessage("Flash Light is Off", this)
             }
         } catch (e: Exception) {
             // Handle any exceptions that may occur when accessing the camera or turning on/off the flashlight.
@@ -132,33 +164,54 @@ class Tools : AppCompatActivity() {
 
         when (item.itemId) {
             R.id.home -> {
+                turnOffFlashlight()
                 val intent = Intent(this, Home::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
                 return@OnNavigationItemSelectedListener true
             }
 
             R.id.tools -> {
-                val intent = Intent(this, Tools::class.java)
-                startActivity(intent)
+                // Check if the current activity is not Profile before starting it
+                if (this !is Tools) {
+                    turnOffFlashlight()
+                    val intent = Intent(this, Tools::class.java)
+                    startActivity(intent)
+                    finish()  // Finish the current activity
+                }
 //                binding.bottomNavView.isSelected= true
                 return@OnNavigationItemSelectedListener true
             }
 
             R.id.info -> {
+                turnOffFlashlight()
                 val intent = Intent(this, Information::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
                 return@OnNavigationItemSelectedListener true
             }
 
             R.id.profile -> {
+                turnOffFlashlight()
                 val intent = Intent(this, Profile::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
                 return@OnNavigationItemSelectedListener true
 
 
             }
         }
         return@OnNavigationItemSelectedListener false
+    }
+
+    private fun turnOffFlashlight() {
+        if (isFlash) {
+            val cameraListId = cameraManager.cameraIdList[0]
+            cameraManager.setTorchMode(cameraListId, false)
+            isFlash = false
+            flashlightSwitch.text = getString(R.string.switch_off)
+            textMessage("Flashlight is turned off.", this)
+        }
     }
 
 }

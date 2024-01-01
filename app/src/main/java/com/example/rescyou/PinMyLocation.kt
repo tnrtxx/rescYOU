@@ -383,6 +383,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
     }
 
+
     private fun checkIfEmpty(){
         //to check baka may null na selected
 
