@@ -49,7 +49,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingHorizontal="34dp"
-
+            android:background="@color/white"
             >
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -79,7 +79,9 @@
                     android:text="@string/switch_off"
                     android:textAlignment="viewEnd"
                     android:textSize="18sp"
-                    tools:ignore="MissingConstraints" />
+                    tools:ignore="MissingConstraints"
+                    android:textColor="@color/black"
+                    />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

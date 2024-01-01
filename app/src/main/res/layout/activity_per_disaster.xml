@@ -4,12 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PerDisaster">
+    tools:context=".PerDisaster"
+    android:background="@color/white"
+    >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:background="@color/white"
             >
 
             <!--HEADER-->
@@ -47,6 +50,7 @@
                 android:orientation="vertical"
                 android:paddingHorizontal="34dp"
                 android:paddingBottom="30dp"
+                android:background="@color/white"
                 >
 
                 <!--IMAGE-->
@@ -67,6 +71,7 @@
                     android:layout_marginTop="10dp"
                     android:text="Description"
                     android:textSize="20sp"
+                    android:textColor="@color/black"
                     />
 
 
@@ -79,6 +84,7 @@
                     android:text="@string/source"
                     android:textStyle="bold"
                     android:textSize="20sp"
+                    android:textColor="@color/black"
                     />
 
                 <TextView
@@ -88,7 +94,9 @@
                     android:layout_marginTop="10dp"
                     android:text="@string/image_source"
                     android:textSize="20sp"
-                    android:textStyle="bold|italic" />
+                    android:textStyle="bold|italic"
+                    android:textColor="@color/black"
+                    />
 
                 <TextView
                     android:id="@+id/imageSource_textView"
@@ -97,7 +105,9 @@
                     android:layout_marginTop="10dp"
                     android:text="URL Image Source"
                     android:textSize="20sp"
-                    android:textStyle="italic" />
+                    android:textStyle="italic"
+                    android:textColor="@color/black"
+                    />
 
                 <TextView
                     android:id="@+id/perDisaster_sourceArticle"
@@ -106,7 +116,9 @@
                     android:layout_marginTop="10dp"
                     android:text="@string/article_source"
                     android:textSize="20sp"
-                    android:textStyle="bold|italic" />
+                    android:textStyle="bold|italic"
+                    android:textColor="@color/black"
+                    />
 
                 <TextView
                     android:id="@+id/articleSource_textView"
@@ -116,6 +128,7 @@
                     android:text="Article Image Source"
                     android:textSize="20sp"
                     android:textStyle="italic"
+                    android:textColor="@color/black"
                     />
 
             </LinearLayout>

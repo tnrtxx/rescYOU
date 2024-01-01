@@ -56,12 +56,14 @@ class Information : AppCompatActivity() {
             R.id.home -> {
                 val intent = Intent(this, Home::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
                 return@OnNavigationItemSelectedListener true
             }
 
             R.id.tools -> {
                 val intent = Intent(this, Tools::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
 //                binding.bottomNavView.isSelected= true
                 return@OnNavigationItemSelectedListener true
             }
@@ -69,12 +71,14 @@ class Information : AppCompatActivity() {
             R.id.info -> {
                 val intent = Intent(this, Information::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
                 return@OnNavigationItemSelectedListener true
             }
 
             R.id.profile -> {
                 val intent = Intent(this, Profile::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
                 return@OnNavigationItemSelectedListener true
 
 

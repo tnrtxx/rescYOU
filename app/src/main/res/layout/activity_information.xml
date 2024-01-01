@@ -49,6 +49,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingHorizontal="34dp"
+            android:background="@color/white"
 
             >
 
@@ -60,7 +61,7 @@
 
                 <TextView
                     android:id="@+id/tips_textview"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/preparedness_tips"
                     android:textColor="@color/black"
@@ -90,7 +91,7 @@
 
                 <TextView
                     android:id="@+id/hotlines_textview"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/hotlines"
                     android:textColor="@color/black"
@@ -120,7 +121,7 @@
 
                 <TextView
                     android:id="@+id/centers_textview"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/evacuation_centers"
                     android:textColor="@color/black"

@@ -4,7 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:backgroundTint="@color/white"
+    android:background="@color/white"
+
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,6 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="vertical"
         android:gravity="center"
+        android:backgroundTint="@color/white"
 >
 
         <ImageView

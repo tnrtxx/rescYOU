@@ -73,7 +73,7 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
                 val displayName = dataSnapshot.child("displayName").value.toString()
                 val email = dataSnapshot.child("email").value.toString()
                 birthday = dataSnapshot.child("birthday").value?.toString()
-                age =  dataSnapshot.child("age").value?.toString()!!.toInt()
+                age = dataSnapshot.child("age").value?.toString()?.toInt() ?: 0
 
                 binding.email.text = email
 
@@ -273,6 +273,7 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
                 }
                 alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
                     // Handle "No" button click, dismiss the dialog
+
                     dialogInterface.dismiss()
                 }
 
@@ -295,7 +296,8 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
             alertDialogBuilder.setTitle("Cancel Confirmation")
             alertDialogBuilder.setMessage("Are you sure you want to cancel?")
             alertDialogBuilder.setPositiveButton("Yes") { dialogInterface, _ ->
-                // Handle "Yes" button click, for example, navigate back or finish the activity
+                val intent = Intent(this, Profile::class.java)
+                startActivity(intent)
                 dialogInterface.dismiss()
 
             }
@@ -371,12 +373,14 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
             R.id.home -> {
                 val intent = Intent(this, Home::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
                 return@OnNavigationItemSelectedListener true
             }
 
             R.id.tools -> {
                 val intent = Intent(this, Tools::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
 //                binding.bottomNavView.isSelected= true
                 return@OnNavigationItemSelectedListener true
             }
@@ -384,6 +388,7 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
             R.id.info -> {
                 val intent = Intent(this, Information::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
                 return@OnNavigationItemSelectedListener true
             }
 
@@ -392,6 +397,7 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
                 if (this !is Profile) {
                     val intent = Intent(this, Profile::class.java)
                     startActivity(intent)
+                    finish()  // Finish the current activity
                 }
                 return@OnNavigationItemSelectedListener true
 

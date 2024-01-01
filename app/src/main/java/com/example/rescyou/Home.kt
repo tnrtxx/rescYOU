@@ -5,11 +5,13 @@ import android.app.Activity
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
@@ -235,48 +237,68 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
 
         //PIN MY LOCATION BUTTON
+
+
+
         binding.pinMyLocationButton.setOnClickListener {
-            if(pinIds.isEmpty()){
-                val intent = Intent(this, PinMyLocation::class.java)
-                startActivity(intent)
-            }else{
-                val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                val myRef = database.getReference("Pins")
 
-                var allPinsResolved = true
-                val latch = CountDownLatch(pinIds.size)
+            //DISABLE THE BUTTON IF NO INTERNET CONNECTION
+            val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
 
-                for (pinId in pinIds) {
-                    myRef.child(pinId).addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(dataSnapshot: DataSnapshot) {
-                            val isResolved = dataSnapshot.child("resolved").getValue(String::class.java)
 
-                            if(isResolved == "false"){
-                                allPinsResolved = false
-                                Toast.makeText(this@Home, "You still have existing pin.", Toast.LENGTH_SHORT).show()
+            // If the device is offline, disable the button and show an alert dialog
+            if (activeNetworkInfo == null || !activeNetworkInfo.isConnected) {
+                AlertDialog.Builder(this)
+                    .setTitle("No Internet Connection")
+                    .setMessage("Internet/WiFi is needed to access this feature.")
+                    .setPositiveButton("OK", null)
+                    .show()
+            } else {
+
+                if(pinIds.isEmpty()){
+                    val intent = Intent(this, PinMyLocation::class.java)
+                    startActivity(intent)
+                }else{
+                    val database = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                    val myRef = database.getReference("Pins")
+
+                    var allPinsResolved = true
+                    val latch = CountDownLatch(pinIds.size)
+
+                    for (pinId in pinIds) {
+                        myRef.child(pinId).addValueEventListener(object : ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                val isResolved = dataSnapshot.child("resolved").getValue(String::class.java)
+
+                                if(isResolved == "false"){
+                                    allPinsResolved = false
+                                    Toast.makeText(this@Home, "You still have existing pin.", Toast.LENGTH_SHORT).show()
+                                }
+
+                                latch.countDown()
                             }
 
-                            latch.countDown()
-                        }
-
-                        override fun onCancelled(databaseError: DatabaseError) {
-                            // Handle possible errors.
-                            latch.countDown()
-                        }
-                    })
-                }
-
-                Thread {
-                    latch.await()
-
-                    runOnUiThread {
-                        if (allPinsResolved) {
-                            val intent = Intent(this@Home, PinMyLocation::class.java)
-                            startActivity(intent)
-                        }
+                            override fun onCancelled(databaseError: DatabaseError) {
+                                // Handle possible errors.
+                                latch.countDown()
+                            }
+                        })
                     }
-                }.start()
+
+                    Thread {
+                        latch.await()
+
+                        runOnUiThread {
+                            if (allPinsResolved) {
+                                val intent = Intent(this@Home, PinMyLocation::class.java)
+                                startActivity(intent)
+                            }
+                        }
+                    }.start()
+                }
             }
+
         }
 
 
@@ -694,25 +716,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 // Clear the pinList before adding new data
                 pinList.clear()
 
-//                for (postSnapshot in snapshot.children) {
-//                    val pin = postSnapshot.getValue(Pins::class.java)
-//                    pin?.let {
-//                        pinList.add(it)
-//                        val markerOptions = MarkerOptions().position(
-//                            LatLng(
-//                                it.latitude.toDouble(),
-//                                it.longitude.toDouble()
-//                            )
-//                        ).title(it.pinId)
-//
-//                      googleMap.addMarker(markerOptions)?.let { markerList.add(it) }
-//                          Marker.tag = it.pinUserId
-//                    }
-//
-//                }
                 for (postSnapshot in snapshot.children) {
                     val pin = postSnapshot.getValue(Pins::class.java)
-                    if (pin != null && postSnapshot.hasChild("latitude")) {
+                    if (pin != null && postSnapshot.hasChild("latitude") && postSnapshot.child("resolved").getValue(String::class.java) != "true") {
                         pin.latitude = postSnapshot.child("latitude").getValue(String::class.java) ?: ""
                         pinList.add(pin)
                         val markerOptions = MarkerOptions().position(
@@ -732,14 +738,11 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 }
             }
 
-
             override fun onCancelled(error: DatabaseError) {
                 // Handle the error
                 Log.e(TAG, "Error getting Pins from Firebase: ${error.message}")
             }
         })
-
-
     }
 
 
@@ -1033,11 +1036,11 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
         val usersRef = database.getReference("Users")
 
-        myRef.addValueEventListener(object : ValueEventListener {
+        myRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val pinUserId = dataSnapshot.child("pinUserId").getValue(String::class.java)
 
-                usersRef.child(pinUserId.toString()).addValueEventListener(object : ValueEventListener {
+                usersRef.child(pinUserId.toString()).addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         val displayName = dataSnapshot.child("displayName").getValue(String::class.java)
 
@@ -1064,6 +1067,24 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 val time = dataSnapshot.child("time").getValue(String::class.java)
                 resolved = dataSnapshot.child("resolved").getValue(String::class.java)
 
+                //to appear if the pin has been resolved
+                if (resolved == "true") {
+                    // Create an AlertDialog.Builder instance
+                    val alertDialogBuilder = AlertDialog.Builder(this@Home)
+                    alertDialogBuilder.setTitle("Pin Resolved")
+                    alertDialogBuilder.setMessage("This pin has been resolved.")
+                    alertDialogBuilder.setPositiveButton("OK") { dialogInterface, _ ->
+                        val intent = Intent(this@Home, Home::class.java) // Use this@Home instead of this
+                        startActivity(intent)
+                        // Dismiss the dialog when the "OK" button is clicked
+                        dialogInterface.dismiss()
+                    }
+
+                    // Create and show the AlertDialog
+                    val alertDialog: AlertDialog = alertDialogBuilder.create()
+                    alertDialog.show()
+                }
+
 
                 if(pinRescuer==null || pinRescuer==""){
                     rescuerName?.text = "No one is sending help yet."
@@ -1074,6 +1095,24 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 else{
                     if(currentUserId()==rescuerID){
                         rescuerName.text = "You are sending a help."
+
+                        val sendHelpButton = dialog.findViewById<Button>(R.id.sendHelpButton)
+
+                        // Create an AlertDialog.Builder instance
+                        val alertDialogBuilder = AlertDialog.Builder(this@Home)
+                        alertDialogBuilder.setTitle("Sending Help")
+                        alertDialogBuilder.setMessage("You are currently sending help.")
+                        alertDialogBuilder.setPositiveButton("OK") { dialogInterface, _ ->
+                            // Dismiss the dialog when the "OK" button is clicked
+                            dialogInterface.dismiss()
+                        }
+
+                        // Create and show the AlertDialog
+                        val alertDialog: AlertDialog = alertDialogBuilder.create()
+                        alertDialog.show()
+
+
+
 
                     }
                     else{
@@ -1160,28 +1199,33 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
         val sendHelpButton = dialog.findViewById<Button>(R.id.sendHelpButton)
         sendHelpButton.setOnClickListener {
-            if(resolved=="true"){
-                Toast.makeText(this, "This pin has already been resolved.", Toast.LENGTH_SHORT).show()
+            if(pinRescuer!=null && pinRescuer!=""){
+                Toast.makeText(this, "Help is already on the way.", Toast.LENGTH_SHORT).show()
             }else{
-                val alertDialogBuilder = AlertDialog.Builder(this)
-                alertDialogBuilder.setTitle("Confirm Send Help")
-                alertDialogBuilder.setMessage("Are you sure you want to send help?")
-                alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
-                    val senderUserId = currentUserId()
-                    if (senderUserId != null) {
-                        sendHelpButtonClicked(pins.pinUserId, senderUserId, pins.pinId)
-                    } else {
-                        Toast.makeText(this, "Failed to get sender user ID.", Toast.LENGTH_SHORT).show()
+                if(resolved=="true"){
+                    Toast.makeText(this, "This pin has already been resolved.", Toast.LENGTH_SHORT).show()
+                }else{
+                    val alertDialogBuilder = AlertDialog.Builder(this)
+                    alertDialogBuilder.setTitle("Confirm Send Help")
+                    alertDialogBuilder.setMessage("Are you sure you want to send help?")
+                    alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
+                        val senderUserId = currentUserId()
+                        if (senderUserId != null) {
+                            sendHelpButtonClicked(pins.pinUserId, senderUserId, pins.pinId)
+                        } else {
+                            Toast.makeText(this, "Failed to get sender user ID.", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                }
-                alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                }
+                    alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                    }
 
-                val alertDialog: AlertDialog = alertDialogBuilder.create()
-                alertDialog.show()
+                    val alertDialog: AlertDialog = alertDialogBuilder.create()
+                    alertDialog.show()
 
+                }
             }
+
 
         }
 
@@ -1220,7 +1264,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         val myRef = database.getReference("Pins").child(pinId)
 
 
-        myRef.addValueEventListener(object : ValueEventListener {
+        myRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val rate = dataSnapshot.child("rate").getValue(String::class.java).toString()
                 val disasterType = dataSnapshot.child("disasterType").getValue(String::class.java).toString()
@@ -1686,12 +1730,14 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             R.id.home -> {
                 val intent = Intent(this, Home::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
                 return@OnNavigationItemSelectedListener true
             }
 
             R.id.tools -> {
                 val intent = Intent(this, Tools::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
                 return@OnNavigationItemSelectedListener true
 
             }
@@ -1699,12 +1745,14 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             R.id.info -> {
                 val intent = Intent(this, Information::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
                 return@OnNavigationItemSelectedListener true
             }
 
             R.id.profile -> {
                 val intent = Intent(this, Profile::class.java)
                 startActivity(intent)
+                finish()  // Finish the current activity
                 return@OnNavigationItemSelectedListener true
 
 

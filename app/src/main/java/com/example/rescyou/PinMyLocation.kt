@@ -337,6 +337,21 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
         }
 
     }
+
+    //BACK PRESSED
+    override fun onBackPressed() {
+        AlertDialog.Builder(this)
+            .setTitle("Cancel Confirmation")
+            .setMessage("Are you sure you want to cancel?")
+            .setPositiveButton("Yes") { _, _ ->
+                super.onBackPressed()
+                val intent = Intent(this, Home::class.java)
+                startActivity(intent)
+            }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
     //PROGRESS DIALOG
 
     private fun showLoadingDialog() {

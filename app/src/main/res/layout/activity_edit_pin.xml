@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".EditPin"
     android:backgroundTint="@color/white"
+    android:background="@color/white"
     >
 
     <LinearLayout
@@ -76,6 +77,7 @@
                 android:padding="10dp"
                 android:checked="false"
                 android:button="@null"
+                android:textColor="@color/black"
 
 
                 />
@@ -92,6 +94,8 @@
                 android:padding="10dp"
                 android:button="@null"
                 android:checked="false"
+                android:textColor="@color/black"
+
                 />
 
             <RadioButton
@@ -106,6 +110,8 @@
                 android:padding="10dp"
                 android:button="@null"
                 android:checked="false"
+                android:textColor="@color/black"
+
                 />
 
             <RadioButton android:id="@+id/radio_critical"
@@ -119,6 +125,8 @@
                 android:padding="10dp"
                 android:button="@null"
                 android:checked="false"
+                android:textColor="@color/black"
+
                 />
 
             <RadioButton android:id="@+id/radio_catastrophic"
@@ -132,6 +140,8 @@
                 android:padding="10dp"
                 android:button="@null"
                 android:checked="false"
+                android:textColor="@color/black"
+
                 />
         </RadioGroup>
 
@@ -157,6 +167,10 @@
             android:paddingHorizontal="10dp"
             android:elevation="10dp"
             android:entries="@array/categories_spinner_items"
+            android:textColor="@color/black"
+            android:background="@color/white"
+
+
             />
 
         <!--Sitio-->
@@ -181,6 +195,9 @@
             android:paddingHorizontal="10dp"
             android:elevation="10dp"
             android:visibility="visible"
+            android:textColor="@color/black"
+            android:background="@color/white"
+
 
             />
 
@@ -208,6 +225,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/describe"
+                android:textColor="@color/black"
                 >
 
             </com.google.android.material.textfield.TextInputEditText>

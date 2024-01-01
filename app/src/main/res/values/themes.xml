@@ -4,12 +4,16 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">#B6B6B6</item>
         <item name="colorOnPrimary">#E6E3E3</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+
     </style>
 
     <style name="Theme.RescYOU" parent="Base.Theme.RescYOU">
         <item name="colorPrimary">#B6B6B6</item>
         <item name="colorPrimaryVariant">#B6B6B6</item>
         <item name="colorOnPrimary">#E6E3E3</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+
 
     </style>
 

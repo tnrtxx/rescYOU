@@ -39,6 +39,8 @@
         app:layout_constraintStart_toEndOf="@+id/data_name_textview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="(049) 545-1694" />
+        tools:text="(049) 545-1694"
+        android:textColor="@color/black"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
