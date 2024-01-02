@@ -183,22 +183,33 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
                 Method.GET,
                 urlDirections,
                 Response.Listener { response ->
-                    dismissLoadingDialog()
                     val jsonResponse = JSONObject(response)
-                    val routes = jsonResponse.getJSONArray("routes")
-                    val legs = routes.getJSONObject(0).getJSONArray("legs")
-                    val steps = legs.getJSONObject(0).getJSONArray("steps")
-                    for (i in 0 until steps.length()) {
-                        val points =
-                            steps.getJSONObject(i).getJSONObject("polyline")
-                                .getString("points")
-                        path.add(PolyUtil.decode(points))
+                    val routes = jsonResponse.optJSONArray("routes")
+                    if (routes != null && routes.length() > 0) {
+                        val legs = routes.getJSONObject(0).optJSONArray("legs")
+                        if (legs != null && legs.length() > 0) {
+                            val steps = legs.getJSONObject(0).optJSONArray("steps")
+                            if (steps != null && steps.length() > 0) {
+                                for (i in 0 until steps.length()) {
+                                    val points = steps.getJSONObject(i).getJSONObject("polyline")
+                                        .getString("points")
+                                    path.add(PolyUtil.decode(points))
+                                }
+                                for (i in 0 until path.size) {
+                                    this.evacuationCenterMap.addPolyline(
+                                        PolylineOptions().addAll(path[i]).color(Color.BLUE)
+                                    )
+                                }
+                            } else {
+                                Log.e(TAG, "No steps found in the response")
+                            }
+                        } else {
+                            Log.e(TAG, "No legs found in the response")
+                        }
+                    } else {
+                        Log.e(TAG, "No routes found in the response")
                     }
-                    for (i in 0 until path.size) {
-                        this.evacuationCenterMap.addPolyline(
-                            PolylineOptions().addAll(path[i]).color(Color.BLUE)
-                        )
-                    }
+                    dismissLoadingDialog()
                 },
                 Response.ErrorListener { _ ->
                     dismissLoadingDialog()

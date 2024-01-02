@@ -7,8 +7,8 @@
     android:layout_marginLeft="24dp"
     android:layout_marginTop="24dp"
     android:layout_marginRight="24dp"
-    app:cardBackgroundColor="@color/light_gray"
     android:elevation="12dp"
+    app:cardBackgroundColor="@color/light_gray"
     app:cardCornerRadius="12dp">
 
     <LinearLayout
@@ -33,11 +33,11 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:textColor="@color/black"
                     android:id="@+id/name_textview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     tools:text="MCDC Purok 18 Covered Court" />
@@ -60,9 +60,9 @@
                         android:drawablePadding="6dp"
                         android:gravity="center"
                         android:textAllCaps="true"
+                        android:textColor="@color/black"
                         android:textSize="12sp"
                         android:textStyle="bold"
-                        android:textColor="@color/black"
                         app:drawableStartCompat="@drawable/baseline_circle_18"
                         tools:text="AVAILABLE" />
                 </com.google.android.material.card.MaterialCardView>
@@ -90,12 +90,12 @@
                         android:textSize="14sp" />
 
                     <TextView
-                        android:textColor="@color/black"
                         android:id="@+id/address_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:lineSpacingExtra="4dp"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         tools:text="Asia 1, Kapayapaan Ville, Calamba, Laguna" />
                 </LinearLayout>
@@ -108,19 +108,19 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:textColor="@color/black"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/occupant_s"
+                        android:textColor="@color/black"
                         android:textSize="14sp" />
 
                     <TextView
-                        android:textColor="@color/black"
                         android:id="@+id/occupants_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:lineSpacingExtra="4dp"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         tools:text="CANGOLF, Balagbag Araw, Silangan, Mangumit " />
                 </LinearLayout>
