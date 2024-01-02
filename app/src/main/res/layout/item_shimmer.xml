@@ -82,7 +82,7 @@
                         android:lineSpacingExtra="4dp"
                         android:textColor="@color/darker_gray"
                         android:textSize="14sp"
-                        tools:text="Asia 1, Kapayapaan Ville, Calamba, Laguna" />
+                        android:text="Asia 1, Kapayapaan Ville, Calamba, Laguna" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -109,7 +109,7 @@
                         android:lineSpacingExtra="4dp"
                         android:textColor="@color/darker_gray"
                         android:textSize="14sp"
-                        tools:text="CANGOLF, Balagbag Araw, Silangan, Mangumit " />
+                        android:text="CANGOLF, Balagbag Araw, Silangan, Mangumit " />
                 </LinearLayout>
 
             </RelativeLayout>
