@@ -1,6 +1,7 @@
 package com.example.rescyou
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.ContentValues
 import android.graphics.Color
 import android.os.Bundle
@@ -50,7 +51,8 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
     private var latitude: Double? = 0.0
     private var longitude: Double? = 0.0
 
-
+    //for a progress dialog
+    private lateinit var progressDialog: ProgressDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding =
@@ -135,6 +137,9 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun displayEvacuationCenterWithDirection() {
+
+        showLoadingDialog()
+
         evacuationCenterMap.uiSettings.isMapToolbarEnabled = false
         evacuationCenterMap.uiSettings.isMyLocationButtonEnabled = true
 
@@ -149,7 +154,6 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
         val locationLayout = buttonLocation.layoutParams as RelativeLayout.LayoutParams
         locationLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
         locationLayout.addRule(RelativeLayout.ABOVE, layoutZoom.id)
-
 
         val latLngOrigin =
             LatLng(Home.currentLocation!!.latitude, Home.currentLocation!!.longitude)
@@ -179,6 +183,7 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
                 Method.GET,
                 urlDirections,
                 Response.Listener { response ->
+                    dismissLoadingDialog()
                     val jsonResponse = JSONObject(response)
                     val routes = jsonResponse.getJSONArray("routes")
                     val legs = routes.getJSONObject(0).getJSONArray("legs")
@@ -196,6 +201,7 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
                     }
                 },
                 Response.ErrorListener { _ ->
+                    dismissLoadingDialog()
                     Log.d(TAG, Response.ErrorListener::class.java.toString())
                 }) {}
 
@@ -204,6 +210,7 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun displayEvacuationCenterWithoutDirection() {
+
         marker = evacuationCenterMap.addMarker(
             MarkerOptions()
                 .position(LatLng(latitude!!, longitude!!))
@@ -220,6 +227,19 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
             .build()
 
         evacuationCenterMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
+
+    private fun showLoadingDialog() {
+        progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Getting the best route for you...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+    }
+
+    private fun dismissLoadingDialog() {
+        if (progressDialog.isShowing) {
+            progressDialog.dismiss()
+        }
     }
 
 
