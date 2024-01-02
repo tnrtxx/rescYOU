@@ -18,6 +18,7 @@ import android.widget.CheckBox
 import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.rescyou.databinding.ActivitySignUpBinding
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -46,12 +47,18 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
     //Initialize variables
 //Personal Information
     private lateinit var firstName: String
-    private lateinit var middleName: String
+    private var middleName: String = ""
     private lateinit var lastName: String
     private lateinit var displayName: String
-    private lateinit var suffixName: String
-    private lateinit var birthday: String
+    private var suffixName: String = ""
+
     private var age: Int = 0
+
+    private var birthday: String = ""
+
+    private lateinit var middleNameText: String
+    private lateinit var suffixNameText: String
+
 
     //Account Information
     private lateinit var email: String
@@ -75,7 +82,7 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
     private val formatter = SimpleDateFormat("MMMM d, yyyy", Locale.US)
 
     //Pssword matcher
-    val passwordPattern = "^(?=.*[a-z])(?=.*[A-Z]).{6,}$"
+    val passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$"
     val passwordMatcher = Regex(passwordPattern)
 
 
@@ -98,30 +105,29 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
             lastName = binding.lastNameTextInput.text.toString()
             suffixName = binding.suffixNameTextInput.text.toString()
 
+            middleNameText = binding.middleNameTextInput.text.toString().trim()
+            suffixNameText = binding.suffixNameTextInput.text.toString().trim()
 
             //ACCOUNT INFORMATION
             email = binding.emailTextInput.text.toString()
             password = binding.passwordTextInput.text.toString()
 
 
-
-//            Check for the required values
-            if(firstName.trim().length==0 || lastName.trim().length==0 ||  birthday.trim().length==0 ||  email.trim().length==0) {
-                Toast.makeText(applicationContext, "Please fill up the requred field/s.", Toast.LENGTH_SHORT).show()
-            }else if(checkEmail(email)==false){
+            // Check for the required values
+            if(firstName.trim().isEmpty() || lastName.trim().isEmpty() || birthday.trim().isEmpty() || email.trim().isEmpty()) {
+                Toast.makeText(applicationContext, "Please fill up the required field/s.", Toast.LENGTH_SHORT).show()
+            } else if(!checkEmail(email)) {
                 Toast.makeText(applicationContext, "Invalid Email", Toast.LENGTH_SHORT).show()
-
             } else if (!passwordMatcher.matches(password.trim())) {
-                Toast.makeText(
-                    applicationContext,
-                    "Password should be at least 6 characters, with at least 1 uppercase and 1 lowercase letter.",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-            } else if(checkEmail(email)==false && password.trim().length<6 ){
-                Toast.makeText(applicationContext, "Invalid Email and password should be at least 6 characters.", Toast.LENGTH_SHORT).show()
-
-            }else{
+                AlertDialog.Builder(this)
+                    .setMessage("Password should be at least 6 characters, with at least 1 uppercase, 1 lowercase letter and a special character.")
+                    .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            } else if(!checkEmail(email) && password.trim().length < 6) {
+                Toast.makeText(applicationContext, "Invalid mail and Password.", Toast.LENGTH_SHORT).show()
+            } else{
 
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
@@ -145,19 +151,32 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
         }
 
 
-        //For DatePickerDialog
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
         binding.birthdayTextInput.setOnClickListener {
-            //Get the date from the DatePickerDialog
-            DatePickerDialog(
+            // Get the current date.
+            val currentDate = Calendar.getInstance()
+
+            // Create a DatePickerDialog.
+            val datePickerDialog = DatePickerDialog(
                 this,
                 this,
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            )
 
+            // Set the maximum date to the current date.
+            datePickerDialog.datePicker.maxDate = currentDate.timeInMillis
+
+            // Show the DatePickerDialog.
+            datePickerDialog.show()
         }
-
     }
 
     //Email Address Pattern
@@ -257,7 +276,20 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
                 Log.d(TAG, "createUserWithEmail:success")
                 val user = auth.currentUser
                 userID= user?.uid.toString()
-                displayName = firstName + " " + lastName
+
+                //PAREHAS WALANG MIDDLE NAME AND SUFFIX NAME
+                if (middleNameText.isEmpty() && suffixNameText.isEmpty()){
+                    displayName = "$firstName $lastName"
+                } //MAY SUFFIX NAME PERO WALANG MIDDLE NAME
+                else if(middleNameText.isEmpty() && suffixNameText.isNotEmpty()){
+                    displayName = "$firstName $lastName $suffixName"
+                }//MAY MIDDLE NAME PERO WALANG SUFFIX NAME
+                else if (middleNameText.isNotEmpty() && suffixNameText.isEmpty()) {
+                    displayName = "$firstName $middleName $lastName"
+                } //PAREHAS MERON
+                else if (middleNameText.isNotEmpty() && suffixNameText.isNotEmpty()) {
+                    displayName = "$firstName $middleName $lastName $suffixName"
+                }
 
 
                 //Set the display name of the user
@@ -320,8 +352,6 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
 
         data = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
         val myRef = data.reference
-
-        var displayName: String = firstName + " " + lastName + suffixName
 
         //store data to the REALTIME DATABASE
         myRef.child("Users").child(userID).child("firstName").setValue(firstName)
