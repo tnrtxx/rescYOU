@@ -45,8 +45,6 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
 
     private var name: String? = null
     private var status: String? = null
-    private var inCharge: String? = null
-    private var inChargeContactNum: String? = null
     private var occupants: String? = null
     private var address: String? = null
     private var latitude: Double? = 0.0
@@ -61,8 +59,6 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
         // Get the data from the intent
         name = intent.getStringExtra("name")
         status = intent.getStringExtra("status")
-        inCharge = intent.getStringExtra("inCharge")
-        inChargeContactNum = intent.getStringExtra("inChargeContactNum")
         occupants = intent.getStringExtra("occupants")
         address = intent.getStringExtra("address")
         latitude = intent.getDoubleExtra("latitude", 0.0)
@@ -163,7 +159,7 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
             MarkerOptions().position(latLngDestination).title(name)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                 .snippet(
-                    "Status: $status | Contact: $inChargeContactNum"
+                    "Status: $status"
                 )
         )
 
@@ -214,7 +210,7 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
                 .title(name)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                 .snippet(
-                    "Status: $status | Contact: $inChargeContactNum"
+                    "Status: $status"
                 )
         )
 

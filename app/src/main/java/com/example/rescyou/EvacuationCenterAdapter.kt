@@ -2,7 +2,6 @@ package com.example.rescyou
 
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -59,8 +58,6 @@ class EvacuationCenterAdapter(private var evacuationCenterArrayList: List<Evacua
             intent.putExtra("placeId", currentItem.placeId)
             intent.putExtra("name", currentItem.name)
             intent.putExtra("status", currentItem.status)
-            intent.putExtra("inCharge", currentItem.inCharge)
-            intent.putExtra("inChargeContactNum", currentItem.inChargeContactNum)
             intent.putExtra("occupants", currentItem.occupants)
             intent.putExtra("address", currentItem.address)
             intent.putExtra("latitude", currentItem.latitude)
@@ -83,8 +80,6 @@ class EvacuationCenterAdapter(private var evacuationCenterArrayList: List<Evacua
             binding.nameTextview.text = item.name.toString()
             binding.addressTextview.text = item.address.toString()
             binding.statusTextview.text = item.status.toString()
-            binding.inChargeTextview.text = item.inCharge.toString()
-            binding.inChargeContactNumTextview.text = item.inChargeContactNum.toString()
             binding.occupantsTextview.text = item.occupants.toString()
 
             // !! This if for the Evacuation Centers activity only !!

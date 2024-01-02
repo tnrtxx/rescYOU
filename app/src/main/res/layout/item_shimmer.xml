@@ -58,65 +58,10 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/evacuation_center_linearlayout">
 
-
-                <LinearLayout
-                    android:id="@+id/in_charge_linearlayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@color/darker_gray"
-                        android:text="@string/in_charge"
-                        android:textColor="@color/darker_gray"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/in_charge_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:background="@color/darker_gray"
-                        android:textColor="@color/darker_gray"
-                        android:textSize="14sp"
-                        tools:text="Juan Mercado" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/in_charge_contact_num_linearlayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/in_charge_linearlayout"
-                    android:layout_marginBottom="4dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@color/darker_gray"
-                        android:text="@string/contact_number"
-                        android:textColor="@color/darker_gray"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/in_charge_contact_num_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:background="@color/darker_gray"
-                        android:textColor="@color/darker_gray"
-                        android:textSize="14sp"
-                        tools:text="09123456789" />
-                </LinearLayout>
-
                 <LinearLayout
                     android:id="@+id/address_linearlayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/in_charge_contact_num_linearlayout"
                     android:layout_marginBottom="4dp"
                     android:orientation="horizontal">
 
