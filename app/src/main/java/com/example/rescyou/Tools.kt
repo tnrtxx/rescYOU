@@ -12,7 +12,6 @@ import android.view.View
 import android.widget.Switch
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import com.example.rescyou.databinding.ActivityTermsAndConditionsBinding
 import com.example.rescyou.databinding.ActivityToolsBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 

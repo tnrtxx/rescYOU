@@ -379,6 +379,22 @@ private fun showDialog(pinId: String) {
 
                             }
 
+                            if (pinName == null) {
+                                val alertDialogBuilder = AlertDialog.Builder(this@DialogActivity) // Use this@DialogActivity instead of this
+                                alertDialogBuilder.setTitle("Pin Deletion")
+                                alertDialogBuilder.setMessage("The current pin has already been deleted.")
+                                alertDialogBuilder.setPositiveButton("OK") { dialogInterface, _ ->
+                                    // Handle "OK" button click, dismiss the dialog and navigate to Home activity
+                                    val intent = Intent(this@DialogActivity, Home::class.java)
+                                    startActivity(intent)
+                                    dialogInterface.dismiss()
+                                }
+
+                                val alertDialog: AlertDialog = alertDialogBuilder.create() // Create the AlertDialog
+                                alertDialog.show() // Show the AlertDialog
+                            }
+
+
                             pinnedByName.text = pinName
                             ratingsSituation.text = rate
                             disasterType.text = disaster
@@ -391,6 +407,8 @@ private fun showDialog(pinId: String) {
                             // Handle possible errors.
                         }
                     })
+
+
 
                     pinnedByName.text = pinData.pinName
                     ratingsSituation.text = pinData.rate
@@ -576,7 +594,6 @@ private fun showDialog(pinId: String) {
                             Toast.makeText(this@DialogActivity, "This pin has been resolved.", Toast.LENGTH_SHORT).show()
                         } else{
                             showEditDialog(pinId)
-                            Toast.makeText(this@DialogActivity, "Edit button clicked", Toast.LENGTH_SHORT).show()
                         }
 
                     }

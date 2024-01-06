@@ -126,7 +126,7 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
                     }
                     .show()
             } else if(!checkEmail(email) && password.trim().length < 6) {
-                Toast.makeText(applicationContext, "Invalid mail and Password.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Invalid mail and password.", Toast.LENGTH_SHORT).show()
             } else{
 
                 auth.createUserWithEmailAndPassword(email, password)
@@ -159,10 +159,7 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
         super.onResume()
 
         binding.birthdayTextInput.setOnClickListener {
-            // Get the current date.
-            val currentDate = Calendar.getInstance()
-
-            // Create a DatePickerDialog.
+            // GET THE DATE PICKER FOR BIRTHDAY
             val datePickerDialog = DatePickerDialog(
                 this,
                 this,
@@ -171,10 +168,11 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
                 calendar.get(Calendar.DAY_OF_MONTH)
             )
 
-            // Set the maximum date to the current date.
+            // Set the maximum date to one year ago from the current date.
+            val currentDate = Calendar.getInstance()
+            currentDate.add(Calendar.YEAR, -1)
             datePickerDialog.datePicker.maxDate = currentDate.timeInMillis
 
-            // Show the DatePickerDialog.
             datePickerDialog.show()
         }
     }
@@ -271,50 +269,58 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
         agreeButton.setOnClickListener {
             val checkBox = dialog.findViewById<CheckBox>(R.id.acceptCheckbox)
             if (checkBox.isChecked) {
+                AlertDialog.Builder(this)
+                    .setTitle("Confirmation")
+                    .setMessage("Do you accept the terms and conditions?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "createUserWithEmail:success")
+                        val user = auth.currentUser
+                        userID= user?.uid.toString()
 
-                // Sign in success, update UI with the signed-in user's information
-                Log.d(TAG, "createUserWithEmail:success")
-                val user = auth.currentUser
-                userID= user?.uid.toString()
-
-                //PAREHAS WALANG MIDDLE NAME AND SUFFIX NAME
-                if (middleNameText.isEmpty() && suffixNameText.isEmpty()){
-                    displayName = "$firstName $lastName"
-                } //MAY SUFFIX NAME PERO WALANG MIDDLE NAME
-                else if(middleNameText.isEmpty() && suffixNameText.isNotEmpty()){
-                    displayName = "$firstName $lastName $suffixName"
-                }//MAY MIDDLE NAME PERO WALANG SUFFIX NAME
-                else if (middleNameText.isNotEmpty() && suffixNameText.isEmpty()) {
-                    displayName = "$firstName $middleName $lastName"
-                } //PAREHAS MERON
-                else if (middleNameText.isNotEmpty() && suffixNameText.isNotEmpty()) {
-                    displayName = "$firstName $middleName $lastName $suffixName"
-                }
-
-
-                //Set the display name of the user
-                val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
-                    .setDisplayName(displayName)
-                    .build()
-
-                user?.updateProfile(profileUpdates)
-                    ?.addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d(TAG, "User profile updated.")
+                        //PAREHAS WALANG MIDDLE NAME AND SUFFIX NAME
+                        if (middleNameText.isEmpty() && suffixNameText.isEmpty()){
+                            displayName = "$firstName $lastName"
+                        } //MAY SUFFIX NAME PERO WALANG MIDDLE NAME
+                        else if(middleNameText.isEmpty() && suffixNameText.isNotEmpty()){
+                            displayName = "$firstName $lastName $suffixName"
+                        }//MAY MIDDLE NAME PERO WALANG SUFFIX NAME
+                        else if (middleNameText.isNotEmpty() && suffixNameText.isEmpty()) {
+                            displayName = "$firstName $middleName $lastName"
+                        } //PAREHAS MERON
+                        else if (middleNameText.isNotEmpty() && suffixNameText.isNotEmpty()) {
+                            displayName = "$firstName $middleName $lastName $suffixName"
                         }
+
+
+                        //Set the display name of the user
+                        val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                            .setDisplayName(displayName)
+                            .build()
+
+                        user?.updateProfile(profileUpdates)
+                            ?.addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Log.d(TAG, "User profile updated.")
+                                }
+                            }
+
+                        updateUI(user)
+
+                        storeData(userID, firstName, middleName, lastName, displayName, suffixName, birthday, age, email, password)
+
+
+
+
+                        val intent = Intent(this, Home::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        dialog.dismiss()
                     }
-
-                updateUI(user)
-
-                storeData(userID, firstName, middleName, lastName, displayName, suffixName, birthday, age, email, password)
+                    .setNegativeButton("No", null)
+                    .show()
 
 
-
-
-                val intent = Intent(this, Home::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                dialog.dismiss()
 
             } else {
                 Toast.makeText(this, "Please agree to the terms and conditions.", Toast.LENGTH_SHORT).show()
@@ -324,21 +330,30 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
         //DISAGREE BUTTON
         val declineButton = dialog.findViewById<Button>(R.id.declineButton)
         declineButton.setOnClickListener {
-            // Get the current user
-            val user = auth.currentUser
-            user?.delete()?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d(MainActivity.TAG, "User account deleted.")
-                }
-            }
+            AlertDialog.Builder(this@SignUp)
+                .setTitle("Confirmation")
+                .setMessage("Are you sure you want to decline?")
+                .setPositiveButton("Yes") { _, _ ->
+                    // Get the current user
+                    val user = auth.currentUser
+                    user?.delete()?.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d(MainActivity.TAG, "User account deleted.")
+                        }
+                    }
 
-            // Sign out from Google
-            googleSignInClient.signOut().addOnCompleteListener {
-                // After sign out is completed, navigate back to MainActivity
-                val intent = Intent(this@SignUp, MainActivity::class.java) // Create the Intent object
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent) // Use the Intent object to start the MainActivity
-            }
+                    // Sign out from Google
+                    googleSignInClient.signOut().addOnCompleteListener {
+                        // After sign out is completed, navigate back to MainActivity
+                        val intent = Intent(this@SignUp, MainActivity::class.java) // Create the Intent object
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent) // Use the Intent object to start the MainActivity
+                    }
+
+                }
+                .setNegativeButton("No", null)
+                .show()
+
         }
 
     }

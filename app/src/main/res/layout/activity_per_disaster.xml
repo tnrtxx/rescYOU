@@ -33,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="hello"
+                    tools:text="hello"
                     android:textColor="@color/black"
                     android:textSize="30sp"
                     android:textStyle="bold"
@@ -61,7 +61,7 @@
                     android:padding="8dp"
                     android:layout_gravity="center"
                     android:src="@drawable/photo_icon"
-                    android:scaleType="fitCenter"/>
+                    android:scaleType="centerCrop"/>
 
                 <!--DESCRIPTION-->
                 <TextView

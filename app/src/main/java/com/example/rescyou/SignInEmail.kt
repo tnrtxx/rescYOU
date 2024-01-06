@@ -46,7 +46,7 @@ class SignInEmail : AppCompatActivity() {
             password = binding.passwordTextInput.text.toString()
 
             if(email.trim().length==0 || password.trim().length==0) {
-                Toast.makeText(applicationContext, "Please fill up the requred field/s.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Please fill up the required field/s.", Toast.LENGTH_SHORT).show()
             }else {
 
                 auth.signInWithEmailAndPassword(email, password)

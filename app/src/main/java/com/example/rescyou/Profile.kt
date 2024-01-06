@@ -89,7 +89,7 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
                     binding.birthday.text = birthday
                 }
 
-                if (age == 0) {
+                if (age == 0 || age == null) {
                     binding.age.setTextColor(Color.rgb(182,182,182))
                     binding.age.text = "Enter your birthday to calculate your age."
                 } else {
@@ -175,31 +175,50 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
                     birthdayInputEditText.setText("Enter your birthday")
 
                     birthdayInputEditText.setOnClickListener { view ->
-                        //GET THE DATE PICKER FOR BIRTHDAY
-                        //Get the date from the DatePickerDialog
-                        DatePickerDialog(
+                        // GET THE DATE PICKER FOR BIRTHDAY
+                        val currentDate = Calendar.getInstance()
+
+                        // Set the date range for the DatePickerDialog
+                        val datePickerDialog = DatePickerDialog(
                             this@Profile,
                             this@Profile,
                             calendar.get(Calendar.YEAR),
                             calendar.get(Calendar.MONTH),
                             calendar.get(Calendar.DAY_OF_MONTH)
-                        ).show() }
-                    
+                        )
 
+                        // Set the maximum date to the current date.
+                        datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
+
+                        // Set the minimum date to one year ago from the current date.
+                        currentDate.add(Calendar.YEAR, -1)
+                        datePickerDialog.datePicker.minDate = currentDate.timeInMillis
+
+                        datePickerDialog.show()
+                    }
                 } else {
                     birthdayInputEditText.setText(birthday)
 
                     birthdayInputEditText.setOnClickListener { view ->
-                        //GET THE DATE PICKER FOR BIRTHDAY
-                        //Get the date from the DatePickerDialog
-                        DatePickerDialog(
+                        // GET THE DATE PICKER FOR BIRTHDAY
+                        val datePickerDialog = DatePickerDialog(
                             this@Profile,
                             this@Profile,
                             calendar.get(Calendar.YEAR),
                             calendar.get(Calendar.MONTH),
                             calendar.get(Calendar.DAY_OF_MONTH)
-                        ).show() }
+                        )
+
+                        // Set the maximum date to one year ago from the current date.
+                        val currentDate = Calendar.getInstance()
+                        currentDate.add(Calendar.YEAR, -1)
+                        datePickerDialog.datePicker.maxDate = currentDate.timeInMillis
+
+                        datePickerDialog.show()
+                    }
                 }
+
+
 
                 if (age == 0) {
                     binding.age.setTextColor(Color.rgb(182,182,182))
@@ -295,7 +314,9 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
             alertDialogBuilder.setTitle("Cancel Confirmation")
             alertDialogBuilder.setMessage("Are you sure you want to cancel?")
             alertDialogBuilder.setPositiveButton("Yes") { dialogInterface, _ ->
-                // Handle "Yes" button click, for example, navigate back or finish the activity
+                val intent = Intent(this, Profile::class.java)
+                startActivity(intent)
+                finish()
                 dialogInterface.dismiss()
 
             }
@@ -322,6 +343,8 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         }
         return age
     }
+
+
 
 
 

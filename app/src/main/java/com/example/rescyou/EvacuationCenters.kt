@@ -1,12 +1,12 @@
 package com.example.rescyou
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rescyou.databinding.ActivityEvacuationCentersBinding
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -30,13 +30,18 @@ class EvacuationCenters : AppCompatActivity() {
     private lateinit var evacuationCenterAdapter: EvacuationCenterAdapter
     private lateinit var evacuationCenterArrayList: ArrayList<EvacuationCenterData>
 
+    // Shimmer-related variables
+    private lateinit var shimmerLayout: ShimmerFrameLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEvacuationCentersBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        shimmerLayout = binding.shimmerLayout
         initializeUI()                  // Initialize UI components
         initializeRecyclerView()        // Initialize RecyclerView and its adapter
+        shimmerLayout.startShimmer()    // Start shimmer animation
         getEvacuationCenterData()       // Fetch and display evacuation center data
     }
 
@@ -77,7 +82,12 @@ class EvacuationCenters : AppCompatActivity() {
                             evacuationCenterSnapshot.getValue(EvacuationCenterData::class.java)
                         evacuationCenterArrayList.add(evacuationCenter!!)
                     }
+                    evacuationCenterArrayList.sortBy { it.name }
                     evacuationCenterAdapter.notifyDataSetChanged()
+
+                    // Stop shimmer animation after fetching data
+                    shimmerLayout.stopShimmer()
+                    shimmerLayout.visibility = ShimmerFrameLayout.GONE
                 }
             }
 

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".PinMyLocation"
     android:orientation="vertical"
+    android:background="@color/white"
     >
 
     <LinearLayout
@@ -46,6 +47,7 @@
                 android:padding="10dp"
                 android:checked="false"
                 android:button="@null"
+                android:textColor="@color/black"
 
 
                 />
@@ -62,6 +64,8 @@
                 android:padding="10dp"
                 android:button="@null"
                 android:checked="false"
+                android:textColor="@color/black"
+
                 />
 
             <RadioButton
@@ -76,6 +80,8 @@
                 android:padding="10dp"
                 android:button="@null"
                 android:checked="false"
+                android:textColor="@color/black"
+
                 />
 
             <RadioButton android:id="@+id/radio_critical"
@@ -89,19 +95,25 @@
                 android:padding="10dp"
                 android:button="@null"
                 android:checked="false"
+                android:textColor="@color/black"
+
+
                 />
 
-            <RadioButton android:id="@+id/radio_catastrophic"
+            <RadioButton
+                android:id="@+id/radio_catastrophic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/catastrophic"
-                android:textSize="12sp"
-                android:drawablePadding="10dp"
-                android:drawableTop="@drawable/catastropic_4"
-                android:gravity="center"
-                android:padding="10dp"
                 android:button="@null"
                 android:checked="false"
+                android:drawableTop="@drawable/catastropic_4"
+                android:drawablePadding="10dp"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/catastrophic"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+
                 />
         </RadioGroup>
 

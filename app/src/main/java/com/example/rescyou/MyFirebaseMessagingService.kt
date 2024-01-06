@@ -28,24 +28,24 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         if (remoteMessage.data.isNotEmpty()) {
             val notificationType = remoteMessage.data["type"]
-                if (notificationType == "sendRequest"){
-                    val rescuerName = remoteMessage.data["rescuerName"]
-                    val otherUserID = remoteMessage.data["otherUserID"]
-                    val pinId = remoteMessage.data["pinId"]
+            if (notificationType == "sendRequest"){
+                val rescuerName = remoteMessage.data["rescuerName"]
+                val otherUserID = remoteMessage.data["otherUserID"]
+                val pinId = remoteMessage.data["pinId"]
 
-                    sendNotification(remoteMessage.notification!!.body, rescuerName, otherUserID, pinId)
-                }else if (notificationType == "declineRequest"){
-                    val pinId = remoteMessage.data["pinId"]
+                sendNotification(remoteMessage.notification!!.body, rescuerName, otherUserID, pinId)
+            }else if (notificationType == "declineRequest"){
+                val pinId = remoteMessage.data["pinId"]
 
-                    sendDeclineNotification(remoteMessage.notification!!.body, pinId)
+                sendDeclineNotification(remoteMessage.notification!!.body, pinId)
 
-                }else if (notificationType == "acceptRequest"){
-                    val pinId = remoteMessage.data["pinId"]
+            }else if (notificationType == "acceptRequest"){
+                val pinId = remoteMessage.data["pinId"]
 
-                    sendAcceptNotification(remoteMessage.notification!!.body, pinId)
+                sendAcceptNotification(remoteMessage.notification!!.body, pinId)
 
-                }
-    }}
+            }
+        }}
 
     private fun sendNotification(messageBody: String?, rescuerName: String?, otherUserID:String?, pinId: String?) {
         val channelId = "new_notification_channel_id"  // Change this to a new ID
@@ -57,7 +57,12 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
             putExtra("otherUserID", otherUserID)
             putExtra("pinId", pinId)
         }
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent: PendingIntent
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        } else {
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.app_logo_2)

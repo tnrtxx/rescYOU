@@ -43,11 +43,16 @@
                             android:id="@+id/disaster_category"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/earthquake"
+                            android:text="Earthquake"
                             android:textColor="@color/white"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:layout_marginBottom="20dp"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:gravity="center"
                             />
 
                         <TextView

@@ -1,6 +1,7 @@
 package com.example.rescyou
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.ContentValues
 import android.graphics.Color
 import android.os.Bundle
@@ -45,14 +46,13 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
 
     private var name: String? = null
     private var status: String? = null
-    private var inCharge: String? = null
-    private var inChargeContactNum: String? = null
     private var occupants: String? = null
     private var address: String? = null
     private var latitude: Double? = 0.0
     private var longitude: Double? = 0.0
 
-
+    //for a progress dialog
+    private lateinit var progressDialog: ProgressDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding =
@@ -61,8 +61,6 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
         // Get the data from the intent
         name = intent.getStringExtra("name")
         status = intent.getStringExtra("status")
-        inCharge = intent.getStringExtra("inCharge")
-        inChargeContactNum = intent.getStringExtra("inChargeContactNum")
         occupants = intent.getStringExtra("occupants")
         address = intent.getStringExtra("address")
         latitude = intent.getDoubleExtra("latitude", 0.0)
@@ -139,6 +137,9 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun displayEvacuationCenterWithDirection() {
+
+        showLoadingDialog()
+
         evacuationCenterMap.uiSettings.isMapToolbarEnabled = false
         evacuationCenterMap.uiSettings.isMyLocationButtonEnabled = true
 
@@ -154,7 +155,6 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
         locationLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
         locationLayout.addRule(RelativeLayout.ABOVE, layoutZoom.id)
 
-
         val latLngOrigin =
             LatLng(Home.currentLocation!!.latitude, Home.currentLocation!!.longitude)
         val latLngDestination = LatLng(latitude!!, longitude!!)
@@ -163,7 +163,7 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
             MarkerOptions().position(latLngDestination).title(name)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                 .snippet(
-                    "Status: $status | Contact: $inChargeContactNum"
+                    "Status: $status"
                 )
         )
 
@@ -184,22 +184,35 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
                 urlDirections,
                 Response.Listener { response ->
                     val jsonResponse = JSONObject(response)
-                    val routes = jsonResponse.getJSONArray("routes")
-                    val legs = routes.getJSONObject(0).getJSONArray("legs")
-                    val steps = legs.getJSONObject(0).getJSONArray("steps")
-                    for (i in 0 until steps.length()) {
-                        val points =
-                            steps.getJSONObject(i).getJSONObject("polyline")
-                                .getString("points")
-                        path.add(PolyUtil.decode(points))
+                    val routes = jsonResponse.optJSONArray("routes")
+                    if (routes != null && routes.length() > 0) {
+                        val legs = routes.getJSONObject(0).optJSONArray("legs")
+                        if (legs != null && legs.length() > 0) {
+                            val steps = legs.getJSONObject(0).optJSONArray("steps")
+                            if (steps != null && steps.length() > 0) {
+                                for (i in 0 until steps.length()) {
+                                    val points = steps.getJSONObject(i).getJSONObject("polyline")
+                                        .getString("points")
+                                    path.add(PolyUtil.decode(points))
+                                }
+                                for (i in 0 until path.size) {
+                                    this.evacuationCenterMap.addPolyline(
+                                        PolylineOptions().addAll(path[i]).color(Color.BLUE)
+                                    )
+                                }
+                            } else {
+                                Log.e(TAG, "No steps found in the response")
+                            }
+                        } else {
+                            Log.e(TAG, "No legs found in the response")
+                        }
+                    } else {
+                        Log.e(TAG, "No routes found in the response")
                     }
-                    for (i in 0 until path.size) {
-                        this.evacuationCenterMap.addPolyline(
-                            PolylineOptions().addAll(path[i]).color(Color.BLUE)
-                        )
-                    }
+                    dismissLoadingDialog()
                 },
                 Response.ErrorListener { _ ->
+                    dismissLoadingDialog()
                     Log.d(TAG, Response.ErrorListener::class.java.toString())
                 }) {}
 
@@ -208,13 +221,14 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun displayEvacuationCenterWithoutDirection() {
+
         marker = evacuationCenterMap.addMarker(
             MarkerOptions()
                 .position(LatLng(latitude!!, longitude!!))
                 .title(name)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                 .snippet(
-                    "Status: $status | Contact: $inChargeContactNum"
+                    "Status: $status"
                 )
         )
 
@@ -224,6 +238,19 @@ class EvacuationCenterMap : AppCompatActivity(), OnMapReadyCallback,
             .build()
 
         evacuationCenterMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
+
+    private fun showLoadingDialog() {
+        progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Getting the best route for you...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+    }
+
+    private fun dismissLoadingDialog() {
+        if (progressDialog.isShowing) {
+            progressDialog.dismiss()
+        }
     }
 
 

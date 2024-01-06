@@ -10,8 +10,6 @@ data class EvacuationCenterData(
     var latitude: Double? = 0.0,
     var longitude: Double? = 0.0,
     var status: String? = null,
-    var inCharge: String? = null,
-    var inChargeContactNum: String? = null,
     var occupants: String? = null,
 ) : Serializable
 

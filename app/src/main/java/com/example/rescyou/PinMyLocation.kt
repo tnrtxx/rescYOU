@@ -340,11 +340,14 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     //PROGRESS DIALOG
 
     private fun showLoadingDialog() {
-        progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Uploading...")
-        progressDialog.setCancelable(false)
-        progressDialog.show()
+        if (!isFinishing) {
+            progressDialog = ProgressDialog(this)
+            progressDialog.setMessage("Uploading...")
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+        }
     }
+
 
     private fun dismissLoadingDialog() {
         if (progressDialog.isShowing) {
