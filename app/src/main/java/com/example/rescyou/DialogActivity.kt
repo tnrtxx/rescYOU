@@ -114,6 +114,9 @@ class DialogActivity : AppCompatActivity() {
     var resolved: String? = null
 
 
+    // Add a new property to your activity
+    var dialogInteracted = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDialogBinding.inflate(layoutInflater)
@@ -129,44 +132,48 @@ class DialogActivity : AppCompatActivity() {
 
 
 
+
         // Create a dialog
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Help Request")
         alertDialogBuilder.setMessage("Do you want to accept help from $rescuerName?")
         alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
-            status = "Accepted"
+            try {
+                status = "Accepted"
 
+                val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                    .reference
 
-            val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .reference
+                if (pinId != null && rescuerName != null) {
+                    dbRef.child("Pins").child(pinId).child("pinRescuer").setValue(rescuerName)
+                    dbRef.child("Pins").child(pinId).child("pinRescuerID").setValue(otherUserID)
+                } else {
+                    Log.d(TAG, "pinId or rescuerName is null")
+                }
 
-            if (pinId != null && rescuerName != null) {
-                dbRef.child("Pins").child(pinId).child("pinRescuer").setValue(rescuerName)
-                dbRef.child("Pins").child(pinId).child("pinRescuerID").setValue(otherUserID)
-            } else {
-                Log.d(TAG, "pinId or rescuerName is null")
+                if (otherUserID != null) {
+                    fetchFCMToken(otherUserID)
+                } else {
+                    Log.d(TAG, "otherUserID is null")
+                }
+
+                if (rescuerName != null) {
+                    showDialog(pinId)
+                } else {
+                    Log.d(TAG, "rescuerName is null")
+                }
+
+                Log.d(TAG, "Rescuer name in DialogActivity: $rescuerName")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error in 'Yes' button click listener", e)
             }
-
-            if (otherUserID != null) {
-                fetchFCMToken(otherUserID)
-            } else {
-                Log.d(TAG, "otherUserID is null")
-            }
-
-            if (rescuerName != null) {
-                showDialog(pinId)
-            } else {
-                Log.d(TAG, "rescuerName is null")
-            }
-
-            Log.d(TAG, "Rescuer name in DialogActivity: $rescuerName")
-
         }
         alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
             status = "Declined"
 
             fetchFCMToken(otherUserID)
             showDeclineDialog(pinId)
+
 //            sendDeclineNotification(myPinModel.fcmToken)
             dialogInterface.dismiss()
         }
@@ -290,6 +297,7 @@ fun callApi(jsonObject: JSONObject) {
         }
     })
 }
+
 
 private fun showDialog(pinId: String) {
 
