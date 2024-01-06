@@ -54,6 +54,10 @@ class PreparednessTips : AppCompatActivity() {
         databaseReference.keepSynced(true)  //add this line of code after nung Firebase get instance para sa mga page na need ioffline.
         // (ex. hotlines and evacuation center(?) not sure if gagana sa evacuation center
 
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         eventListener = databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -67,13 +71,16 @@ class PreparednessTips : AppCompatActivity() {
                     dataClass?.let { dataList.add(it) }
                 }
                 adapter.notifyDataSetChanged()
-
             }
 
             override fun onCancelled(error: DatabaseError) {
-
+                // Handle onCancelled event
             }
         })
+    }
 
+    override fun onPause() {
+        super.onPause()
+        databaseReference.removeEventListener(eventListener)
     }
 }

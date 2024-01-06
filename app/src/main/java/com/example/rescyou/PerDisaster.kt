@@ -9,6 +9,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.rescyou.databinding.ActivityPerDisasterBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 
 class PerDisaster : AppCompatActivity() {
@@ -45,6 +49,8 @@ class PerDisaster : AppCompatActivity() {
         disasterArticleSource =  binding.articleSourceTextView
 
         val bundle = intent.extras
+
+
         if (bundle != null) {
             disasterDesc.text = bundle.getString("Description")
             disasterTitle.text = bundle.getString("Title")
@@ -56,6 +62,39 @@ class PerDisaster : AppCompatActivity() {
             imageUrl = bundle.getString("Image") ?: ""
             Glide.with(this).load(bundle.getString("Image")).into(disasterImage)
         }
+
+        //get from the realtime database
+        // Create a DatabaseReference to the specific item
+        val databaseReference = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Preparedness Tips").child(
+            bundle?.getString("Title").toString()
+        )
+        databaseReference.keepSynced(true)  //add this line of code after nung Firebase get instance para sa mga page na need ioffline.
+
+        // Fetch the data from Firebase
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val dataClass = snapshot.getValue(DataClass::class.java)
+                if (dataClass != null) {
+                    // Call replaceNewlines() on dataClass
+                    dataClass.replaceNewlines()
+
+                    // Update the UI with the fetched data
+                    disasterDesc.text = dataClass.dataDesc
+                    disasterTitle.text = dataClass.dataTitle
+                    disasterImageSource.text = dataClass.dataImageSource
+                    disasterArticleSource.text = dataClass.dataArticleSource
+                    imageUrl = dataClass.dataImage ?: ""
+                    Glide.with(this@PerDisaster).load(imageUrl).into(disasterImage)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle onCancelled event
+            }
+        })
+
+
+
 
         disasterImageSource.setOnClickListener {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(disasterImageSource.text.toString()))

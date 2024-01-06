@@ -61,7 +61,7 @@
                     android:padding="8dp"
                     android:layout_gravity="center"
                     android:src="@drawable/photo_icon"
-                    android:scaleType="centerCrop"/>
+                    android:scaleType="fitCenter"/>
 
                 <!--DESCRIPTION-->
                 <TextView
