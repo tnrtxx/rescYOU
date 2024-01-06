@@ -177,8 +177,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     //for a progress dialog
     private lateinit var progressDialog: ProgressDialog
 
+    private var isDialogShowing = false  // Flag to check if any dialog is showing
 
-
+    private var currentDialog: Dialog? = null
 
 
 
@@ -312,6 +313,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         bottomNavigationView.setOnNavigationItemSelectedListener(navBarWhenClicked)
 
     }
+
 
     private fun handleGpsStatus(isGpsOn: Boolean) {
         if (!isGpsOn) {
@@ -492,8 +494,26 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
     }
 
+    override fun onBackPressed() {
+        // Check if any dialog is showing
+        if (isDialogShowing) {
+            // Redirect to your desired activity
+            val intent = Intent(this@Home, Home::class.java)
+            startActivity(intent)
+            isDialogShowing = false  // Reset the flag
+        } else {
+            super.onBackPressed()  // Default behavior if no dialog is showing
+        }
+    }
+
 
     private fun showMyDialog(pinId: String) {
+
+        isDialogShowing = true  // Set the flag to true when the dialog is about to show
+
+        // Dismiss the current dialog if it's showing
+        currentDialog?.dismiss()
+
 
         // Get a reference to the "Pins" node in the database
         val pinsRef = database.getReference("Pins")
@@ -508,6 +528,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                     val dialog = Dialog(this@Home)
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
                     dialog.setContentView(R.layout.activity_my_pin)
+
 
                     if (!isFinishing) {
                         dialog.show()
@@ -671,6 +692,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                 Log.d(PinMyLocation.TAG, "loadPin:onCancelled", databaseError.toException())
             }
         })
+
+        // Keep a reference to the currently displayed dialog
+        currentDialog = dialog
 
 
     }
@@ -1004,6 +1028,12 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
     //SHOW DIALOG (for other pins)
     private fun showDialog(pins: Pins) {
+        isDialogShowing = true  // Set the flag to true when the dialog is about to show
+        // Dismiss the current dialog if it's showing
+        currentDialog?.dismiss()
+
+
+
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.activity_view_pin)
@@ -1018,6 +1048,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.rgb(241, 242, 242)))
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
         dialog.window?.setGravity(Gravity.BOTTOM)
+
 
 
 
@@ -1229,6 +1260,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
         }
 
+        // Keep a reference to the currently displayed dialog
+        currentDialog = dialog
+
 
 
     }
@@ -1236,9 +1270,19 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
     //SHOW MY DIALOG (for my pin)
     private fun showEditDialog(pinId: String) {
+        isDialogShowing = true  // Set the flag to true when the dialog is about to show
+
+        // Dismiss the current dialog if it's showing
+        currentDialog?.dismiss()
+
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.activity_edit_pin)
+
+        // Show the dialog
+        if (!isFinishing) {
+            dialog.show()
+        }
 
         dialog.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -1422,6 +1466,9 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         }
 
         dialog.show()
+
+        // Keep a reference to the currently displayed dialog
+        currentDialog = dialog
     }
 
 

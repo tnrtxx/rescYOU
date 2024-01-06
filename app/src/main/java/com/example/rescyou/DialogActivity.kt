@@ -117,6 +117,8 @@ class DialogActivity : AppCompatActivity() {
     // Add a new property to your activity
     var dialogInteracted = false
 
+    private var currentDialog: Dialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDialogBinding.inflate(layoutInflater)
@@ -183,6 +185,17 @@ class DialogActivity : AppCompatActivity() {
         val alertDialog: AlertDialog = alertDialogBuilder.create()
         alertDialog.show()
 
+    }
+
+    override fun onBackPressed() {
+        // Create an Intent to redirect to your desired activity
+        val intent = Intent(this, Home::class.java)
+
+        // Start the new activity
+        startActivity(intent)
+
+        // Finish the current activity to prevent going back to it when pressing back
+        finish()
     }
 
 
@@ -299,7 +312,13 @@ fun callApi(jsonObject: JSONObject) {
 }
 
 
+    //DIALOGS
+
+
 private fun showDialog(pinId: String) {
+
+    // Dismiss the current dialog if it's showing
+    currentDialog?.dismiss()
 
         // Get a reference to the "Pins" node in the database
         val pinsRef = database.getReference("Pins")
@@ -471,6 +490,9 @@ private fun showDialog(pinId: String) {
                             .show()
                     }
 
+                    // Keep a reference to the currently displayed dialog
+                    currentDialog = dialog
+
                 } else {
                     Log.d(TAG, "No Pin data found for pinId: $pinId")
                 }
@@ -482,12 +504,18 @@ private fun showDialog(pinId: String) {
             }
         })
 
+
+
+
     }
 
     private fun showDeclineDialog(pinId: String) {
+        // Dismiss the current dialog if it's showing
+        currentDialog?.dismiss()
 
         // Get a reference to the "Pins" node in the database
         val pinsRef = database.getReference("Pins")
+
 
         // Attach a listener to read the data at the "Pins" reference
         pinsRef.child(pinId).addListenerForSingleValueEvent(object : ValueEventListener {
@@ -630,7 +658,8 @@ private fun showDialog(pinId: String) {
 
                         }
 
-
+                        // Keep a reference to the currently displayed dialog
+                        currentDialog = dialog
                     }
 
                 } else {
@@ -673,9 +702,18 @@ private fun showDialog(pinId: String) {
 
     //EDIT
     private fun showEditDialog(pinId: String) {
+        // Dismiss the current dialog if it's showing
+        currentDialog?.dismiss()
+
+
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.activity_edit_pin)
+
+        // Show the dialog
+        if (!isFinishing) {
+            dialog.show()
+        }
 
         dialog.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -857,7 +895,8 @@ private fun showDialog(pinId: String) {
             val alertDialog: AlertDialog = alertDialogBuilder.create()
             alertDialog.show()
         }
-
+        // Keep a reference to the currently displayed dialog
+        currentDialog = dialog
         dialog.show()
     }
 

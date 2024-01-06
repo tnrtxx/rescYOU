@@ -54,6 +54,8 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
     //for a progress dialog
     private lateinit var progressDialog: ProgressDialog
 
+    private var currentDialog: Dialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
@@ -140,9 +142,17 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
     //EDITING THE PROFILE
     private fun showProfileEdit(userId: String?) {
+        // Dismiss the current dialog if it's showing
+        currentDialog?.dismiss()
+
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.activity_profile_edit)
+
+        // Show the dialog
+        if (!isFinishing) {
+            dialog.show()
+        }
 
         dialog.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -176,9 +186,6 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
                     birthdayInputEditText.setOnClickListener { view ->
                         // GET THE DATE PICKER FOR BIRTHDAY
-                        val currentDate = Calendar.getInstance()
-
-                        // Set the date range for the DatePickerDialog
                         val datePickerDialog = DatePickerDialog(
                             this@Profile,
                             this@Profile,
@@ -187,12 +194,10 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
                             calendar.get(Calendar.DAY_OF_MONTH)
                         )
 
-                        // Set the maximum date to the current date.
-                        datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
-
-                        // Set the minimum date to one year ago from the current date.
+                        // Set the maximum date to one year ago from the current date.
+                        val currentDate = Calendar.getInstance()
                         currentDate.add(Calendar.YEAR, -1)
-                        datePickerDialog.datePicker.minDate = currentDate.timeInMillis
+                        datePickerDialog.datePicker.maxDate = currentDate.timeInMillis
 
                         datePickerDialog.show()
                     }
@@ -328,6 +333,9 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
             val alertDialog: AlertDialog = alertDialogBuilder.create()
             alertDialog.show()
         }
+
+        // Keep a reference to the currently displayed dialog
+        currentDialog = dialog
 
         dialog.show()
     }
