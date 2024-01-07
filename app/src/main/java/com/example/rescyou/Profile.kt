@@ -75,7 +75,7 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
                 val displayName = dataSnapshot.child("displayName").value.toString()
                 val email = dataSnapshot.child("email").value.toString()
                 birthday = dataSnapshot.child("birthday").value?.toString()
-                age =  dataSnapshot.child("age").value?.toString()!!.toInt()
+                age =  dataSnapshot.child("age").value?.toString()?.toInt() ?: 0
 
                 binding.email.text = email
 
@@ -386,12 +386,11 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
     }
 
     private fun signOut() {
-
         Toast.makeText(applicationContext,"Sign out successfully.", Toast.LENGTH_SHORT).show()
-
 
         FirebaseAuth.getInstance().signOut()
         val i  = Intent(this,MainActivity::class.java)
+        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(i)
     }
 

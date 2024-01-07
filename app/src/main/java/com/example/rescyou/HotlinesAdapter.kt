@@ -2,6 +2,7 @@ package com.example.rescyou
 
 import HotlinesDataClass
 import android.content.Intent
+import android.graphics.Paint
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +26,10 @@ class HotlinesAdapter (private val hotlinesList: MutableList<HotlinesDataClass>)
         val currentItem = hotlinesList[position]
         holder.dataNameTextView.text = currentItem.dataName
         holder.dataPhoneTextView.text = currentItem.dataPhone
+
+        // Underline the text in dataPhoneTextView
+        holder.dataPhoneTextView.paintFlags = holder.dataPhoneTextView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
 
         holder.dataPhoneTextView.setOnClickListener {
             val dialIntent = Intent(Intent.ACTION_DIAL)

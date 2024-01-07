@@ -92,8 +92,10 @@ class Tools : AppCompatActivity() {
         // Update the flashlight button based on the flashlight status.
         if (isFlash) {
             flashlightSwitch.text = getString(R.string.switch_on)
+            flashlightSwitch.isChecked = true
         } else {
             flashlightSwitch.text = getString(R.string.switch_off)
+            flashlightSwitch.isChecked = false
         }
     }
 
@@ -113,10 +115,12 @@ class Tools : AppCompatActivity() {
                 cameraManager.setTorchMode(cameraListId, true)
                 isFlash = true
                 switchFlashlight.text = getString(R.string.switch_on)
+                switchFlashlight.isChecked = true
             } else {
                 cameraManager.setTorchMode(cameraListId, false)
                 isFlash = false
                 switchFlashlight.text = getString(R.string.switch_off)
+                switchFlashlight.isChecked = false
             }
         } catch (e: Exception) {
             // Handle any exceptions that may occur when accessing the camera or turning on/off the flashlight.

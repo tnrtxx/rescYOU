@@ -390,7 +390,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     private fun checkIfEmpty(){
         //to check baka may null na selected
 
-        if(selectedRateName == "" || selectedItemValue =="Select an item" || selectedSitioValue =="" || binding.describeTextInput.text?.isEmpty() == true || uri.size == 0){
+        if(selectedRateName == "" || selectedItemValue =="Select an item" || selectedSitioValue =="Select an item" || selectedSitioValue =="" || binding.describeTextInput.text?.isEmpty() == true || uri.size == 0){
             Toast.makeText(applicationContext, "Please fill all the required field." , Toast.LENGTH_SHORT).show()
             isEmpty="true"
 

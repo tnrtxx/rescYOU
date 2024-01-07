@@ -650,7 +650,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                             Toast.makeText(this@Home, "This pin has been resolved.", Toast.LENGTH_SHORT).show()
                         } else{
                             showEditDialog(pinId)
-                            Toast.makeText(this@Home, "Edit button clicked", Toast.LENGTH_SHORT).show()
                         }
 
                     }

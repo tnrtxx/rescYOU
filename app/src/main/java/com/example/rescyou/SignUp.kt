@@ -26,8 +26,11 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -128,23 +131,7 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
             } else if(!checkEmail(email) && password.trim().length < 6) {
                 Toast.makeText(applicationContext, "Invalid mail and password.", Toast.LENGTH_SHORT).show()
             } else{
-
-                auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
-                            showTermsAndConditions()
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                            Toast.makeText(
-                                baseContext,
-                                "Email already exists.",
-                                Toast.LENGTH_SHORT,
-                            ).show()
-                            updateUI(null)
-                        }
-                    }
+                checkIfEmailExists(email)
 
 
             }
@@ -236,6 +223,36 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
         }
     }
 
+    private fun checkIfEmailExists(email: String) {
+        // Create a reference to the "Users" node in your Realtime Database
+        val usersRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            .getReference("Users")
+
+        // Query to search for the email
+        val query = usersRef.orderByChild("email").equalTo(email)
+
+        // Attach a ValueEventListener to listen for changes
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Email exists in the database
+                    Toast.makeText(applicationContext, "Email already exists.", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Email does not exist in the database
+                    // Continue with user registration process
+                    showTermsAndConditions()
+
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle database error
+                Log.w(TAG, "checkIfEmailExists:onCancelled", databaseError.toException())
+                Toast.makeText(applicationContext, "Database error occurred.", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
     private fun showTermsAndConditions() {
         val dialog = Dialog(this@SignUp)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -273,49 +290,63 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
                     .setTitle("Confirmation")
                     .setMessage("Do you accept the terms and conditions?")
                     .setPositiveButton("Yes") { _, _ ->
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success")
-                        val user = auth.currentUser
-                        userID= user?.uid.toString()
 
-                        //PAREHAS WALANG MIDDLE NAME AND SUFFIX NAME
-                        if (middleNameText.isEmpty() && suffixNameText.isEmpty()){
-                            displayName = "$firstName $lastName"
-                        } //MAY SUFFIX NAME PERO WALANG MIDDLE NAME
-                        else if(middleNameText.isEmpty() && suffixNameText.isNotEmpty()){
-                            displayName = "$firstName $lastName $suffixName"
-                        }//MAY MIDDLE NAME PERO WALANG SUFFIX NAME
-                        else if (middleNameText.isNotEmpty() && suffixNameText.isEmpty()) {
-                            displayName = "$firstName $middleName $lastName"
-                        } //PAREHAS MERON
-                        else if (middleNameText.isNotEmpty() && suffixNameText.isNotEmpty()) {
-                            displayName = "$firstName $middleName $lastName $suffixName"
-                        }
-
-
-                        //Set the display name of the user
-                        val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
-                            .setDisplayName(displayName)
-                            .build()
-
-                        user?.updateProfile(profileUpdates)
-                            ?.addOnCompleteListener { task ->
+                        auth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(this@SignUp) { task ->
                                 if (task.isSuccessful) {
-                                    Log.d(TAG, "User profile updated.")
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d(TAG, "createUserWithEmail:success")
+                                    val user = auth.currentUser
+                                    userID= user?.uid.toString()
+
+                                    //PAREHAS WALANG MIDDLE NAME AND SUFFIX NAME
+                                    if (middleNameText.isEmpty() && suffixNameText.isEmpty()){
+                                        displayName = "$firstName $lastName"
+                                    } //MAY SUFFIX NAME PERO WALANG MIDDLE NAME
+                                    else if(middleNameText.isEmpty() && suffixNameText.isNotEmpty()){
+                                        displayName = "$firstName $lastName $suffixName"
+                                    }//MAY MIDDLE NAME PERO WALANG SUFFIX NAME
+                                    else if (middleNameText.isNotEmpty() && suffixNameText.isEmpty()) {
+                                        displayName = "$firstName $middleName $lastName"
+                                    } //PAREHAS MERON
+                                    else if (middleNameText.isNotEmpty() && suffixNameText.isNotEmpty()) {
+                                        displayName = "$firstName $middleName $lastName $suffixName"
+                                    }
+
+
+                                    //Set the display name of the user
+                                    val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                                        .setDisplayName(displayName)
+                                        .build()
+
+                                    user?.updateProfile(profileUpdates)
+                                        ?.addOnCompleteListener { task ->
+                                            if (task.isSuccessful) {
+                                                Log.d(TAG, "User profile updated.")
+                                            }
+                                        }
+
+                                    updateUI(user)
+
+                                    storeData(userID, firstName, middleName, lastName, displayName, suffixName, birthday, age, email, password)
+
+
+
+
+                                    val intent = Intent(this, Home::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    startActivity(intent)
+                                    dialog.dismiss()
+                                } else {
+                                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                                    Toast.makeText(
+                                        baseContext,
+                                        "Registration failed.",
+                                        Toast.LENGTH_SHORT,
+                                    ).show()
                                 }
                             }
 
-                        updateUI(user)
-
-                        storeData(userID, firstName, middleName, lastName, displayName, suffixName, birthday, age, email, password)
-
-
-
-
-                        val intent = Intent(this, Home::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
-                        dialog.dismiss()
                     }
                     .setNegativeButton("No", null)
                     .show()
@@ -334,26 +365,13 @@ class SignUp : AppCompatActivity(), DatePickerDialog.OnDateSetListener{
                 .setTitle("Confirmation")
                 .setMessage("Are you sure you want to decline?")
                 .setPositiveButton("Yes") { _, _ ->
-                    // Get the current user
-                    val user = auth.currentUser
-                    user?.delete()?.addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d(MainActivity.TAG, "User account deleted.")
-                        }
-                    }
-
-                    // Sign out from Google
-                    googleSignInClient.signOut().addOnCompleteListener {
-                        // After sign out is completed, navigate back to MainActivity
-                        val intent = Intent(this@SignUp, MainActivity::class.java) // Create the Intent object
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent) // Use the Intent object to start the MainActivity
-                    }
-
+                    // Navigate to Home activity if the user clicks "No"
+                    val intent = Intent(this@SignUp, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
                 }
                 .setNegativeButton("No", null)
                 .show()
-
         }
 
     }

@@ -70,7 +70,7 @@ class TermsAndConditions : AppCompatActivity() {
             //DISAGREE BUTTON
             binding.declineButton.setOnClickListener {
 
-                val i  = Intent(this,MainActivity::class.java)
+                val i  = Intent(this,SplashScreen::class.java)
                 i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(i)
 
