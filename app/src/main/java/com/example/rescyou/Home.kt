@@ -236,10 +236,17 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         // Initialize Firebase
         FirebaseUtil.initializeFirebase(this)
 
+        if (!hasLocationPermission()) {
+            requestLocationPermission()
+        }
+
+        if (!hasNotificationPermission()) {
+            requestNotificationPermission()
+        }
+
+
 
         //PIN MY LOCATION BUTTON
-
-
 
         binding.pinMyLocationButton.setOnClickListener {
 
@@ -982,6 +989,18 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
     //PERMISSIONS
 
+    private fun hasNotificationPermission(): Boolean =
+        EasyPermissions.hasPermissions(this, android.Manifest.permission.ACCESS_NOTIFICATION_POLICY)
+
+    private fun requestNotificationPermission() {
+        EasyPermissions.requestPermissions(
+            this,
+            "This application requires notification access to work properly.",
+            Constants.PERMISSION_REQUEST_CODE_ACCESS_NOTIFICATION,
+            android.Manifest.permission.ACCESS_NOTIFICATION_POLICY
+        )
+    }
+
     private fun hasLocationPermission(): Boolean =
         EasyPermissions.hasPermissions(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -998,12 +1017,21 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             SettingsDialog.Builder(this).build().show()
         } else {
-            requestLocationPermission()
+            if (requestCode == Constants.PERMISSION_REQUEST_CODE_ACCESS_FINE_LOCATION) {
+                requestLocationPermission()
+            } else if (requestCode == Constants.PERMISSION_REQUEST_CODE_ACCESS_NOTIFICATION) {
+                requestNotificationPermission()
+            }
         }
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
-        restartApp()
+        when (requestCode) {
+            Constants.PERMISSION_REQUEST_CODE_ACCESS_FINE_LOCATION -> restartApp()
+            Constants.PERMISSION_REQUEST_CODE_ACCESS_NOTIFICATION -> {
+                // Handle the permission granted for notifications if needed
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
