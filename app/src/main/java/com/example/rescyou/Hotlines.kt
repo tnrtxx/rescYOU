@@ -58,6 +58,10 @@ class Hotlines : AppCompatActivity() {
                     }
                 }
 
+                // Sort the list in alphabetical order by the 'dataName' property
+                hotlinesList.sortBy { it.dataName.orEmpty() }
+
+                // Notify the adapter about the data change
                 adapter.notifyDataSetChanged()
             }
 

@@ -476,7 +476,7 @@ private fun showDialog(pinId: String) {
                     resolvedButtonLayout.setOnClickListener {
                         AlertDialog.Builder(this@DialogActivity)
                             .setTitle("Resolve Confirmation")
-                            .setMessage("Are you sure you want to mark this as resolved?")
+                            .setMessage("Are you sure you want to mark this as resolved? This action cannot be undone.")
                             .setPositiveButton("Yes") { _, _ ->
                                 val dbRef = FirebaseDatabase.getInstance("https://rescyou-57570-default-rtdb.asia-southeast1.firebasedatabase.app/")
                                     .reference
@@ -840,7 +840,7 @@ private fun showDialog(pinId: String) {
         deleteButton.setOnClickListener {
             val alertDialogBuilder = AlertDialog.Builder(this@DialogActivity)
             alertDialogBuilder.setTitle("Delete Confirmation")
-            alertDialogBuilder.setMessage("Are you sure you want to delete?")
+            alertDialogBuilder.setMessage("Are you sure you want to permanently delete this?")
             alertDialogBuilder.setPositiveButton("Yes") { dialogInterface, _ ->
                 // Handle "Yes" button click, for example, navigate back or finish the activity
                 dialogInterface.dismiss()

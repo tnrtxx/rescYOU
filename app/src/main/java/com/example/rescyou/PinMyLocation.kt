@@ -311,17 +311,6 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
                     uploadImages()
                     getPinDetails()
 
-                    // Add a marker for the selected location
-//                    val currentLocation = Home.currentLocation
-//                    pin.latitude= currentLocation?.latitude.toString()
-//                    pin.latitude= currentLocation?.longitude.toString()
-//
-//                    val intent = Intent(this, Home::class.java)
-//                    startActivity(intent)
-
-//
-
-
 
                 }
                 alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
@@ -389,6 +378,7 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
 
     private fun checkIfEmpty(){
         //to check baka may null na selected
+        isEmpty = "false"
 
         if(selectedRateName == "" || selectedItemValue =="Select an item" || selectedSitioValue =="Select an item" || selectedSitioValue =="" || binding.describeTextInput.text?.isEmpty() == true || uri.size == 0){
             Toast.makeText(applicationContext, "Please fill all the required field." , Toast.LENGTH_SHORT).show()
