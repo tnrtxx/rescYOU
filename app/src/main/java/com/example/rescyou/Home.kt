@@ -59,6 +59,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -72,6 +73,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.maps.android.clustering.ClusterManager
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import okhttp3.Call
@@ -486,20 +488,11 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             }
 
 
-
-//            // Assuming you associate user data with the marker (e.g., marker.tag)
-//            val otherUserId = marker.tag as? String
-//            if (otherUserId != null) {
-//                // Fetch otherUser data
-//                fetchOtherUserData(otherUserId)
-//            } else {
-//                Log.e(TAG, "Failed to obtain otherUserId from marker.")
-//            }
-
             true
         }
 
     }
+
 
     override fun onBackPressed() {
         // Check if any dialog is showing
