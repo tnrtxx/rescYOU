@@ -24,6 +24,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -999,14 +1000,32 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
         EasyPermissions.hasPermissions(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
 
     private fun requestLocationPermission() {
-        EasyPermissions.requestPermissions(
-            this,
-            "This application requires location permission to work properly.",
-            Constants.PERMISSION_REQUEST_CODE_ACCESS_FINE_LOCATION,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
-        )
-    }
+        val rationale = "This feature requires location permission to work properly."
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Location Permission Request")
+            .setMessage(rationale)
+            .setPositiveButton("Grant Permission") { _, _ ->
+                // Request permission when the user clicks the positive button
+                EasyPermissions.requestPermissions(
+                    this,
+                    rationale,
+                    Constants.PERMISSION_REQUEST_CODE_ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            }
+            .setNegativeButton("Cancel") { _, _ ->
+                // Handle cancellation or navigate to another screen
+            }
+            .setCancelable(false) // Make the dialog not cancelable
+            .create()
 
+        // Make other elements clickable while the dialog is open
+        dialog.setOnShowListener {
+            dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        }
+
+        dialog.show()
+    }
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             SettingsDialog.Builder(this).build().show()
