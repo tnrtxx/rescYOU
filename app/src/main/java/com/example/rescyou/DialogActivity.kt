@@ -151,18 +151,21 @@ class DialogActivity : AppCompatActivity() {
                     dbRef.child("Pins").child(pinId).child("pinRescuerID").setValue(otherUserID)
                 } else {
                     Log.d(TAG, "pinId or rescuerName is null")
+                    throw RuntimeException("pinId or rescuerName is null")
                 }
 
                 if (otherUserID != null) {
                     fetchFCMToken(otherUserID)
                 } else {
                     Log.d(TAG, "otherUserID is null")
+                    throw RuntimeException("otherUserID is null")
                 }
 
                 if (rescuerName != null) {
                     showDialog(pinId)
                 } else {
                     Log.d(TAG, "rescuerName is null")
+                    throw RuntimeException("rescuerName is null")
                 }
 
                 Log.d(TAG, "Rescuer name in DialogActivity: $rescuerName")
