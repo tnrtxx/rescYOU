@@ -108,11 +108,12 @@
                 android:checked="false"
                 android:drawableTop="@drawable/catastropic_4"
                 android:drawablePadding="10dp"
-                android:gravity="center"
                 android:padding="10dp"
                 android:text="@string/catastrophic"
                 android:textSize="12sp"
                 android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
 
                 />
         </RadioGroup>
@@ -135,10 +136,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:padding="10dp"
+            android:padding="16dp"
             android:paddingHorizontal="10dp"
-            android:elevation="10dp"
             android:entries="@array/categories_spinner_items"
+            android:background="@drawable/spinner_border"
             />
 
         <!--Sitio-->
@@ -159,10 +160,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:padding="10dp"
+            android:padding="16dp"
             android:paddingHorizontal="10dp"
-            android:elevation="10dp"
             android:visibility="visible"
+            android:background="@drawable/spinner_border"
 
             />
 
