@@ -869,57 +869,37 @@ class PinMyLocation : AppCompatActivity(), EasyPermissions.PermissionCallbacks, 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == RESULT_OK && data != null) {
-            if (requestCode == GALLERY_IMAGE_PICK_REQUEST_CODE) {
-                // Handle result from system file picker
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    val clipData = data.clipData
-                    if (clipData != null) {
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                GALLERY_IMAGE_PICK_REQUEST_CODE -> {
+                    // Handle result from system file picker
+                    val clipData = data?.clipData
+                    val imageUri = data?.data
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && clipData != null) {
                         for (i in 0 until clipData.itemCount) {
-                            val imageUri = clipData.getItemAt(i).uri
-                            if (uri.size < 4) {
-                                uri.add(imageUri)
-                            } else {
-                                Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
-                                break
-                            }
+                            addImageUri(clipData.getItemAt(i).uri)
                         }
-                    } else {
-                        val imageUri = data.data
-                        if (imageUri != null) {
-                            if (uri.size < 4) {
-                                uri.add(imageUri)
-                            } else {
-                                Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
-                } else {
-                    // Handle result from FilePicker
-                    val selectedPhotos = data.getParcelableArrayListExtra<Uri>(FilePickerConst.KEY_SELECTED_MEDIA)
-                    if (selectedPhotos != null) {
-                        for (imageUri in selectedPhotos) {
-                            if (uri.size < 4) {
-                                uri.add(imageUri)
-                            } else {
-                                Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
-                                break
-                            }
-                        }
-                    } else {
-                        val imageUri = data.data
-                        if (imageUri != null) {
-                            if (uri.size < 4) {
-                                uri.add(imageUri)
-                            } else {
-                                Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
-                            }
-                        }
+                    } else if (imageUri != null) {
+                        addImageUri(imageUri)
                     }
                 }
-                adapter.notifyDataSetChanged()
-                adapter.updateItemCount()
+                CAPTURE_IMAGE -> {
+                    // Handle result from camera
+                    fileUri?.let { addImageUri(it) }
+                }
             }
+
+            adapter.notifyDataSetChanged()
+            adapter.updateItemCount()
+        }
+    }
+
+    private fun addImageUri(imageUri: Uri) {
+        if (uri.size < 4) {
+            uri.add(imageUri)
+        } else {
+            Toast.makeText(this, "Not allowed to pick more than 4 images", Toast.LENGTH_SHORT).show()
         }
     }
 

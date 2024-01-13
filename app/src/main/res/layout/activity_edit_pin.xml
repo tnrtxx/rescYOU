@@ -13,8 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="34dp"
-
         >
 
         <!--HEADER-->
@@ -22,20 +20,24 @@
             android:id="@+id/back_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/navy_blue"
+            android:backgroundTint="@color/navy_blue"
+            android:paddingHorizontal="34dp"
+            android:paddingVertical="14dp"
             >
 
             <ImageView
                 android:id="@+id/back_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/back_button_2"></ImageView>
+                android:src="@drawable/back_button_3"></ImageView>
             <TextView
                 android:id="@+id/pins_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/my_pin"
-                android:textColor="@color/black"
+                android:text="Edit My Pin"
+                android:textColor="@color/white"
                 android:textSize="30sp"
                 android:textStyle="bold"
                 android:layout_toEndOf="@+id/back_button"
@@ -46,223 +48,232 @@
 
         <!--START OF LAYOUT-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/rate_situation"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="20dp"
-            >
-        </TextView>
-
-        <RadioGroup
-            android:id="@+id/rate_radiobutton"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            >
-
-
-            <RadioButton android:id="@+id/radio_mild"
+            android:orientation="vertical"
+            android:padding="34dp">
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/mild"
-                android:textSize="12sp"
-                android:drawablePadding="10dp"
-                android:drawableTop="@drawable/mild_1"
-                android:gravity="center"
-                android:padding="10dp"
-                android:checked="false"
-                android:button="@null"
+                android:text="@string/rate_situation"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
                 android:textColor="@color/black"
+                >
+            </TextView>
 
-
-                />
-
-            <RadioButton
-                android:id="@+id/radio_moderate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/moderate"
-                android:textSize="12sp"
-                android:drawablePadding="10dp"
-                android:drawableTop="@drawable/moderate"
-                android:gravity="center"
-                android:padding="10dp"
-                android:button="@null"
-                android:checked="false"
-                android:textColor="@color/black"
-                />
-
-            <RadioButton
-                android:id="@+id/radio_severe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/severe"
-                android:textSize="12sp"
-                android:drawablePadding="10dp"
-                android:drawableTop="@drawable/severe"
-                android:gravity="center"
-                android:padding="10dp"
-                android:button="@null"
-                android:checked="false"
-                android:textColor="@color/black"
-                />
-
-            <RadioButton android:id="@+id/radio_critical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/critical"
-                android:textSize="12sp"
-                android:drawablePadding="10dp"
-                android:drawableTop="@drawable/crtical"
-                android:gravity="center"
-                android:padding="10dp"
-                android:button="@null"
-                android:checked="false"
-                android:textColor="@color/black"
-                />
-
-            <RadioButton android:id="@+id/radio_catastrophic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/catastrophic"
-                android:textSize="12sp"
-                android:drawablePadding="10dp"
-                android:drawableTop="@drawable/catastropic_4"
-                android:gravity="center"
-                android:padding="10dp"
-                android:button="@null"
-                android:checked="false"
-                android:textColor="@color/black"
-                />
-        </RadioGroup>
-
-        <!--type of disaster-->
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/type_disaster"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="30dp"
-            >
-        </TextView>
-
-        <Spinner
-            android:id="@+id/spinnerCategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:padding="16dp"
-            android:paddingHorizontal="10dp"
-            android:entries="@array/categories_spinner_items"
-            android:background="@drawable/spinner_border"
-            />
-
-        <!--Sitio-->
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sitio"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="30dp"
-            >
-        </TextView>
-
-        <Spinner
-            android:id="@+id/spinnerSitio"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:padding="16dp"
-            android:paddingHorizontal="10dp"
-            android:visibility="visible"
-            android:background="@drawable/spinner_border"
-
-            />
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/describe"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="30dp"
-            >
-        </TextView>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/describeTextLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            >
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/describeTextInput"
+            <RadioGroup
+                android:id="@+id/rate_radiobutton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/describe"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
                 >
 
-            </com.google.android.material.textfield.TextInputEditText>
-        </com.google.android.material.textfield.TextInputLayout>
+
+                <RadioButton android:id="@+id/radio_mild"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mild"
+                    android:textSize="12sp"
+                    android:drawablePadding="10dp"
+                    android:drawableTop="@drawable/mild_1"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:checked="false"
+                    android:button="@null"
+                    android:textColor="@color/black"
+
+
+                    />
+
+                <RadioButton
+                    android:id="@+id/radio_moderate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/moderate"
+                    android:textSize="12sp"
+                    android:drawablePadding="10dp"
+                    android:drawableTop="@drawable/moderate"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:button="@null"
+                    android:checked="false"
+                    android:textColor="@color/black"
+                    />
+
+                <RadioButton
+                    android:id="@+id/radio_severe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/severe"
+                    android:textSize="12sp"
+                    android:drawablePadding="10dp"
+                    android:drawableTop="@drawable/severe"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:button="@null"
+                    android:checked="false"
+                    android:textColor="@color/black"
+                    />
+
+                <RadioButton android:id="@+id/radio_critical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/critical"
+                    android:textSize="12sp"
+                    android:drawablePadding="10dp"
+                    android:drawableTop="@drawable/crtical"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:button="@null"
+                    android:checked="false"
+                    android:textColor="@color/black"
+                    />
+
+                <RadioButton android:id="@+id/radio_catastrophic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/catastrophic"
+                    android:textSize="12sp"
+                    android:drawablePadding="10dp"
+                    android:drawableTop="@drawable/catastropic_4"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:button="@null"
+                    android:checked="false"
+                    android:textColor="@color/black"
+                    />
+            </RadioGroup>
+
+            <!--type of disaster-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/type_disaster"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="30dp"
+                >
+            </TextView>
+
+            <Spinner
+                android:id="@+id/spinnerCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="16dp"
+                android:paddingHorizontal="10dp"
+                android:entries="@array/categories_spinner_items"
+                android:background="@drawable/spinner_border"
+                />
+
+            <!--Sitio-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sitio"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="30dp"
+                >
+            </TextView>
+
+            <Spinner
+                android:id="@+id/spinnerSitio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="16dp"
+                android:paddingHorizontal="10dp"
+                android:visibility="visible"
+                android:background="@drawable/spinner_border"
+
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/describe"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="30dp"
+                >
+            </TextView>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/describeTextLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/describeTextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/describe"
+                    >
+
+                </com.google.android.material.textfield.TextInputEditText>
+            </com.google.android.material.textfield.TextInputLayout>
 
 
 
-        <android.widget.Button
-            android:id="@+id/saveButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            android:background="@drawable/rounded_corner"
-            android:foregroundTint="@color/white"
-            android:padding="12dp"
-            android:text="@string/save"
-            android:textColor="@color/white"
-            android:textSize="20sp"></android.widget.Button>
+            <android.widget.Button
+                android:id="@+id/saveButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/rounded_corner"
+                android:foregroundTint="@color/white"
+                android:padding="12dp"
+                android:text="@string/save"
+                android:textColor="@color/white"
+                android:textSize="20sp"></android.widget.Button>
 
-        <android.widget.Button
-            android:id="@+id/deletePinButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/delete"
-            android:background="@drawable/rounded_corner_gray"
-            android:foregroundTint="@color/navy_blue"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:padding="12dp"
-            >
-        </android.widget.Button>
+            <android.widget.Button
+                android:id="@+id/deletePinButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/delete"
+                android:background="@drawable/rounded_corner_gray"
+                android:foregroundTint="@color/navy_blue"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:padding="12dp"
+                >
+            </android.widget.Button>
 
-        <android.widget.Button
-            android:id="@+id/cancelButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/cancel_pin"
-            android:background="@drawable/rounded_corner_gray"
-            android:foregroundTint="@color/navy_blue"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:padding="12dp"
-            android:layout_marginBottom="80dp"
-            >
-        </android.widget.Button>
+            <android.widget.Button
+                android:id="@+id/cancelButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/cancel_pin"
+                android:background="@drawable/rounded_corner_gray"
+                android:foregroundTint="@color/navy_blue"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:padding="12dp"
+                android:layout_marginBottom="80dp"
+                >
+            </android.widget.Button>
+
+
+
+
+        </LinearLayout>
 
 
     </LinearLayout>

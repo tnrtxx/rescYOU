@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Profile"
     android:background="@color/white"
+
     >
 
 
@@ -17,7 +18,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+
+            >
 
 
     <!--HEADER-->
@@ -28,8 +31,8 @@
             android:background="@color/light_gray"
             android:gravity="center"
             android:orientation="vertical"
-            android:backgroundTint="@color/light_gray"
-            android:paddingTop="24dp"
+            android:backgroundTint="@color/navy_blue"
+            android:paddingTop="16dp"
             >
 
             <TextView
@@ -38,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/profile"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="30sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -59,110 +62,99 @@
             android:orientation="vertical"
             android:paddingHorizontal="34dp"
             >
-            <!--PERSONAL DETAILS-->
-            <TextView
-                android:layout_width="wrap_content"
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="40dp"
+            app:cardCornerRadius="10dp"
+            android:backgroundTint="@color/navy_blue"
+            android:layout_marginTop="30dp"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/personal_details"
-                android:textAlignment="textStart"
-                android:textColor="@color/navy_blue"
-                android:textSize="30sp"
-                android:textStyle="bold"></TextView>
+                android:orientation="vertical"
+                android:paddingVertical="30dp"
+                >
+
+                <TextView
+                    android:id="@+id/displayName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Juan Dela Cruz"
+                    android:textColor="@color/white"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    ></TextView>
+
+                <TextView
+                    android:id="@+id/email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Juan@gmail.com"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:drawableLeft="@drawable/email_icon"
+                    android:drawablePadding="10dp"
+
+                    ></TextView>
 
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/display_name"
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
-                android:textSize="24sp"
-                android:textStyle="bold"></TextView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:id="@+id/displayName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Juan Dela Cruz"
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
-                android:textSize="24sp"></TextView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/birthday"
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
-                android:textSize="24sp"
-                android:textStyle="bold"></TextView>
+        <!--THIN LINE-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/dark_gray"
+            android:layout_marginTop="30dp"
+            />
 
             <TextView
                 android:id="@+id/birthday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="Enter your birthday"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:drawableLeft="@drawable/birthday_icon"
+                android:drawablePadding="10dp"
+                >
+
+
+            </TextView>
+            <TextView
+                android:id="@+id/age"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Enter your birthday"
                 android:textAlignment="textStart"
                 android:textColor="@color/black"
-                android:textSize="24sp"></TextView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/age"
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
                 android:textSize="24sp"
-                android:textStyle="bold"></TextView>
-
-            <TextView
-                android:id="@+id/age"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Enter your birthday to calculate your age."
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
-                android:textSize="24sp"></TextView>
+                android:drawableLeft="@drawable/age_icon"
+                android:drawablePadding="10dp"
+                >
 
 
-            <!--ACCOUNT DETAILS-->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:text="@string/account_details"
-                android:textAlignment="textStart"
-                android:textColor="@color/navy_blue"
-                android:textSize="30sp"
-                android:textStyle="bold"></TextView>
+            </TextView>
 
+        <!--THIN LINE-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/dark_gray"
+            android:layout_marginTop="40dp"
+            />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/email"
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
-                android:textSize="24sp"
-                android:textStyle="bold"></TextView>
-
-            <TextView
-                android:id="@+id/email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Juan@gmail.com"
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
-                android:textSize="24sp"></TextView>
 
         <android.widget.Button
             android:id="@+id/editButton"

@@ -13,22 +13,38 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="34dp"
+
 
         >
 
         <!--HEADER-->
+
+        <!--START OF LAYOUT-->
+        <!--PERSONAL DETAILS-->
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:text="@string/personal_details"-->
+<!--            android:textAlignment="textStart"-->
+<!--            android:textColor="@color/navy_blue"-->
+<!--            android:textSize="30sp"-->
+<!--            android:textStyle="bold"></TextView>-->
+
         <RelativeLayout
             android:id="@+id/back_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
+            android:background="@color/navy_blue"
+            android:backgroundTint="@color/navy_blue"
+            android:paddingHorizontal="34dp"
+            android:paddingVertical="14dp">
 
             <ImageView
                 android:id="@+id/back_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/back_button_2"></ImageView>
+                android:src="@drawable/back_button_3"></ImageView>
 
             <TextView
                 android:id="@+id/editProfile_textview"
@@ -39,28 +55,24 @@
                 android:layout_marginStart="20dp"
                 android:layout_toEndOf="@+id/back_button"
                 android:text="@string/profile_edit"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="30sp"
                 android:textStyle="bold" />
+
+
         </RelativeLayout>
 
-        <!--START OF LAYOUT-->
-        <!--PERSONAL DETAILS-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/personal_details"
-            android:textAlignment="textStart"
-            android:textColor="@color/navy_blue"
-            android:textSize="30sp"
-            android:textStyle="bold"></TextView>
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="34dp"
+        >
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:text="@string/display_name"
             android:textAlignment="textStart"
             android:textColor="@color/black"
@@ -139,14 +151,12 @@
             android:textColor="@color/black"
             android:textSize="20sp"
             android:padding="12dp"
-            android:layout_marginBottom="350dp"
+            android:layout_marginBottom="400dp"
             >
         </android.widget.Button>
 
-
-
-
     </LinearLayout>
+         </LinearLayout>
 
 
 

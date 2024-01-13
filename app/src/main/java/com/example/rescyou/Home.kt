@@ -20,7 +20,6 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.util.Log
 import android.view.Gravity
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -60,7 +59,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -74,7 +72,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.maps.android.clustering.ClusterManager
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import okhttp3.Call
@@ -90,7 +87,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.CountDownLatch
-
 
 private const val TAG = "Home"
 
@@ -185,7 +181,6 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
     private var currentDialog: Dialog? = null
 
 
-
     /** TODO:
      * LOGIC-RELATED
      * GPS - irequire kay user
@@ -247,7 +242,27 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
             requestNotificationPermission()
         }
 
+        //CHECK IF THE USER IS NULL
 
+        var userRef = database.getReference("Users").child(currentUserId().toString())
+        userRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    val displayName = dataSnapshot.child("displayName").getValue(String::class.java)
+                    val email = dataSnapshot.child("email").getValue(String::class.java)
+                    if(displayName == null || email == null || displayName == "" || email == "" || displayName == "null" || email == "null"){
+                        checkIfNull(email)
+                    }
+                } else {
+                    val email = null
+                    checkIfNull(email)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle possible errors.
+            }
+        })
 
         //PIN MY LOCATION BUTTON
 
@@ -324,6 +339,55 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
 
     }
 
+    // Define checkIfNull
+    private fun checkIfNull(email: String?) {
+        if (email == null || email == "" || email == "null") {
+
+            AlertDialog.Builder(this)
+                .setTitle("Login Error")
+                .setMessage("There is a problem logging in. Please sign in again.")
+                .setPositiveButton("OK") { _, _ ->
+                    val user = FirebaseAuth.getInstance().currentUser
+                    user?.let {
+                        // Delete from authentication
+                        it.delete()
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    // Delete from realtime database
+                                    val userRef = FirebaseDatabase.getInstance().getReference("Users").child(it.uid)
+                                    userRef.removeValue().addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                        val intent = Intent(this, MainActivity::class.java)
+                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    startActivity(intent)
+                                        }
+                                    }
+                                } else {
+                                }
+                            }
+                    }
+
+
+                }
+                .setCancelable(false)
+                .show()
+        } else {
+            showLoginErrorDialog()
+        }
+    }
+
+    private fun showLoginErrorDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Login Error")
+            .setMessage("There is a problem logging in. Please sign in again.")
+            .setPositiveButton("OK") { _, _ ->
+                val intent = Intent(this, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+            .setCancelable(false)
+            .show()
+    }
 
     private fun handleGpsStatus(isGpsOn: Boolean) {
         if (!isGpsOn) {
@@ -564,6 +628,7 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             val pinUserId = dataSnapshot.child("pinUserId").getValue(String::class.java)
 
+
                             usersRef.child(pinUserId.toString()).addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                                     val displayName = dataSnapshot.child("displayName").getValue(String::class.java)
@@ -748,8 +813,8 @@ class Home : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Permission
                         pinList.add(pin)
                         val markerOptions = MarkerOptions().position(
                             LatLng(
-                                pin.latitude.toDouble(),
-                                pin.longitude.toDouble()
+                                pin.latitude?.toDoubleOrNull() ?: 0.0,
+                                pin.longitude?.toDoubleOrNull() ?: 0.0
                             )
                         ).title(pin.pinId)
 

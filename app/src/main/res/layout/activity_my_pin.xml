@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="34dp"
 
         >
 
@@ -22,20 +21,24 @@
             android:id="@+id/back_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/navy_blue"
+            android:paddingHorizontal="34dp"
+            android:paddingVertical="14dp"
+            android:background="@color/navy_blue"
             >
 
             <ImageView
                 android:id="@+id/back_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/back_button_2"></ImageView>
+                android:src="@drawable/back_button_3"></ImageView>
             <TextView
                 android:id="@+id/pins_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/my_pin"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="30sp"
                 android:textStyle="bold"
                 android:layout_toEndOf="@+id/back_button"
@@ -45,236 +48,243 @@
         </RelativeLayout>
 
         <!--START OF LAYOUT-->
-
-        <!--SENDING HELP NAME-->
-        <TextView
-            android:id="@+id/viewPin_sendHelpName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/darker_gray"
-            android:layout_marginTop="20dp"
-            >
-        </TextView>
-
-        <!--THIN LINE-->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/dark_gray"
-            android:layout_below="@id/viewPin_sendHelpName"
-            android:layout_marginTop="10dp"
-            android:layout_toRightOf="@id/textView_pinnedBy"
-            />
-
-        <!--TIME-->
-        <TextView
-            android:id="@+id/dateAndTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Last updated: 12:00 PM, 12/12/2020"
-            android:textAlignment="textStart"
-            android:textSize="18sp"
-            android:textColor="@color/darker_gray"
-            android:layout_marginTop="10dp"
-            android:layout_toRightOf="@id/textView_pinnedBy"
-            android:textStyle="italic"
-            >
-        </TextView>
-
-        <!--PINNED NAME-->
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
-
+            android:orientation="vertical"
+            android:padding="34dp">
+            <!--SENDING HELP NAME-->
             <TextView
-                android:id="@+id/textView_pinnedBy"
+                android:id="@+id/viewPin_sendHelpName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/pinned_by"
+                android:text=""
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/darker_gray"
+                >
+            </TextView>
+
+            <!--THIN LINE-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/dark_gray"
+                android:layout_below="@id/viewPin_sendHelpName"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/textView_pinnedBy"
+                />
+
+            <!--TIME-->
+            <TextView
+                android:id="@+id/dateAndTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last updated: 12:00 PM, 12/12/2020"
+                android:textAlignment="textStart"
+                android:textSize="18sp"
+                android:textColor="@color/darker_gray"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/textView_pinnedBy"
+                android:textStyle="italic"
+                >
+            </TextView>
+
+            <!--PINNED NAME-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:id="@+id/textView_pinnedBy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pinned_by"
+                    android:textAlignment="textStart"
+                    android:textSize="20sp"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"
+                    >
+                </TextView>
+
+                <TextView
+                    android:id="@+id/viewPin_pinnedByName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pinned_by_name"
+                    android:textAlignment="textStart"
+                    android:textSize="20sp"
+                    android:textColor="@color/navy_blue"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@id/textView_pinnedBy"
+                    android:layout_marginLeft="20dp"
+                    android:textStyle="bold"
+
+                    >
+                </TextView>
+            </RelativeLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ratings_current_situation"
                 android:textAlignment="textStart"
                 android:textSize="20sp"
                 android:textColor="@color/black"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:textStyle="bold"
                 >
             </TextView>
 
             <TextView
-                android:id="@+id/viewPin_pinnedByName"
+                android:id="@+id/viewPin_ratingsCurrentSituation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/pinned_by_name"
+                android:text="@string/situation"
                 android:textAlignment="textStart"
                 android:textSize="20sp"
-                android:textColor="@color/navy_blue"
-                android:layout_marginTop="10dp"
-                android:layout_toRightOf="@id/textView_pinnedBy"
-                android:layout_marginLeft="20dp"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"
+                >
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/type_disaster"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="20dp"
                 android:textStyle="bold"
+                >
+            </TextView>
+
+            <TextView
+                android:id="@+id/viewPin_disasterType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Natural Disaster"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"
 
                 >
             </TextView>
-        </RelativeLayout>
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ratings_current_situation"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="20dp"
-            android:textStyle="bold"
-            >
-        </TextView>
-
-        <TextView
-            android:id="@+id/viewPin_ratingsCurrentSituation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/situation"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="20dp"
-            >
-        </TextView>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/type_disaster"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="20dp"
-            android:textStyle="bold"
-            >
-        </TextView>
-
-        <TextView
-            android:id="@+id/viewPin_disasterType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Natural Disaster"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="20dp"
-            >
-        </TextView>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/your_sitio"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="20dp"
-            android:textStyle="bold"
-            >
-        </TextView>
-
-        <TextView
-            android:id="@+id/viewPin_currentSitio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Asia 2"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="20dp"
-            >
-        </TextView>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/current_situation"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="20dp"
-            android:textStyle="bold"
-            >
-        </TextView>
-
-        <TextView
-            android:id="@+id/viewPin_currentSituation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Describe current situation"
-            android:textAlignment="textStart"
-            android:textColor="@color/black"
-            android:textSize="20sp"></TextView>
-
-        <HorizontalScrollView
-            android:id="@+id/scrollAttachments"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:fillViewport="true"
-            android:scrollbarSize="0dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/viewPin_currentSituation">
-
-            <LinearLayout
-                android:id="@+id/attachmentContainer"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:text="@string/your_sitio"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="20dp"
+                android:textStyle="bold"
+                >
+            </TextView>
 
+            <TextView
+                android:id="@+id/viewPin_currentSitio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Asia 2"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"
+
+                >
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/current_situation"
+                android:textAlignment="textStart"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="20dp"
+                android:textStyle="bold"
+                >
+            </TextView>
+
+            <TextView
+                android:id="@+id/viewPin_currentSituation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Describe current situation"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="20sp"></TextView>
+
+            <HorizontalScrollView
+                android:id="@+id/scrollAttachments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:fillViewport="true"
+                android:scrollbarSize="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewPin_currentSituation">
+
+                <LinearLayout
+                    android:id="@+id/attachmentContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <LinearLayout
+                android:id="@+id/photo_LinearView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                >
             </LinearLayout>
 
-        </HorizontalScrollView>
 
-        <LinearLayout
-            android:id="@+id/photo_LinearView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            >
+            <android.widget.Button
+                android:id="@+id/resolvedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/rounded_corner"
+                android:foregroundTint="@color/white"
+                android:padding="12dp"
+                android:text="@string/resolved"
+                android:textColor="@color/white"
+                android:textSize="20sp"></android.widget.Button>
+
+            <android.widget.Button
+                android:id="@+id/editPinButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/edit"
+                android:background="@drawable/rounded_corner_gray"
+                android:foregroundTint="@color/navy_blue"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:padding="12dp"
+                android:layout_marginBottom="80dp"
+                >
+            </android.widget.Button>
+
+
+
         </LinearLayout>
-
-
-        <android.widget.Button
-            android:id="@+id/resolvedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            android:background="@drawable/rounded_corner"
-            android:foregroundTint="@color/white"
-            android:padding="12dp"
-            android:text="@string/resolved"
-            android:textColor="@color/white"
-            android:textSize="20sp"></android.widget.Button>
-
-        <android.widget.Button
-            android:id="@+id/editPinButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/edit"
-            android:background="@drawable/rounded_corner_gray"
-            android:foregroundTint="@color/navy_blue"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:padding="12dp"
-            android:layout_marginBottom="80dp"
-            >
-        </android.widget.Button>
-
-
     </LinearLayout>
 
 

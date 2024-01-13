@@ -81,10 +81,10 @@
 
     <!--Pin my location button-->
     <string name="pin_location">Pin My Location</string>
-    <string name="describe">Describe your current situation.</string>
+    <string name="describe">Describe your current situation</string>
     <string name="cancel_pin">Cancel</string>
 
-    <string name="rate_situation">Rate your current situation.</string>
+    <string name="rate_situation">Rate the Severity</string>
     <string name="mild">Mild</string>
     <string name="moderate">Moderate</string>
     <string name="severe">Severe</string>
@@ -146,7 +146,7 @@
 
     <string name="send_help_name">No one is sending help yet.</string>
 
-    <string name="ratings_current_situation">Ratings of Current Situation:</string>
+    <string name="ratings_current_situation">Rate of Severity:</string>
     <string name="current_situation">Current Situation:</string>
     <string name="situation">Happy</string>
 

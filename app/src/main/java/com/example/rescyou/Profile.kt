@@ -96,7 +96,10 @@ class Profile : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
                     binding.age.text = "Enter your birthday to calculate your age."
                 } else {
                     binding.age.setTextColor(Color.rgb(33,33,33)) // Change to the original color
-                    binding.age.text = age.toString()
+                    if(age == 1)
+                        binding.age.text = age.toString() + " year old"
+                    else
+                        binding.age.text = age.toString() + " years old"
                 }
             }
 

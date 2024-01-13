@@ -20,8 +20,9 @@
             android:background="@color/light_gray"
             android:gravity="center"
             android:orientation="vertical"
-            android:backgroundTint="@color/light_gray"
-            android:paddingTop="24dp"
+            android:backgroundTint="@color/navy_blue"
+            android:paddingTop="16dp"
+
             >
 
             <TextView
@@ -30,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/info"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="30sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -57,7 +58,7 @@
                 android:id="@+id/tips_info_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="20dp">
 
                 <TextView
                     android:id="@+id/tips_textview"
