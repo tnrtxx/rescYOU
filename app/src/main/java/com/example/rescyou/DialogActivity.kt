@@ -135,6 +135,7 @@ class DialogActivity : AppCompatActivity() {
 
 
 
+
         // Create a dialog
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Help Request")
@@ -147,37 +148,28 @@ class DialogActivity : AppCompatActivity() {
                     .reference
 
                 if (pinId != null && rescuerName != null) {
-                    dbRef.child("Pins").child(pinId).child("pinRescuer").setValue(rescuerName).addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            dbRef.child("Pins").child(pinId).child("pinRescuerID").setValue(otherUserID).addOnCompleteListener { task2 ->
-                                if (task2.isSuccessful) {
-                                    if (otherUserID != null) {
-                                        fetchFCMToken(otherUserID)
-                                    } else {
-                                        Log.d(TAG, "otherUserID is null")
-                                        throw RuntimeException("otherUserID is null")
-                                    }
-
-                                    if (rescuerName != null) {
-                                        showDialog(pinId)
-                                    } else {
-                                        Log.d(TAG, "rescuerName is null")
-                                        throw RuntimeException("rescuerName is null")
-                                    }
-
-                                    Log.d(TAG, "Rescuer name in DialogActivity: $rescuerName")
-                                } else {
-                                    Log.e(TAG, "Error setting pinRescuerID", task2.exception)
-                                }
-                            }
-                        } else {
-                            Log.e(TAG, "Error setting pinRescuer", task.exception)
-                        }
-                    }
+                    dbRef.child("Pins").child(pinId).child("pinRescuer").setValue(rescuerName)
+                    dbRef.child("Pins").child(pinId).child("pinRescuerID").setValue(otherUserID)
                 } else {
                     Log.d(TAG, "pinId or rescuerName is null")
                     throw RuntimeException("pinId or rescuerName is null")
                 }
+
+                if (otherUserID != null) {
+                    fetchFCMToken(otherUserID)
+                } else {
+                    Log.d(TAG, "otherUserID is null")
+                    throw RuntimeException("otherUserID is null")
+                }
+
+                if (rescuerName != null) {
+                    showDialog(pinId)
+                } else {
+                    Log.d(TAG, "rescuerName is null")
+                    throw RuntimeException("rescuerName is null")
+                }
+
+                Log.d(TAG, "Rescuer name in DialogActivity: $rescuerName")
             } catch (e: Exception) {
                 Log.e(TAG, "Error in 'Yes' button click listener", e)
             }
