@@ -12,6 +12,7 @@ import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.example.rescyou.databinding.ActivityCompassBinding
 
 
@@ -40,10 +41,22 @@ class Compass : AppCompatActivity(), SensorEventListener {
 
     }
 
-    private fun initData(){
+    private fun initData() {
         mSendorManager = getSystemService(SENSOR_SERVICE) as SensorManager?
-    }
 
+        // Check if the device has a compass sensor
+        val sensors = mSendorManager?.getSensorList(Sensor.TYPE_MAGNETIC_FIELD)
+        if (sensors == null || sensors.isEmpty()) {
+            // The device doesn't have a compass sensor, show an AlertDialog
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setTitle("Compass Not Available")
+            alertDialogBuilder.setMessage("This compass feature is not available on your device.")
+            alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            alertDialogBuilder.show()
+        }
+    }
     override fun onResume(){
         super.onResume()
         @Suppress("DEPRECATION")
