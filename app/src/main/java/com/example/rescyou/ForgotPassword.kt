@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.example.rescyou.databinding.ActivityForgotPasswordBinding
 import com.example.rescyou.databinding.ActivitySignUpBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -37,6 +38,17 @@ class ForgotPassword : AppCompatActivity() {
             if( email.trim().length==0) {
                 Toast.makeText(applicationContext, "Please enter your email.", Toast.LENGTH_SHORT).show()
             }else{
+                // Show an AlertDialog
+                val alertDialogBuilder = AlertDialog.Builder(this)
+                alertDialogBuilder.setTitle("Password Reset")
+                alertDialogBuilder.setMessage("An email has been sent to reset your password.")
+                alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                alertDialogBuilder.setCancelable(false)
+                alertDialogBuilder.show()
+
+
                 sendPasswordReset()
             }
 
@@ -53,6 +65,8 @@ class ForgotPassword : AppCompatActivity() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "Email sent.")
+
+
 
                     val intent = Intent(this, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

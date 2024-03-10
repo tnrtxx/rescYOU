@@ -53,8 +53,12 @@ class Compass : AppCompatActivity(), SensorEventListener {
             alertDialogBuilder.setMessage("This compass feature is not available on your device.")
             alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
+                val intent = Intent(this, Tools::class.java)
+                startActivity(intent)
             }
+            alertDialogBuilder.setCancelable(false)  // This will make the dialog unclickable outside the prompt
             alertDialogBuilder.show()
+
         }
     }
     override fun onResume(){
